@@ -132,8 +132,8 @@ async function handleLogin() {
     setToken(data.token, loginForm.remember)
     setUserInfo(data.user)
 
-    // 跳转到首页
-    router.push('/dashboard')
+    // 跳转到知识库页面
+    router.push('/knowledge')
   } catch (error) {
     alert(error.message || '登录失败，请重试')
   } finally {

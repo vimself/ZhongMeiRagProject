@@ -5,7 +5,7 @@
 
 import { API_BASE_URL, USE_MOCK } from './env'
 import { getToken } from './storage'
-import { mockLogin } from '../api/mock'
+import { mockLogin, mockGetKnowledgeBaseStats, mockGetKnowledgeBaseList } from '../api/mock'
 
 /**
  * 通用API请求函数
@@ -106,6 +106,10 @@ async function getMockData(url, body) {
   // 根据URL返回对应的模拟数据
   if (url.includes('/auth/login')) {
     return mockLogin(body)
+  } else if (url.includes('/knowledge-base/stats')) {
+    return mockGetKnowledgeBaseStats()
+  } else if (url.includes('/knowledge-base/list')) {
+    return mockGetKnowledgeBaseList()
   }
 
   // 默认返回成功

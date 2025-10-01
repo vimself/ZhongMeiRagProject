@@ -152,18 +152,215 @@
 
 ---
 
+## 主布局导航栏 (MainLayout.vue)
+
+### 1. 系统Logo图标
+- **文件名**: `logo-main.svg`
+- **位置**: `frontEnd/src/assets/images/logo-main.svg`
+- **尺寸**: 40x40 px
+- **用途**: 主布局左侧导航栏顶部Logo
+- **样式**: 紫色渐变背景，圆角8px
+- **当前状态**: 使用CSS渐变占位符(需要替换为实际Logo)
+- **设计要求**: 与登录页Logo风格一致
+
+### 2. 导航菜单图标
+
+#### 2.1 我的知识库图标 (Knowledge Icon)
+- **文件名**: `icon-knowledge.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-knowledge.svg`
+- **尺寸**: 20x20 px
+- **用途**: 导航菜单"我的知识库"项
+- **当前状态**: 使用Emoji占位符 "📚" (需要替换)
+- **设计要求**: 书籍/图书馆风格的图标
+
+#### 2.2 智能问答图标 (Chat Icon)
+- **文件名**: `icon-chat.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-chat.svg`
+- **尺寸**: 20x20 px
+- **用途**: 导航菜单"智能问答"项
+- **当前状态**: 使用Emoji占位符 "💬" (需要替换)
+- **设计要求**: 对话气泡风格的图标
+
+#### 2.3 文档搜索图标 (Search Icon)
+- **文件名**: `icon-search.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-search.svg`
+- **尺寸**: 20x20 px
+- **用途**: 导航菜单"文档搜索"项
+- **当前状态**: 使用Emoji占位符 "🔍" (需要替换)
+- **设计要求**: 放大镜风格的图标
+
+### 3. 用户菜单图标
+
+#### 3.1 用户头像图标 (User Avatar Icon)
+- **文件名**: `icon-user-avatar.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-user-avatar.svg`
+- **尺寸**: 20x20 px
+- **用途**: 底部用户信息区域头像
+- **当前状态**: 使用Emoji占位符 "👤" (需要替换)
+- **设计要求**: 人像轮廓风格
+
+#### 3.2 更多操作图标 (More Icon)
+- **文件名**: `icon-more.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-more.svg`
+- **尺寸**: 18x18 px
+- **用途**: 用户信息区域更多操作按钮
+- **当前状态**: 使用文本符号 "⋮" (需要替换)
+- **设计要求**: 竖向三点图标
+
+#### 3.3 个人中心图标 (Profile Icon)
+- **文件名**: `icon-profile.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-profile.svg`
+- **尺寸**: 18x18 px
+- **用途**: 用户菜单"个人中心"项
+- **当前状态**: 使用Emoji占位符 "👤" (需要替换)
+- **设计要求**: 用户设置风格图标
+
+#### 3.4 退出登录图标 (Logout Icon)
+- **文件名**: `icon-logout.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-logout.svg`
+- **尺寸**: 18x18 px
+- **用途**: 用户菜单"退出登录"项
+- **当前状态**: 使用Emoji占位符 "🚪" (需要替换)
+- **设计要求**: 退出/登出门的图标
+
+---
+
+## 我的知识库页面 (Knowledge.vue)
+
+### 1. 页面功能图标
+
+#### 1.1 时间图标 (Time Icon)
+- **文件名**: `icon-time.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-time.svg`
+- **尺寸**: 16x16 px
+- **用途**: 页面右上角当前时间显示
+- **当前状态**: 使用Emoji占位符 "🕐" (需要替换)
+- **设计要求**: 时钟风格图标
+
+### 2. 统计卡片图标
+
+#### 2.1 知识库图标 (Database Icon)
+- **文件名**: `icon-database.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-database.svg`
+- **尺寸**: 28x28 px
+- **用途**: "可访问知识库"统计卡片
+- **当前状态**: 使用Emoji占位符 "📚" (需要替换)
+- **设计要求**: 数据库/书架风格图标
+- **颜色**: 蓝色系 (#dbeafe背景)
+
+#### 2.2 文档图标 (Document Icon)
+- **文件名**: `icon-document.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-document.svg`
+- **尺寸**: 28x28 px
+- **用途**: "可查阅文档"统计卡片
+- **当前状态**: 使用Emoji占位符 "📄" (需要替换)
+- **设计要求**: 文档/文件风格图标
+- **颜色**: 绿色系 (#d1fae5背景)
+
+#### 2.3 消息图标 (Message Icon)
+- **文件名**: `icon-message.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-message.svg`
+- **尺寸**: 28x28 px
+- **用途**: "今日问答"统计卡片
+- **当前状态**: 使用Emoji占位符 "💬" (需要替换)
+- **设计要求**: 对话/消息风格图标
+- **颜色**: 紫色系 (#e9d5ff背景)
+
+### 3. 提示信息图标
+
+#### 3.1 信息提示图标 (Info Tip Icon)
+- **文件名**: `icon-info-tip.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-info-tip.svg`
+- **尺寸**: 14x14 px
+- **用途**: 知识库列表标题右侧提示
+- **当前状态**: 使用Emoji占位符 "ℹ️" (需要替换)
+- **设计要求**: 圆形带"i"字母的图标
+
+### 4. 知识库卡片图标
+
+#### 4.1 技术规范库图标 (Code Icon)
+- **文件名**: `icon-code.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-code.svg`
+- **尺寸**: 24x24 px
+- **用途**: 技术规范库卡片图标
+- **当前状态**: 需要创建(使用CSS渐变背景)
+- **设计要求**: 代码/编程风格图标
+- **颜色**: 紫色渐变背景
+
+#### 4.2 产品手册图标 (Book Icon)
+- **文件名**: `icon-book.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-book.svg`
+- **尺寸**: 24x24 px
+- **用途**: 产品手册卡片图标
+- **当前状态**: 需要创建(使用CSS渐变背景)
+- **设计要求**: 书本/手册风格图标
+- **颜色**: 绿色渐变背景
+
+#### 4.3 运维文档图标 (Gear Icon)
+- **文件名**: `icon-gear.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-gear.svg`
+- **尺寸**: 24x24 px
+- **用途**: 运维文档卡片图标
+- **当前状态**: 需要创建(使用CSS渐变背景)
+- **设计要求**: 齿轮/设置风格图标
+- **颜色**: 粉红色渐变背景
+
+#### 4.4 更多操作图标 (More Dot Icon)
+- **文件名**: `icon-more-dot.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-more-dot.svg`
+- **尺寸**: 18x18 px
+- **用途**: 知识库卡片更多操作按钮
+- **当前状态**: 使用文本符号 "⋮" (需要替换)
+- **设计要求**: 竖向三点图标
+
+#### 4.5 查看图标 (Eye Icon)
+- **文件名**: `icon-eye-view.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-eye-view.svg`
+- **尺寸**: 14x14 px
+- **用途**: 知识库卡片查看人数标识
+- **当前状态**: 使用Emoji占位符 "👁️" (需要替换)
+- **设计要求**: 眼睛风格图标
+
+### 5. 状态指示图标
+
+#### 5.1 加载动画图标 (Loading Spinner)
+- **文件名**: `icon-loading-spinner.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-loading-spinner.svg`
+- **尺寸**: 32x32 px
+- **用途**: 页面加载中状态
+- **当前状态**: 使用CSS动画实现的旋转圆圈 (可保留或替换)
+- **设计要求**: 圆形旋转动画
+
+#### 5.2 空状态图标 (Empty Icon)
+- **文件名**: `icon-empty.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-empty.svg`
+- **尺寸**: 64x64 px
+- **用途**: 知识库列表为空时的占位图标
+- **当前状态**: 使用Emoji占位符 "📭" (需要替换)
+- **设计要求**: 空文件夹/空盒子风格
+
+### 6. 开发中占位图标
+
+#### 6.1 施工图标 (Construction Icon)
+- **文件名**: `icon-construction.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-construction.svg`
+- **尺寸**: 80x80 px
+- **用途**: 功能开发中页面占位
+- **当前状态**: 使用Emoji占位符 "🚧" (需要替换)
+- **设计要求**: 施工/建设中风格图标
+
+---
+
 ## 待补充的图标
 
 随着项目开发进度，其他页面需要的图标将在此处补充：
 
-- [ ] 知识库管理页面图标
 - [ ] 文档上传页面图标
-- [ ] 智能问答页面图标
-- [ ] 搜索页面图标
 - [ ] 用户管理页面图标
 - [ ] 模型管理页面图标
-- [ ] 个人中心页面图标
-- [ ] 导航菜单图标
+- [ ] 知识库详情页面图标
+- [ ] 智能问答对话页面图标
+- [ ] 搜索结果页面图标
 
 ---
 
@@ -172,6 +369,7 @@
 | 日期 | 版本 | 更新内容 | 更新人 |
 |------|------|---------|--------|
 | 2025-10-01 | v1.0 | 创建文档，添加登录页面所需图标 | AI Assistant |
+| 2025-10-01 | v1.1 | 添加主布局和我的知识库页面所需图标 | AI Assistant |
 
 ---
 
