@@ -492,3 +492,150 @@ export function mockExportSearchResults(params) {
   }
 }
 
+/**
+ * 模拟获取用户个人信息
+ * @returns {object} 模拟响应
+ */
+export function mockGetUserProfile() {
+  return {
+    success: true,
+    data: {
+      id: 'user_001',
+      username: 'zhangsan',
+      name: '张三',
+      email: 'zhangsan@company.com',
+      phone: '138****1234',
+      department: 'tech',
+      position: '高级工程师',
+      avatar: '/avatars/default-avatar.png',
+      bio: '专注于后端开发和系统架构设计，有多年互联网开发经验。',
+      role: 'user',
+      createdAt: '2024-01-15T08:30:00Z',
+      lastLoginAt: '2024-09-25T09:30:00Z'
+    },
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟更新用户信息
+ * @param {object} params - 更新参数
+ * @returns {object} 模拟响应
+ */
+export function mockUpdateUserProfile(params) {
+  return {
+    success: true,
+    data: {
+      id: 'user_001',
+      ...params,
+      updatedAt: new Date().toISOString()
+    },
+    message: '更新成功'
+  }
+}
+
+/**
+ * 模拟上传头像
+ * @param {FormData} formData - 文件数据
+ * @returns {object} 模拟响应
+ */
+export function mockUploadUserAvatar(formData) {
+  return {
+    success: true,
+    data: {
+      avatarUrl: '/avatars/user-avatar-' + Date.now() + '.png'
+    },
+    message: '头像上传成功'
+  }
+}
+
+/**
+ * 模拟获取部门列表
+ * @returns {object} 模拟响应
+ */
+export function mockGetDepartmentList() {
+  return {
+    success: true,
+    data: [
+      { value: 'tech', label: '技术部' },
+      { value: 'product', label: '产品部' },
+      { value: 'design', label: '设计部' },
+      { value: 'marketing', label: '市场部' },
+      { value: 'sales', label: '销售部' },
+      { value: 'hr', label: '人力资源部' },
+      { value: 'finance', label: '财务部' },
+      { value: 'admin', label: '行政部' }
+    ],
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟获取登录记录
+ * @param {object} params - 查询参数
+ * @returns {object} 模拟响应
+ */
+export function mockGetLoginRecords(params) {
+  return {
+    success: true,
+    data: [
+      {
+        id: 'login_001',
+        device: 'Windows Chrome',
+        ip: '192.168.1.100',
+        location: '北京',
+        loginTime: '2024-09-25T09:30:00Z',
+        status: 'current',
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      },
+      {
+        id: 'login_002',
+        device: 'iPhone Safari',
+        ip: '192.168.1.101',
+        location: '北京',
+        loginTime: '2024-09-24T18:45:00Z',
+        status: 'ended',
+        userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)'
+      },
+      {
+        id: 'login_003',
+        device: 'MacBook Chrome',
+        ip: '192.168.1.102',
+        location: '上海',
+        loginTime: '2024-09-23T14:20:00Z',
+        status: 'ended',
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+      }
+    ],
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟修改密码
+ * @param {object} params - 修改参数
+ * @returns {object} 模拟响应
+ */
+export function mockChangeUserPassword(params) {
+  const { currentPassword, newPassword, confirmPassword } = params
+
+  // 模拟密码验证
+  if (currentPassword !== 'user123') {
+    throw new Error('当前密码错误')
+  }
+
+  if (newPassword !== confirmPassword) {
+    throw new Error('新密码和确认密码不一致')
+  }
+
+  if (newPassword.length < 6) {
+    throw new Error('密码长度不能少于6位')
+  }
+
+  return {
+    success: true,
+    data: {},
+    message: '密码修改成功'
+  }
+}
+

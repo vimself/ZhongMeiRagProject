@@ -11,13 +11,14 @@
 ## 目录
 
 - [1. 用户认证模块](#1-用户认证模块)
-- [2. 知识库管理模块](#2-知识库管理模块)
-- [3. 文档管理模块](#3-文档管理模块)
-- [4. RAG 智能问答模块](#4-rag-智能问答模块)
-- [5. 搜索模块](#5-搜索模块)
-- [6. 用户管理模块](#6-用户管理模块)
-- [7. 模型管理模块](#7-模型管理模块)
-- [8. 权限管理模块](#8-权限管理模块)
+- [2. 个人中心模块](#2-个人中心模块)
+- [3. 知识库管理模块](#3-知识库管理模块)
+- [4. 文档管理模块](#4-文档管理模块)
+- [5. 智能问答模块](#5-智能问答模块)
+- [6. 搜索模块](#6-搜索模块)
+- [7. 用户管理模块](#7-用户管理模块)
+- [8. 模型管理模块](#8-模型管理模块)
+- [9. 权限管理模块](#9-权限管理模块)
 
 ---
 
@@ -375,9 +376,668 @@ export async function changePassword(oldPassword, newPassword) {
 
 ---
 
-## 2. 知识库管理模块
+## 2. 个人中心模块
 
-### 2.1 获取知识库统计数据
+### 2.1 获取个人信息
+
+**功能描述**: 获取当前登录用户的详细个人信息，包括基本资料、联系方式、头像等，用于个人设置页面展示。
+
+**业务背景**: 用户访问个人设置页面时需要展示当前用户的详细信息，包括可编辑和只读的字段。
+
+**接口地址**: `/api/user/profile`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{}
+```
+
+**参数说明**:
+无参数
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "id": "string, 用户ID",
+    "username": "string, 用户名（不可修改）",
+    "name": "string, 真实姓名",
+    "email": "string, 邮箱地址",
+    "phone": "string, 手机号码",
+    "department": "string, 部门代码",
+    "position": "string, 职位",
+    "avatar": "string, 头像URL",
+    "bio": "string, 个人简介",
+    "role": "string, 用户角色",
+    "createdAt": "string, 注册时间",
+    "lastLoginAt": "string, 最后登录时间"
+  }
+}
+```
+
+**Body 数据结构说明**:
+| 字段名 | 类型 | 说明 | 示例值 |
+|--------|------|------|--------|
+| id | string | 用户唯一标识 | "user_001" |
+| username | string | 用户名（只读） | "zhangsan" |
+| name | string | 真实姓名 | "张三" |
+| email | string | 邮箱地址 | "zhangsan@company.com" |
+| phone | string | 手机号码（脱敏显示） | "138****1234" |
+| department | string | 部门代码 | "tech" |
+| position | string | 职位 | "高级工程师" |
+| avatar | string | 头像URL，空值表示使用默认头像 | "/avatars/user-avatar.png" |
+| bio | string | 个人简介 | "专注于后端开发和系统架构设计" |
+| role | string | 用户角色 | "user" |
+| createdAt | string | 账号注册时间 | "2024-01-15T08:30:00Z" |
+| lastLoginAt | string | 最后登录时间 | "2024-09-25T09:30:00Z" |
+
+**请求示例**:
+```
+POST /api/user/profile
+Content-Type: application/json
+Authorization: Bearer eyJhbGc...
+
+{}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "id": "user_001",
+    "username": "zhangsan",
+    "name": "张三",
+    "email": "zhangsan@company.com",
+    "phone": "138****1234",
+    "department": "tech",
+    "position": "高级工程师",
+    "avatar": "/avatars/default-avatar.png",
+    "bio": "专注于后端开发和系统架构设计，有多年互联网开发经验。",
+    "role": "user",
+    "createdAt": "2024-01-15T08:30:00Z",
+    "lastLoginAt": "2024-09-25T09:30:00Z"
+  }
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 获取个人信息
+ * - 接口地址: /api/user/profile
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: UserProfile对象
+ */
+export async function getUserProfile() {
+  return await apiRequest('/api/user/profile', {
+    method: 'POST',
+    body: {},
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 手机号码在返回时进行脱敏处理
+- avatar字段为空时前端使用默认头像
+- 个人简介最大长度200字符
+
+---
+
+### 2.2 更新个人信息
+
+**功能描述**: 更新用户的基本信息，如姓名、邮箱、手机、部门、职位、个人简介等可编辑字段。
+
+**业务背景**: 用户在个人设置页面修改基本信息时调用。
+
+**接口地址**: `/api/user/profile/update`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "name": "string, 真实姓名",
+  "email": "string, 邮箱地址",
+  "phone": "string, 手机号码",
+  "department": "string, 部门代码",
+  "position": "string, 职位",
+  "bio": "string, 个人简介，最大200字符"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| name | string | 是 | 真实姓名，2-20字符 | "张三" |
+| email | string | 是 | 邮箱地址，需符合邮箱格式 | "zhangsan@company.com" |
+| phone | string | 否 | 手机号码，11位数字 | "13800138000" |
+| department | string | 否 | 部门代码 | "tech" |
+| position | string | 否 | 职位名称 | "高级工程师" |
+| bio | string | 否 | 个人简介，最大200字符 | "专注于后端开发..." |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "更新成功",
+  "body": {
+    "id": "string, 用户ID",
+    "name": "string, 更新后的姓名",
+    "email": "string, 更新后的邮箱",
+    "phone": "string, 更新后的手机号",
+    "department": "string, 更新后的部门",
+    "position": "string, 更新后的职位",
+    "bio": "string, 更新后的个人简介",
+    "updatedAt": "string, 更新时间"
+  }
+}
+```
+
+**请求示例**:
+```
+POST /api/user/profile/update
+Content-Type: application/json
+Authorization: Bearer eyJhbGc...
+
+{
+  "name": "张三",
+  "email": "zhangsan@company.com",
+  "phone": "13800138000",
+  "department": "tech",
+  "position": "高级工程师",
+  "bio": "专注于后端开发和系统架构设计，有多年互联网开发经验。"
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "更新成功",
+  "body": {
+    "id": "user_001",
+    "name": "张三",
+    "email": "zhangsan@company.com",
+    "phone": "138****1234",
+    "department": "tech",
+    "position": "高级工程师",
+    "bio": "专注于后端开发和系统架构设计，有多年互联网开发经验。",
+    "updatedAt": "2025-10-01T15:30:00Z"
+  }
+}
+```
+
+**失败响应示例**:
+```json
+{
+  "error": 5001,
+  "message": "邮箱格式不正确",
+  "body": {}
+}
+```
+
+```json
+{
+  "error": 5002,
+  "message": "手机号码格式不正确",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 更新个人信息
+ * - 接口地址: /api/user/profile/update
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: 更新后的用户信息
+ */
+export async function updateUserProfile(params) {
+  return await apiRequest('/api/user/profile/update', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 邮箱和姓名为必填字段
+- 手机号码需要11位数字格式验证
+- 个人简介最大长度200字符
+- 部门代码需要在有效的部门列表中
+
+---
+
+### 2.3 上传头像
+
+**功能描述**: 上传用户头像图片，支持JPG、PNG格式，文件大小不超过2MB。
+
+**业务背景**: 用户在个人设置页面更换头像时调用。
+
+**接口地址**: `/api/user/avatar/upload`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Authorization: Bearer {token}
+Content-Type: multipart/form-data
+```
+
+**请求体 (Body)**:
+FormData格式，包含以下字段：
+- `avatar`: File对象，头像文件
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 限制 |
+|--------|------|------|------|------|
+| avatar | File | 是 | 头像文件 | JPG/PNG格式，≤2MB |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "头像上传成功",
+  "body": {
+    "avatarUrl": "string, 新头像URL"
+  }
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "头像上传成功",
+  "body": {
+    "avatarUrl": "/avatars/user-avatar-1696156800000.png"
+  }
+}
+```
+
+**失败响应示例**:
+```json
+{
+  "error": 5003,
+  "message": "文件大小不能超过2MB",
+  "body": {}
+}
+```
+
+```json
+{
+  "error": 5004,
+  "message": "仅支持JPG、PNG格式的图片",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 上传头像
+ * - 接口地址: /api/user/avatar/upload
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: {avatarUrl}
+ */
+export async function uploadUserAvatar(file) {
+  const formData = new FormData();
+  formData.append('avatar', file);
+  
+  return await apiRequest('/api/user/avatar/upload', {
+    method: 'POST',
+    body: formData,
+    needAuth: true,
+    headers: {} // FormData会自动设置Content-Type
+  });
+}
+```
+
+**注意事项**:
+- 支持的图片格式：JPG、JPEG、PNG
+- 文件大小限制：2MB
+- 上传成功后返回新的头像URL
+- 旧头像文件会被自动清理
+
+---
+
+### 2.4 获取部门列表
+
+**功能描述**: 获取公司部门列表，用于个人信息编辑时的部门选择下拉框。
+
+**业务背景**: 用户在编辑个人信息时需要选择所属部门。
+
+**接口地址**: `/api/user/departments`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{}
+```
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "value": "string, 部门代码",
+      "label": "string, 部门名称"
+    }
+  ]
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    { "value": "tech", "label": "技术部" },
+    { "value": "product", "label": "产品部" },
+    { "value": "design", "label": "设计部" },
+    { "value": "marketing", "label": "市场部" },
+    { "value": "sales", "label": "销售部" },
+    { "value": "hr", "label": "人力资源部" },
+    { "value": "finance", "label": "财务部" },
+    { "value": "admin", "label": "行政部" }
+  ]
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 获取部门列表
+ * - 接口地址: /api/user/departments
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: Array<{value, label}>
+ */
+export async function getDepartmentList() {
+  return await apiRequest('/api/user/departments', {
+    method: 'POST',
+    body: {},
+    needAuth: true
+  });
+}
+```
+
+---
+
+### 2.5 获取登录记录
+
+**功能描述**: 获取用户最近的登录记录，包括设备信息、IP地址、登录时间等，用于安全设置页面展示。
+
+**业务背景**: 用户可以查看自己账号的登录历史，及时发现异常登录行为。
+
+**接口地址**: `/api/user/login-records`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "limit": "number, 返回数量，默认10"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| limit | number | 否 | 返回数量，默认10，最大50 | 10 |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "id": "string, 记录ID",
+      "device": "string, 设备信息",
+      "ip": "string, IP地址",
+      "location": "string, 登录地点",
+      "loginTime": "string, 登录时间",
+      "status": "string, 状态: current-当前会话, ended-已结束",
+      "userAgent": "string, 浏览器标识"
+    }
+  ]
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "id": "login_001",
+      "device": "Windows Chrome",
+      "ip": "192.168.1.100",
+      "location": "北京",
+      "loginTime": "2024-09-25T09:30:00Z",
+      "status": "current",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    },
+    {
+      "id": "login_002",
+      "device": "iPhone Safari",
+      "ip": "192.168.1.101",
+      "location": "北京",
+      "loginTime": "2024-09-24T18:45:00Z",
+      "status": "ended",
+      "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)"
+    }
+  ]
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 获取登录记录
+ * - 接口地址: /api/user/login-records
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: Array<LoginRecord>
+ */
+export async function getLoginRecords(params = {}) {
+  return await apiRequest('/api/user/login-records', {
+    method: 'POST',
+    body: { limit: 10, ...params },
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 记录按登录时间倒序排列
+- status为current的表示当前活跃会话
+- location基于IP地址解析，可能不完全准确
+- device信息从User-Agent解析获得
+
+---
+
+### 2.6 修改密码（个人中心）
+
+**功能描述**: 在个人中心页面修改密码，需要验证当前密码。
+
+**业务背景**: 用户在安全设置页面主动修改密码，增强账号安全性。
+
+**接口地址**: `/api/user/change-password`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "currentPassword": "string, 当前密码",
+  "newPassword": "string, 新密码",
+  "confirmPassword": "string, 确认新密码"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| currentPassword | string | 是 | 当前密码 | "OldPass@123" |
+| newPassword | string | 是 | 新密码，8-20位，包含大小写字母和数字 | "NewPass@456" |
+| confirmPassword | string | 是 | 确认新密码，需与newPassword一致 | "NewPass@456" |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "密码修改成功",
+  "body": {}
+}
+```
+
+**请求示例**:
+```
+POST /api/user/change-password
+Content-Type: application/json
+Authorization: Bearer eyJhbGc...
+
+{
+  "currentPassword": "OldPass@123",
+  "newPassword": "NewPass@456",
+  "confirmPassword": "NewPass@456"
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "密码修改成功",
+  "body": {}
+}
+```
+
+**失败响应示例**:
+```json
+{
+  "error": 5005,
+  "message": "当前密码错误",
+  "body": {}
+}
+```
+
+```json
+{
+  "error": 5006,
+  "message": "新密码和确认密码不一致",
+  "body": {}
+}
+```
+
+```json
+{
+  "error": 5007,
+  "message": "密码长度不能少于6位",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 修改密码（个人中心）
+ * - 接口地址: /api/user/change-password
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: 修改结果
+ */
+export async function changeUserPassword(params) {
+  return await apiRequest('/api/user/change-password', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 密码强度要求：最少6位，建议8-20位并包含大小写字母、数字
+- 新密码和确认密码必须一致
+- 修改成功后用户无需重新登录（与认证模块的修改密码接口不同）
+- 新密码不能与最近3次使用过的密码相同
+
+---
+
+## 3. 知识库管理模块
+
+### 3.1 获取知识库统计数据
 
 **功能描述**: 获取当前用户可访问的知识库统计信息，包括可访问知识库数量、可查阅文档数量、今日问答次数等，用于首页展示统计卡片。
 
@@ -473,7 +1133,7 @@ export async function getKnowledgeBaseStats() {
 
 ---
 
-### 2.2 获取知识库列表
+### 3.2 获取知识库列表
 
 **功能描述**: 获取当前用户有权访问的知识库列表，包含知识库的基本信息、统计数据、状态等详细信息，用于知识库页面展示。
 
@@ -654,7 +1314,7 @@ export async function getKnowledgeBaseList(params = {}) {
 
 ---
 
-### 2.3 获取知识库详情
+### 3.3 获取知识库详情
 
 **功能描述**: 获取指定知识库的详细信息，包括完整配置、文档列表、授权用户等。
 
@@ -777,15 +1437,15 @@ export async function getKnowledgeBaseDetail(params) {
 
 ---
 
-## 3. 文档管理模块
+## 4. 文档管理模块
 
 *待补充:当生成文档管理相关前端界面时,此部分将被填充*
 
 ---
 
-## 4. RAG 智能问答模块
+## 5. 智能问答模块
 
-### 4.1 获取知识库列表（对话页面）
+### 5.1 获取知识库列表（对话页面）
 
 **功能描述**: 获取用户可访问的知识库简化列表，用于智能问答页面的知识库选择下拉框。
 
@@ -857,7 +1517,7 @@ export async function getKnowledgeBaseList() {
 
 ---
 
-### 4.2 获取可用模型列表
+### 5.2 获取可用模型列表
 
 **功能描述**: 获取系统配置的可用大语言模型列表，用于智能问答页面的模型选择下拉框。
 
@@ -937,7 +1597,7 @@ export async function getModelList() {
 
 ---
 
-### 4.3 获取会话历史列表
+### 5.3 获取会话历史列表
 
 **功能描述**: 获取当前用户的历史会话列表，按时间倒序排列，用于智能问答页面左侧的会话历史展示。
 
@@ -1032,7 +1692,7 @@ export async function getSessionHistory(params = {}) {
 
 ---
 
-### 4.4 创建新会话
+### 5.4 创建新会话
 
 **功能描述**: 创建一个新的对话会话。
 
@@ -1112,7 +1772,7 @@ export async function createSession(params) {
 
 ---
 
-### 4.5 发送消息
+### 5.5 发送消息
 
 **功能描述**: 向指定会话发送用户问题，获取AI回答及引用来源。
 
@@ -1230,7 +1890,7 @@ export async function sendChatMessage(params) {
 
 ---
 
-### 4.6 获取会话消息列表
+### 5.6 获取会话消息列表
 
 **功能描述**: 获取指定会话的所有历史消息，用于加载历史对话。
 
@@ -1324,9 +1984,9 @@ export async function getSessionMessages(params) {
 
 ---
 
-## 5. 搜索模块
+## 6. 搜索模块
 
-### 5.1 搜索文档
+### 6.1 搜索文档
 
 **功能描述**: 在知识库中搜索文档内容，支持关键词搜索和向量检索，返回相关文档列表及高亮摘要。
 
@@ -1512,7 +2172,7 @@ export async function searchDocuments(params) {
 
 ---
 
-### 5.2 获取热门搜索关键词
+### 6.2 获取热门搜索关键词
 
 **功能描述**: 获取系统中的热门搜索关键词列表，基于搜索频率统计，用于搜索页面的热门搜索标签展示。
 
@@ -1598,7 +2258,7 @@ export async function getHotKeywords(params = {}) {
 
 ---
 
-### 5.3 获取文档类型列表
+### 6.3 获取文档类型列表
 
 **功能描述**: 获取系统支持的文档类型列表，用于搜索页面筛选器的文档类型下拉选择。
 
@@ -1672,7 +2332,7 @@ export async function getDocTypes() {
 
 ---
 
-### 5.4 导出搜索结果
+### 6.4 导出搜索结果
 
 **功能描述**: 将当前搜索结果导出为CSV文件，包含文档标题、知识库、类型、页码、更新时间等信息。
 
@@ -1771,19 +2431,19 @@ export async function exportSearchResults(params) {
 
 ---
 
-## 6. 用户管理模块
+## 7. 用户管理模块
 
 *待补充:当生成用户管理相关前端界面时,此部分将被填充*
 
 ---
 
-## 7. 模型管理模块
+## 8. 模型管理模块
 
 *待补充:当生成模型管理相关前端界面时,此部分将被填充*
 
 ---
 
-## 8. 权限管理模块
+## 9. 权限管理模块
 
 *待补充:当生成权限管理相关前端界面时,此部分将被填充*
 
@@ -1846,8 +2506,9 @@ export async function exportSearchResults(params) {
 |------|------|---------|--------|
 | 2025-10-01 | v1.0 | 初始化文档,添加用户认证模块接口 | AI Assistant |
 | 2025-10-01 | v1.1 | 添加知识库管理模块接口(统计、列表、详情) | AI Assistant |
-| 2025-10-01 | v1.2 | 添加RAG智能问答模块接口(会话、消息、模型) | AI Assistant |
+| 2025-10-01 | v1.2 | 添加智能问答模块接口(会话、消息、模型) | AI Assistant |
 | 2025-10-01 | v1.3 | 添加搜索模块接口(搜索文档、热门关键词、文档类型、导出) | AI Assistant |
+| 2025-10-01 | v1.4 | 添加个人中心模块(6个接口): 获取个人信息、更新个人信息、上传头像、获取部门列表、获取登录记录、修改密码 | AI Assistant |
 
 ---
 

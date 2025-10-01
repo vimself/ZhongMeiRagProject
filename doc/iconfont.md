@@ -620,6 +620,129 @@
 
 ---
 
+## 个人设置页面 (Profile.vue)
+
+### 1. 页面功能图标
+
+#### 1.1 基本信息标签图标 (User Info Icon)
+- **文件名**: `icon-user-info.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-user-info.svg`
+- **尺寸**: 18x18 px
+- **用途**: 基本信息标签页图标
+- **当前状态**: 使用Emoji占位符 "👤" (需要替换)
+- **设计要求**: 用户资料风格图标
+- **颜色**: 标签激活时为白色，未激活时为 #6b7280
+
+#### 1.2 安全设置标签图标 (Security Icon)
+- **文件名**: `icon-security.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-security.svg`
+- **尺寸**: 18x18 px
+- **用途**: 安全设置标签页图标
+- **当前状态**: 使用Emoji占位符 "🔒" (需要替换)
+- **设计要求**: 安全/锁定风格图标
+- **颜色**: 标签激活时为白色，未激活时为 #6b7280
+
+### 2. 头像相关图标
+
+#### 2.1 默认头像图标 (User Avatar Default Icon)
+- **文件名**: `icon-user-avatar-default.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-user-avatar-default.svg`
+- **尺寸**: 24x24 px (小头像), 48x48 px (大头像)
+- **用途**: 用户未上传头像时的默认图标
+- **当前状态**: 使用Emoji占位符 "👤" (需要替换)
+- **设计要求**: 用户头像轮廓图标
+- **颜色**: 白色 (#ffffff)，用于渐变背景
+
+#### 2.2 相机图标 (Camera Icon)
+- **文件名**: `icon-camera.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-camera.svg`
+- **尺寸**: 16x16 px
+- **用途**: 头像上传按钮图标
+- **当前状态**: 使用Emoji占位符 "📷" (需要替换)
+- **设计要求**: 相机风格图标
+- **颜色**: #495057
+
+### 3. 密码显示/隐藏图标
+
+#### 3.1 眼睛图标 - 关闭状态 (Eye Close Icon)
+- **文件名**: `icon-eye-close-profile.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-eye-close-profile.svg`
+- **尺寸**: 18x18 px
+- **用途**: 密码输入框隐藏密码状态
+- **当前状态**: 使用Emoji占位符 "👁️‍🗨️" (需要替换)
+- **设计要求**: 眼睛带斜线图标
+- **颜色**: #9ca3af，Hover时 #667eea
+
+#### 3.2 眼睛图标 - 打开状态 (Eye Open Icon)
+- **文件名**: `icon-eye-open-profile.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-eye-open-profile.svg`
+- **尺寸**: 18x18 px
+- **用途**: 密码输入框显示密码状态
+- **当前状态**: 使用Emoji占位符 "👁️" (需要替换)
+- **设计要求**: 眼睛风格图标
+- **颜色**: #9ca3af，Hover时 #667eea
+
+### 4. 设备图标（登录记录）
+
+#### 4.1 Windows设备图标 (Windows Icon)
+- **文件名**: `icon-device-windows.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-device-windows.svg`
+- **尺寸**: 24x24 px
+- **用途**: 登录记录中的Windows设备标识
+- **当前状态**: 使用Emoji占位符 "💻" (需要替换)
+- **设计要求**: Windows电脑图标
+- **颜色**: #6b7280
+
+#### 4.2 iPhone设备图标 (iPhone Icon)
+- **文件名**: `icon-device-iphone.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-device-iphone.svg`
+- **尺寸**: 24x24 px
+- **用途**: 登录记录中的iPhone设备标识
+- **当前状态**: 使用Emoji占位符 "📱" (需要替换)
+- **设计要求**: 手机风格图标
+- **颜色**: #6b7280
+
+#### 4.3 Mac设备图标 (Mac Icon)
+- **文件名**: `icon-device-mac.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-device-mac.svg`
+- **尺寸**: 24x24 px
+- **用途**: 登录记录中的Mac设备标识
+- **当前状态**: 使用Emoji占位符 "🖥️" (需要替换)
+- **设计要求**: Mac电脑图标
+- **颜色**: #6b7280
+
+#### 4.4 Android设备图标 (Android Icon)
+- **文件名**: `icon-device-android.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-device-android.svg`
+- **尺寸**: 24x24 px
+- **用途**: 登录记录中的Android设备标识
+- **当前状态**: 使用Emoji占位符 "📱" (需要替换)
+- **设计要求**: Android手机图标
+- **颜色**: #6b7280
+
+#### 4.5 通用设备图标 (Computer Icon)
+- **文件名**: `icon-device-computer.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-device-computer.svg`
+- **尺寸**: 24x24 px
+- **用途**: 登录记录中无法识别设备时的通用图标
+- **当前状态**: 使用Emoji占位符 "💻" (需要替换)
+- **设计要求**: 通用电脑图标
+- **颜色**: #6b7280
+
+### 5. 加载动画图标
+
+#### 5.1 加载图标 (Loading Icon)
+- **文件名**: `icon-loading-profile.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-loading-profile.svg`
+- **尺寸**: 16x16 px
+- **用途**: 保存个人信息和修改密码时的加载状态
+- **当前状态**: 使用CSS动画实现的旋转圆圈 (可保留或替换)
+- **设计要求**: 圆形旋转动画
+- **颜色**: #e5e7eb 边框，#667eea 顶部
+- **动画**: 顺时针旋转，0.8s循环
+
+---
+
 ## 待补充的图标
 
 随着项目开发进度，其他页面需要的图标将在此处补充：
@@ -639,6 +762,7 @@
 | 2025-10-01 | v1.1 | 添加主布局和我的知识库页面所需图标 | AI Assistant |
 | 2025-10-01 | v1.2 | 添加智能问答页面所需图标(15个) | AI Assistant |
 | 2025-10-01 | v1.3 | 添加文档搜索页面所需图标(10个) | AI Assistant |
+| 2025-10-01 | v1.4 | 添加个人设置页面所需图标(11个) | AI Assistant |
 
 ---
 

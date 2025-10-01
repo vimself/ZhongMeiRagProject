@@ -161,10 +161,10 @@ function handleForgotPassword() {
 
 .login-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 500px;
   background: #ffffff;
   border-radius: 16px;
-  padding: 48px 40px;
+  padding: 48px 50px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 

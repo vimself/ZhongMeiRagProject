@@ -17,7 +17,13 @@ import {
   mockSearchDocuments,
   mockGetHotKeywords,
   mockGetDocTypes,
-  mockExportSearchResults
+  mockExportSearchResults,
+  mockGetUserProfile,
+  mockUpdateUserProfile,
+  mockUploadUserAvatar,
+  mockGetDepartmentList,
+  mockGetLoginRecords,
+  mockChangeUserPassword
 } from '../api/mock'
 
 /**
@@ -141,6 +147,18 @@ async function getMockData(url, body) {
     return mockGetDocTypes()
   } else if (url.includes('/search/export')) {
     return mockExportSearchResults(body)
+  } else if (url.includes('/user/profile') && !url.includes('update')) {
+    return mockGetUserProfile()
+  } else if (url.includes('/user/profile/update')) {
+    return mockUpdateUserProfile(body)
+  } else if (url.includes('/user/avatar/upload')) {
+    return mockUploadUserAvatar(body)
+  } else if (url.includes('/user/departments')) {
+    return mockGetDepartmentList()
+  } else if (url.includes('/user/login-records')) {
+    return mockGetLoginRecords(body)
+  } else if (url.includes('/user/change-password')) {
+    return mockChangeUserPassword(body)
   }
 
   // 默认返回成功
