@@ -302,3 +302,193 @@ export function mockSendChatMessage(params) {
   }
 }
 
+/**
+ * 模拟搜索文档
+ * @param {object} params - 搜索参数
+ * @returns {object} 模拟响应
+ */
+export function mockSearchDocuments(params) {
+  const { keyword, page = 1, pageSize = 10 } = params
+  
+  // 如果没有关键词，返回空结果
+  if (!keyword) {
+    return {
+      success: true,
+      data: {
+        list: [],
+        total: 0,
+        page: 1,
+        pageSize: 10
+      },
+      message: '请输入搜索关键词'
+    }
+  }
+
+  // 模拟搜索结果
+  const allResults = [
+    {
+      id: 'doc_001',
+      title: 'RESTful API设计规范v2.0.pdf',
+      knowledgeBase: '技术规范库',
+      docType: 'PDF',
+      excerpt: '...完整的<em>API设计</em>规范文档，包括命名规则、HTTP方法使用、状态码定义等内容...',
+      score: 0.95,
+      pageNumber: 12,
+      updateTime: '2025-09-28',
+      size: '2.3 MB'
+    },
+    {
+      id: 'doc_002',
+      title: '数据库连接池配置指南.pdf',
+      knowledgeBase: '技术规范库',
+      docType: 'PDF',
+      excerpt: '...详细介绍了<em>数据库连接池</em>的配置方法和最佳实践，包括连接数设置、超时配置等...',
+      score: 0.92,
+      pageNumber: 23,
+      updateTime: '2025-09-25',
+      size: '1.8 MB'
+    },
+    {
+      id: 'doc_003',
+      title: 'Redis缓存使用手册.pdf',
+      knowledgeBase: '技术规范库',
+      docType: 'PDF',
+      excerpt: '...全面的<em>Redis</em>缓存使用指南，涵盖数据结构选择、过期策略、性能优化等内容...',
+      score: 0.90,
+      pageNumber: 45,
+      updateTime: '2025-09-20',
+      size: '3.1 MB'
+    },
+    {
+      id: 'doc_004',
+      title: '微服务架构设计手册.pdf',
+      knowledgeBase: '技术规范库',
+      docType: 'PDF',
+      excerpt: '...介绍<em>微服务架构</em>的设计原则、服务拆分、通信方式、数据管理等核心内容...',
+      score: 0.88,
+      pageNumber: 78,
+      updateTime: '2025-09-15',
+      size: '4.5 MB'
+    },
+    {
+      id: 'doc_005',
+      title: 'MySQL性能优化实战.pdf',
+      knowledgeBase: '技术规范库',
+      docType: 'PDF',
+      excerpt: '...深入讲解MySQL<em>性能优化</em>技巧，包括索引优化、查询优化、配置调优等内容...',
+      score: 0.85,
+      pageNumber: 56,
+      updateTime: '2025-09-10',
+      size: '2.7 MB'
+    },
+    {
+      id: 'doc_006',
+      title: 'Docker容器化部署指南.pdf',
+      knowledgeBase: '运维文档',
+      docType: 'PDF',
+      excerpt: '...详细说明如何使用<em>Docker</em>进行应用容器化，包括镜像构建、容器编排等内容...',
+      score: 0.82,
+      pageNumber: 34,
+      updateTime: '2025-09-05',
+      size: '3.2 MB'
+    },
+    {
+      id: 'doc_007',
+      title: 'Nginx配置最佳实践.pdf',
+      knowledgeBase: '运维文档',
+      docType: 'PDF',
+      excerpt: '...介绍<em>Nginx</em>的配置技巧和最佳实践，包括负载均衡、反向代理、缓存配置等...',
+      score: 0.80,
+      pageNumber: 28,
+      updateTime: '2025-08-30',
+      size: '1.5 MB'
+    },
+    {
+      id: 'doc_008',
+      title: '产品功能使用手册v3.0.pdf',
+      knowledgeBase: '产品手册',
+      docType: 'PDF',
+      excerpt: '...全面的产品<em>功能介绍</em>和使用指南，帮助用户快速上手使用系统各项功能...',
+      score: 0.78,
+      pageNumber: 15,
+      updateTime: '2025-08-25',
+      size: '5.2 MB'
+    }
+  ]
+
+  // 根据关键词过滤
+  const filteredResults = allResults.filter(doc => 
+    doc.title.toLowerCase().includes(keyword.toLowerCase()) ||
+    doc.excerpt.toLowerCase().includes(keyword.toLowerCase())
+  )
+
+  // 分页
+  const start = (page - 1) * pageSize
+  const end = start + pageSize
+  const pagedResults = filteredResults.slice(start, end)
+
+  return {
+    success: true,
+    data: {
+      list: pagedResults,
+      total: filteredResults.length,
+      page: page,
+      pageSize: pageSize
+    },
+    message: '搜索成功'
+  }
+}
+
+/**
+ * 模拟获取热门搜索关键词
+ * @returns {object} 模拟响应
+ */
+export function mockGetHotKeywords() {
+  return {
+    success: true,
+    data: [
+      { keyword: 'API设计规范', count: 156 },
+      { keyword: '数据库连接池', count: 132 },
+      { keyword: 'Redis缓存', count: 128 },
+      { keyword: '微服务架构', count: 115 },
+      { keyword: '性能优化', count: 98 }
+    ],
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟获取文档类型列表
+ * @returns {object} 模拟响应
+ */
+export function mockGetDocTypes() {
+  return {
+    success: true,
+    data: [
+      { value: 'all', label: '全部类型' },
+      { value: 'pdf', label: 'PDF文档' },
+      { value: 'word', label: 'Word文档' },
+      { value: 'markdown', label: 'Markdown文档' },
+      { value: 'text', label: '文本文档' }
+    ],
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟导出搜索结果
+ * @param {object} params - 导出参数
+ * @returns {object} 模拟响应
+ */
+export function mockExportSearchResults(params) {
+  return {
+    success: true,
+    data: {
+      downloadUrl: '/downloads/search-results-' + Date.now() + '.csv',
+      fileName: 'search-results-' + new Date().toISOString().split('T')[0] + '.csv',
+      expiresIn: 3600
+    },
+    message: '导出成功'
+  }
+}
+

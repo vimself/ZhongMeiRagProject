@@ -13,7 +13,11 @@ import {
   mockGetModelList,
   mockGetSessionHistory,
   mockCreateSession,
-  mockSendChatMessage
+  mockSendChatMessage,
+  mockSearchDocuments,
+  mockGetHotKeywords,
+  mockGetDocTypes,
+  mockExportSearchResults
 } from '../api/mock'
 
 /**
@@ -129,6 +133,14 @@ async function getMockData(url, body) {
     return mockCreateSession(body)
   } else if (url.includes('/chat/message/send')) {
     return mockSendChatMessage(body)
+  } else if (url.includes('/search/documents')) {
+    return mockSearchDocuments(body)
+  } else if (url.includes('/search/hot-keywords')) {
+    return mockGetHotKeywords()
+  } else if (url.includes('/search/doc-types')) {
+    return mockGetDocTypes()
+  } else if (url.includes('/search/export')) {
+    return mockExportSearchResults(body)
   }
 
   // 默认返回成功

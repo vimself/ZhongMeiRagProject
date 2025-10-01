@@ -1326,7 +1326,448 @@ export async function getSessionMessages(params) {
 
 ## 5. 搜索模块
 
-*待补充:当生成搜索相关前端界面时,此部分将被填充*
+### 5.1 搜索文档
+
+**功能描述**: 在知识库中搜索文档内容，支持关键词搜索和向量检索，返回相关文档列表及高亮摘要。
+
+**业务背景**: 用户需要快速查找知识库中的特定文档或技术内容，通过关键词搜索能够精准定位到相关文档和段落。
+
+**接口地址**: `/api/search/documents`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "keyword": "string, 搜索关键词",
+  "knowledgeBaseId": "string, 知识库ID，'all'表示全部知识库",
+  "docType": "string, 文档类型，'all'表示全部类型",
+  "sortBy": "string, 排序方式: relevance-相关度, time-时间, title-标题",
+  "page": "number, 页码，从1开始，默认1",
+  "pageSize": "number, 每页数量，默认10"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| keyword | string | 是 | 搜索关键词 | "API设计" |
+| knowledgeBaseId | string | 否 | 知识库ID，"all"表示全部知识库 | "kb_001" |
+| docType | string | 否 | 文档类型，"all"表示全部类型 | "pdf" |
+| sortBy | string | 否 | 排序方式 | "relevance" |
+| page | number | 否 | 页码 | 1 |
+| pageSize | number | 否 | 每页数量 | 10 |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "搜索成功",
+  "body": {
+    "list": [
+      {
+        "id": "string, 文档ID",
+        "title": "string, 文档标题",
+        "knowledgeBase": "string, 所属知识库名称",
+        "docType": "string, 文档类型",
+        "excerpt": "string, 摘要片段（带HTML高亮标签<em>）",
+        "score": "number, 相关性得分(0-1)",
+        "pageNumber": "number, 页码",
+        "updateTime": "string, 更新时间",
+        "size": "string, 文件大小"
+      }
+    ],
+    "total": "number, 总数",
+    "page": "number, 当前页码",
+    "pageSize": "number, 每页数量"
+  }
+}
+```
+
+**Body 数据结构说明**:
+| 字段名 | 类型 | 说明 | 示例值 |
+|--------|------|------|--------|
+| list | Array | 文档列表 | - |
+| list[].id | string | 文档唯一标识 | "doc_001" |
+| list[].title | string | 文档标题 | "RESTful API设计规范v2.0.pdf" |
+| list[].knowledgeBase | string | 所属知识库 | "技术规范库" |
+| list[].docType | string | 文档类型 | "PDF" |
+| list[].excerpt | string | 摘要片段，关键词用`<em>`标签高亮 | "...完整的<em>API设计</em>规范..." |
+| list[].score | number | 相关性得分 | 0.95 |
+| list[].pageNumber | number | 文档页码 | 12 |
+| list[].updateTime | string | 更新时间 | "2025-09-28" |
+| list[].size | string | 文件大小 | "2.3 MB" |
+| total | number | 符合条件的总记录数 | 8 |
+| page | number | 当前页码 | 1 |
+| pageSize | number | 每页数量 | 10 |
+
+**请求示例**:
+```
+POST /api/search/documents
+Content-Type: application/json
+Authorization: Bearer eyJhbGc...
+
+{
+  "keyword": "API设计",
+  "knowledgeBaseId": "all",
+  "docType": "all",
+  "sortBy": "relevance",
+  "page": 1,
+  "pageSize": 10
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "搜索成功",
+  "body": {
+    "list": [
+      {
+        "id": "doc_001",
+        "title": "RESTful API设计规范v2.0.pdf",
+        "knowledgeBase": "技术规范库",
+        "docType": "PDF",
+        "excerpt": "...完整的<em>API设计</em>规范文档，包括命名规则、HTTP方法使用、状态码定义等内容...",
+        "score": 0.95,
+        "pageNumber": 12,
+        "updateTime": "2025-09-28",
+        "size": "2.3 MB"
+      },
+      {
+        "id": "doc_002",
+        "title": "数据库连接池配置指南.pdf",
+        "knowledgeBase": "技术规范库",
+        "docType": "PDF",
+        "excerpt": "...详细介绍了数据库连接池的配置方法和<em>API</em>调用示例...",
+        "score": 0.88,
+        "pageNumber": 23,
+        "updateTime": "2025-09-25",
+        "size": "1.8 MB"
+      }
+    ],
+    "total": 8,
+    "page": 1,
+    "pageSize": 10
+  }
+}
+```
+
+**失败响应示例**:
+```json
+{
+  "error": 4001,
+  "message": "搜索关键词不能为空",
+  "body": {
+    "list": [],
+    "total": 0,
+    "page": 1,
+    "pageSize": 10
+  }
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 搜索文档
+ * - 接口地址: /api/search/documents
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: {list, total, page, pageSize}
+ */
+export async function searchDocuments(params) {
+  return await apiRequest('/api/search/documents', {
+    method: 'POST',
+    body: {
+      page: 1,
+      pageSize: 10,
+      sortBy: 'relevance',
+      knowledgeBaseId: 'all',
+      docType: 'all',
+      ...params
+    },
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 搜索结果中的excerpt字段包含HTML标签`<em>`用于高亮关键词
+- score表示文档与关键词的相关性得分，越接近1越相关
+- 搜索默认在用户有权访问的知识库范围内进行
+- 支持分页，单次最多返回100条结果
+- 搜索结果按相关度、时间或标题排序
+
+---
+
+### 5.2 获取热门搜索关键词
+
+**功能描述**: 获取系统中的热门搜索关键词列表，基于搜索频率统计，用于搜索页面的热门搜索标签展示。
+
+**业务背景**: 为用户提供搜索建议，展示系统中常见的搜索关键词，帮助用户快速找到常用内容。
+
+**接口地址**: `/api/search/hot-keywords`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "limit": "number, 返回数量，默认10"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| limit | number | 否 | 返回数量，默认10，最大20 | 10 |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "keyword": "string, 关键词",
+      "count": "number, 搜索次数"
+    }
+  ]
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    { "keyword": "API设计规范", "count": 156 },
+    { "keyword": "数据库连接池", "count": 132 },
+    { "keyword": "Redis缓存", "count": 128 },
+    { "keyword": "微服务架构", "count": 115 },
+    { "keyword": "性能优化", "count": 98 }
+  ]
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 获取热门搜索关键词
+ * - 接口地址: /api/search/hot-keywords
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: Array<{keyword, count}>
+ */
+export async function getHotKeywords(params = {}) {
+  return await apiRequest('/api/search/hot-keywords', {
+    method: 'POST',
+    body: { limit: 10, ...params },
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 热门关键词基于最近30天的搜索统计
+- 按搜索次数降序排列
+- 统计数据每小时更新一次
+
+---
+
+### 5.3 获取文档类型列表
+
+**功能描述**: 获取系统支持的文档类型列表，用于搜索页面筛选器的文档类型下拉选择。
+
+**业务背景**: 用户可以根据文档类型筛选搜索结果，快速找到特定格式的文档。
+
+**接口地址**: `/api/search/doc-types`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{}
+```
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "value": "string, 类型值",
+      "label": "string, 类型显示名称"
+    }
+  ]
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    { "value": "all", "label": "全部类型" },
+    { "value": "pdf", "label": "PDF文档" },
+    { "value": "word", "label": "Word文档" },
+    { "value": "markdown", "label": "Markdown文档" },
+    { "value": "text", "label": "文本文档" }
+  ]
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 获取文档类型列表
+ * - 接口地址: /api/search/doc-types
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: Array<{value, label}>
+ */
+export async function getDocTypes() {
+  return await apiRequest('/api/search/doc-types', {
+    method: 'POST',
+    body: {},
+    needAuth: true
+  });
+}
+```
+
+---
+
+### 5.4 导出搜索结果
+
+**功能描述**: 将当前搜索结果导出为CSV文件，包含文档标题、知识库、类型、页码、更新时间等信息。
+
+**业务背景**: 用户需要保存搜索结果用于离线查看或分享给他人。
+
+**接口地址**: `/api/search/export`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "keyword": "string, 搜索关键词",
+  "knowledgeBaseId": "string, 知识库ID",
+  "docType": "string, 文档类型",
+  "sortBy": "string, 排序方式"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| keyword | string | 是 | 搜索关键词 | "API设计" |
+| knowledgeBaseId | string | 否 | 知识库ID | "kb_001" |
+| docType | string | 否 | 文档类型 | "pdf" |
+| sortBy | string | 否 | 排序方式 | "relevance" |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "导出成功",
+  "body": {
+    "downloadUrl": "string, 下载链接",
+    "fileName": "string, 文件名",
+    "expiresIn": "number, 过期时间（秒）"
+  }
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "导出成功",
+  "body": {
+    "downloadUrl": "/downloads/search-results-1696156800000.csv",
+    "fileName": "search-results-2025-10-01.csv",
+    "expiresIn": 3600
+  }
+}
+```
+
+**失败响应示例**:
+```json
+{
+  "error": 4002,
+  "message": "搜索结果为空，无法导出",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 导出搜索结果
+ * - 接口地址: /api/search/export
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: {downloadUrl, fileName, expiresIn}
+ */
+export async function exportSearchResults(params) {
+  return await apiRequest('/api/search/export', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 导出文件为CSV格式，使用UTF-8编码
+- 下载链接有效期为1小时（3600秒）
+- 导出最多包含1000条记录
+- 前端应使用`window.open(downloadUrl)`触发下载
 
 ---
 
@@ -1368,6 +1809,8 @@ export async function getSessionMessages(params) {
 | 3002 | 问题内容为空 | 提示输入问题 |
 | 3003 | 问题长度超限 | 提示问题不能超过1000字符 |
 | 3004 | 模型不可用 | 提示选择其他模型 |
+| 4001 | 搜索关键词不能为空 | 提示用户输入搜索关键词 |
+| 4002 | 搜索结果为空，无法导出 | 提示用户搜索结果为空 |
 
 *更多错误码将随着接口的增加而补充*
 
@@ -1404,6 +1847,7 @@ export async function getSessionMessages(params) {
 | 2025-10-01 | v1.0 | 初始化文档,添加用户认证模块接口 | AI Assistant |
 | 2025-10-01 | v1.1 | 添加知识库管理模块接口(统计、列表、详情) | AI Assistant |
 | 2025-10-01 | v1.2 | 添加RAG智能问答模块接口(会话、消息、模型) | AI Assistant |
+| 2025-10-01 | v1.3 | 添加搜索模块接口(搜索文档、热门关键词、文档类型、导出) | AI Assistant |
 
 ---
 

@@ -510,6 +510,116 @@
 
 ---
 
+## 文档搜索页面 (Search.vue)
+
+### 1. 页面功能图标
+
+#### 1.1 时间图标 (Time Icon)
+- **文件名**: `icon-time-search.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-time-search.svg`
+- **尺寸**: 16x16 px
+- **用途**: 页面右上角当前时间显示
+- **当前状态**: 使用Emoji占位符 "🕐" (需要替换)
+- **设计要求**: 时钟风格图标
+
+#### 1.2 搜索按钮图标 (Search Button Icon)
+- **文件名**: `icon-search-btn.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-search-btn.svg`
+- **尺寸**: 18x18 px
+- **用途**: 搜索按钮图标
+- **当前状态**: 使用Emoji占位符 "🔍" (需要替换)
+- **设计要求**: 放大镜风格图标
+- **颜色**: 白色 (#ffffff)
+
+#### 1.3 导出按钮图标 (Download Icon)
+- **文件名**: `icon-download.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-download.svg`
+- **尺寸**: 16x16 px
+- **用途**: 导出结果按钮图标
+- **当前状态**: 使用Emoji占位符 "📥" (需要替换)
+- **设计要求**: 下载/导出风格图标
+- **颜色**: 蓝色 (#667eea)
+
+### 2. 空状态图标
+
+#### 2.1 搜索空状态图标 (Search Empty Icon)
+- **文件名**: `icon-search-empty.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-search-empty.svg`
+- **尺寸**: 80x80 px
+- **用途**: 搜索页面未搜索时的空状态图标
+- **当前状态**: 使用Emoji占位符 "🔍" (需要替换)
+- **设计要求**: 放大镜风格图标，半透明
+- **颜色**: 灰色系，透明度50%
+
+#### 2.2 无结果图标 (No Results Icon)
+- **文件名**: `icon-no-results.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-no-results.svg`
+- **尺寸**: 80x80 px
+- **用途**: 搜索无结果时的占位图标
+- **当前状态**: 使用Emoji占位符 "📭" (需要替换)
+- **设计要求**: 空邮箱/无结果风格图标
+- **颜色**: 灰色系，透明度50%
+
+### 3. 加载状态图标
+
+#### 3.1 搜索加载图标 (Search Loading Icon)
+- **文件名**: `icon-loading-search.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-loading-search.svg`
+- **尺寸**: 40x40 px
+- **用途**: 搜索中的加载动画
+- **当前状态**: 使用CSS动画实现的旋转圆圈 (可保留或替换)
+- **设计要求**: 圆形旋转动画
+- **颜色**: 蓝色 (#667eea)
+
+### 4. 搜索结果元数据图标
+
+#### 4.1 知识库小图标 (KB Small Icon)
+- **文件名**: `icon-kb-small.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-kb-small.svg`
+- **尺寸**: 14x14 px
+- **用途**: 搜索结果中显示所属知识库
+- **当前状态**: 使用Emoji占位符 "📚" (需要替换)
+- **设计要求**: 书本/知识库风格图标
+- **颜色**: 灰色 (#6b7280)
+
+#### 4.2 文件类型图标 (File Type Icon)
+- **文件名**: `icon-file-type.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-file-type.svg`
+- **尺寸**: 14x14 px
+- **用途**: 搜索结果中显示文档类型
+- **当前状态**: 使用Emoji占位符 "📄" (需要替换)
+- **设计要求**: 文档/文件风格图标
+- **颜色**: 灰色 (#6b7280)
+
+#### 4.3 页码图标 (Page Icon)
+- **文件名**: `icon-page.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-page.svg`
+- **尺寸**: 14x14 px
+- **用途**: 搜索结果中显示文档页码
+- **当前状态**: 使用Emoji占位符 "📃" (需要替换)
+- **设计要求**: 页面/文档页码风格图标
+- **颜色**: 灰色 (#6b7280)
+
+#### 4.4 时间小图标 (Time Small Icon)
+- **文件名**: `icon-time-small.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-time-small.svg`
+- **尺寸**: 14x14 px
+- **用途**: 搜索结果中显示更新时间
+- **当前状态**: 使用Emoji占位符 "🕐" (需要替换)
+- **设计要求**: 时钟风格图标
+- **颜色**: 灰色 (#6b7280)
+
+#### 4.5 文件大小图标 (Size Icon)
+- **文件名**: `icon-size.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-size.svg`
+- **尺寸**: 14x14 px
+- **用途**: 搜索结果中显示文件大小
+- **当前状态**: 使用Emoji占位符 "💾" (需要替换)
+- **设计要求**: 磁盘/存储风格图标
+- **颜色**: 灰色 (#6b7280)
+
+---
+
 ## 待补充的图标
 
 随着项目开发进度，其他页面需要的图标将在此处补充：
@@ -518,7 +628,6 @@
 - [ ] 用户管理页面图标
 - [ ] 模型管理页面图标
 - [ ] 知识库详情页面图标
-- [ ] 搜索结果页面图标
 
 ---
 
@@ -529,6 +638,7 @@
 | 2025-10-01 | v1.0 | 创建文档，添加登录页面所需图标 | AI Assistant |
 | 2025-10-01 | v1.1 | 添加主布局和我的知识库页面所需图标 | AI Assistant |
 | 2025-10-01 | v1.2 | 添加智能问答页面所需图标(15个) | AI Assistant |
+| 2025-10-01 | v1.3 | 添加文档搜索页面所需图标(10个) | AI Assistant |
 
 ---
 

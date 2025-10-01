@@ -243,8 +243,8 @@ function goToKnowledgeDetail(id) {
 
 <style scoped>
 .knowledge-page {
-  padding: 32px 40px;
-  max-width: 1400px;
+  padding: 32px 48px;
+  max-width: 1800px;
   margin: 0 auto;
 }
 
@@ -254,7 +254,7 @@ function goToKnowledgeDetail(id) {
   justify-content: space-between;
   align-items: center;
   height: 88px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
   flex-shrink: 0;
 }
 

@@ -141,7 +141,7 @@ async function handleLogout() {
 
 /* 左侧导航栏 */
 .sidebar {
-  width: 240px;
+  width: 220px;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
   display: flex;
@@ -158,7 +158,7 @@ async function handleLogout() {
   align-items: center;
   gap: 12px;
   height: 88px;
-  padding: 0 20px;
+  padding: 0 24px;
   border-bottom: 1px solid #e5e7eb;
   flex-shrink: 0;
 }
@@ -193,7 +193,7 @@ async function handleLogout() {
 /* 导航菜单 */
 .sidebar-nav {
   flex: 1;
-  padding: 20px 12px;
+  padding: 20px 16px;
   overflow-y: auto;
 }
 
@@ -201,7 +201,7 @@ async function handleLogout() {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 14px 18px;
   margin-bottom: 4px;
   border-radius: 8px;
   color: #4b5563;
@@ -230,7 +230,7 @@ async function handleLogout() {
 
 /* 底部用户信息 */
 .sidebar-footer {
-  padding: 16px;
+  padding: 20px;
   border-top: 1px solid #e5e7eb;
   position: relative;
 }
@@ -331,7 +331,7 @@ async function handleLogout() {
 /* 右侧内容区 */
 .main-content {
   flex: 1;
-  margin-left: 240px;
+  margin-left: 220px;
   min-height: 100vh;
 }
 
