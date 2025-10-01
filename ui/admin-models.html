@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型管理 - RAG知识问答系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .model-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .model-card {
+            transition: all 0.3s ease;
+        }
+        .status-online {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 侧边栏 -->
+    <div class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-30">
+        <!-- Logo区域 -->
+        <div class="flex items-center p-6 border-b border-gray-200">
+            <div class="bg-white w-10 h-10 rounded-lg flex items-center justify-center mr-3 border border-gray-200 shadow-sm">
+                <img src="logo.png" alt="RAG系统" class="w-full h-full object-contain">
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-gray-900">RAG系统</h1>
+                <p class="text-xs text-gray-500">管理后台</p>
+            </div>
+        </div>
+
+        <!-- 导航菜单 -->
+        <nav class="mt-6">
+            <div class="px-4 space-y-2">
+                <a href="dashboard.html?role=admin" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-home w-5 h-5 mr-3"></i>
+                    <span>仪表板</span>
+                </a>
+                
+                <a href="chat.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-comments w-5 h-5 mr-3"></i>
+                    <span>智能问答</span>
+                </a>
+                
+                <a href="search.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-search w-5 h-5 mr-3"></i>
+                    <span>文档搜索</span>
+                </a>
+
+                <!-- 管理员功能 -->
+                <div class="border-t border-gray-200 mt-4 pt-4">
+                    <p class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">管理功能</p>
+                    
+                    <a href="admin-users.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-users w-5 h-5 mr-3"></i>
+                        <span>用户管理</span>
+                    </a>
+                    
+                    <a href="admin-knowledge.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-database w-5 h-5 mr-3"></i>
+                        <span>知识库管理</span>
+                    </a>
+                    
+                    <a href="upload.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-upload w-5 h-5 mr-3"></i>
+                        <span>文件上传</span>
+                    </a>
+                    
+                    <a href="admin-models.html" class="flex items-center px-4 py-3 text-blue-600 bg-blue-50 rounded-lg">
+                        <i class="fas fa-cogs w-5 h-5 mr-3"></i>
+                        <span class="font-medium">模型管理</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- 主内容区域 -->
+    <div class="ml-64 min-h-screen">
+        <!-- 顶部栏 -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">模型管理</h2>
+                    <p class="text-sm text-gray-500">管理AI模型和推理服务</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="openAddModelModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                        <i class="fas fa-plus mr-2"></i>添加模型
+                    </button>
+                    <button onclick="checkAllModels()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                        <i class="fas fa-heartbeat mr-2"></i>健康检查
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容 -->
+        <main class="p-6">
+            <!-- 统计卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-blue-100 rounded-lg">
+                            <i class="fas fa-brain text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">LLM模型</p>
+                            <p class="text-2xl font-bold text-gray-900">3</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 rounded-lg">
+                            <i class="fas fa-vector-square text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">向量模型</p>
+                            <p class="text-2xl font-bold text-gray-900">2</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-yellow-100 rounded-lg">
+                            <i class="fas fa-server text-yellow-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">在线服务</p>
+                            <p class="text-2xl font-bold text-gray-900">4</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-red-100 rounded-lg">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">离线服务</p>
+                            <p class="text-2xl font-bold text-gray-900">1</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 模型列表 -->
+            <div class="space-y-6">
+                <!-- LLM模型 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">大语言模型 (LLM)</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Qwen2模型 -->
+                        <div class="bg-white rounded-xl shadow-sm model-card overflow-hidden">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">
+                                        <div class="p-3 bg-blue-100 rounded-lg mr-4">
+                                            <i class="fas fa-brain text-blue-600 text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-gray-900">Qwen2-7B-Instruct</h4>
+                                            <p class="text-sm text-gray-500">阿里云通义千问 7B 指令微调版</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-circle text-green-400 mr-1 status-online"></i>在线
+                                        </span>
+                                        <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            <i class="fas fa-star mr-1"></i>默认
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <p class="text-xs text-gray-500">模型大小</p>
+                                        <p class="text-sm font-medium">7B 参数</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">上下文长度</p>
+                                        <p class="text-sm font-medium">32K tokens</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">推理延迟</p>
+                                        <p class="text-sm font-medium">1.2s</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">GPU内存</p>
+                                        <p class="text-sm font-medium">14GB</p>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <p class="text-xs text-gray-500 mb-1">服务地址</p>
+                                    <p class="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-gray-800">http://localhost:8000/v1</p>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="testModel('qwen2')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <i class="fas fa-flask mr-1"></i>测试
+                                        </button>
+                                        <button onclick="editModel('qwen2')" class="text-gray-600 hover:text-gray-800 text-sm font-medium">
+                                            <i class="fas fa-cog mr-1"></i>配置
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="restartModel('qwen2')" class="text-yellow-600 hover:text-yellow-800 text-sm">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
+                                        <button onclick="stopModel('qwen2')" class="text-red-600 hover:text-red-800 text-sm">
+                                            <i class="fas fa-stop"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Llama3模型 -->
+                        <div class="bg-white rounded-xl shadow-sm model-card overflow-hidden">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">
+                                        <div class="p-3 bg-green-100 rounded-lg mr-4">
+                                            <i class="fas fa-brain text-green-600 text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-gray-900">Llama3-8B-Instruct</h4>
+                                            <p class="text-sm text-gray-500">Meta开源Llama 8B 指令版</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-circle text-green-400 mr-1 status-online"></i>在线
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <p class="text-xs text-gray-500">模型大小</p>
+                                        <p class="text-sm font-medium">8B 参数</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">上下文长度</p>
+                                        <p class="text-sm font-medium">8K tokens</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">推理延迟</p>
+                                        <p class="text-sm font-medium">1.5s</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">GPU内存</p>
+                                        <p class="text-sm font-medium">16GB</p>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <p class="text-xs text-gray-500 mb-1">服务地址</p>
+                                    <p class="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-gray-800">http://localhost:8001/v1</p>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="testModel('llama3')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <i class="fas fa-flask mr-1"></i>测试
+                                        </button>
+                                        <button onclick="editModel('llama3')" class="text-gray-600 hover:text-gray-800 text-sm font-medium">
+                                            <i class="fas fa-cog mr-1"></i>配置
+                                        </button>
+                                        <button onclick="setDefault('llama3')" class="text-purple-600 hover:text-purple-800 text-sm font-medium">
+                                            <i class="fas fa-star mr-1"></i>设为默认
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="restartModel('llama3')" class="text-yellow-600 hover:text-yellow-800 text-sm">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
+                                        <button onclick="stopModel('llama3')" class="text-red-600 hover:text-red-800 text-sm">
+                                            <i class="fas fa-stop"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ChatGLM模型 - 离线状态 -->
+                        <div class="bg-white rounded-xl shadow-sm model-card overflow-hidden opacity-75">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">
+                                        <div class="p-3 bg-red-100 rounded-lg mr-4">
+                                            <i class="fas fa-brain text-red-600 text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-gray-900">ChatGLM3-6B</h4>
+                                            <p class="text-sm text-gray-500">智谱AI ChatGLM3 6B版本</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <i class="fas fa-circle text-red-400 mr-1"></i>离线
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <p class="text-xs text-gray-500">模型大小</p>
+                                        <p class="text-sm font-medium">6B 参数</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">上下文长度</p>
+                                        <p class="text-sm font-medium">8K tokens</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">推理延迟</p>
+                                        <p class="text-sm font-medium text-gray-400">-</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">GPU内存</p>
+                                        <p class="text-sm font-medium">12GB</p>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <p class="text-xs text-gray-500 mb-1">服务地址</p>
+                                    <p class="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-gray-400">http://localhost:8002/v1</p>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="startModel('chatglm3')" class="text-green-600 hover:text-green-800 text-sm font-medium">
+                                            <i class="fas fa-play mr-1"></i>启动
+                                        </button>
+                                        <button onclick="editModel('chatglm3')" class="text-gray-600 hover:text-gray-800 text-sm font-medium">
+                                            <i class="fas fa-cog mr-1"></i>配置
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="removeModel('chatglm3')" class="text-red-600 hover:text-red-800 text-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 向量模型 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">向量模型 (Embedding)</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- BGE模型 -->
+                        <div class="bg-white rounded-xl shadow-sm model-card overflow-hidden">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">
+                                        <div class="p-3 bg-purple-100 rounded-lg mr-4">
+                                            <i class="fas fa-vector-square text-purple-600 text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-gray-900">BGE-Large-zh</h4>
+                                            <p class="text-sm text-gray-500">智源BGE中文向量模型</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-circle text-green-400 mr-1 status-online"></i>在线
+                                        </span>
+                                        <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            <i class="fas fa-star mr-1"></i>默认
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <p class="text-xs text-gray-500">向量维度</p>
+                                        <p class="text-sm font-medium">1024</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">最大长度</p>
+                                        <p class="text-sm font-medium">512 tokens</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">处理速度</p>
+                                        <p class="text-sm font-medium">200ms</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">内存占用</p>
+                                        <p class="text-sm font-medium">2GB</p>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <p class="text-xs text-gray-500 mb-1">服务地址</p>
+                                    <p class="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-gray-800">http://localhost:8010/embed</p>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="testEmbedding('bge')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <i class="fas fa-flask mr-1"></i>测试
+                                        </button>
+                                        <button onclick="editModel('bge')" class="text-gray-600 hover:text-gray-800 text-sm font-medium">
+                                            <i class="fas fa-cog mr-1"></i>配置
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="restartModel('bge')" class="text-yellow-600 hover:text-yellow-800 text-sm">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- M3E模型 -->
+                        <div class="bg-white rounded-xl shadow-sm model-card overflow-hidden">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">
+                                        <div class="p-3 bg-orange-100 rounded-lg mr-4">
+                                            <i class="fas fa-vector-square text-orange-600 text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-gray-900">M3E-Base</h4>
+                                            <p class="text-sm text-gray-500">Moka M3E中文向量模型</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-circle text-green-400 mr-1 status-online"></i>在线
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <p class="text-xs text-gray-500">向量维度</p>
+                                        <p class="text-sm font-medium">768</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">最大长度</p>
+                                        <p class="text-sm font-medium">512 tokens</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">处理速度</p>
+                                        <p class="text-sm font-medium">150ms</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">内存占用</p>
+                                        <p class="text-sm font-medium">1.5GB</p>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <p class="text-xs text-gray-500 mb-1">服务地址</p>
+                                    <p class="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-gray-800">http://localhost:8011/embed</p>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="testEmbedding('m3e')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <i class="fas fa-flask mr-1"></i>测试
+                                        </button>
+                                        <button onclick="editModel('m3e')" class="text-gray-600 hover:text-gray-800 text-sm font-medium">
+                                            <i class="fas fa-cog mr-1"></i>配置
+                                        </button>
+                                        <button onclick="setDefaultEmbedding('m3e')" class="text-purple-600 hover:text-purple-800 text-sm font-medium">
+                                            <i class="fas fa-star mr-1"></i>设为默认
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="restartModel('m3e')" class="text-yellow-600 hover:text-yellow-800 text-sm">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 添加模型模态框 -->
+    <div id="addModelModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">添加模型</h3>
+                    <button onclick="closeAddModelModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="modelForm" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">模型类型 *</label>
+                        <select id="modelType" name="type" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">选择模型类型</option>
+                            <option value="llm">大语言模型 (LLM)</option>
+                            <option value="embedding">向量模型 (Embedding)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">模型名称 *</label>
+                        <input type="text" id="modelName" name="name" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="例如：Qwen2-7B-Instruct">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">服务地址 *</label>
+                        <input type="url" id="modelEndpoint" name="endpoint" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="http://localhost:8000/v1">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">模型描述</label>
+                        <textarea id="modelDescription" name="description" rows="2"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="简要描述该模型"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">最大令牌</label>
+                            <input type="number" id="maxTokens" name="maxTokens" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="4096">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">温度</label>
+                            <input type="number" id="temperature" name="temperature" step="0.1" min="0" max="2"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="0.7">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="setAsDefault" name="default"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">设为默认模型</span>
+                        </label>
+                    </div>
+                </form>
+
+                <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+                    <button onclick="closeAddModelModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                        取消
+                    </button>
+                    <button onclick="addModel()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200">
+                        添加模型
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 打开添加模型模态框
+        function openAddModelModal() {
+            document.getElementById('addModelModal').classList.remove('hidden');
+        }
+
+        // 关闭添加模型模态框
+        function closeAddModelModal() {
+            document.getElementById('addModelModal').classList.add('hidden');
+            document.getElementById('modelForm').reset();
+        }
+
+        // 添加模型
+        function addModel() {
+            const formData = new FormData(document.getElementById('modelForm'));
+            const modelData = Object.fromEntries(formData.entries());
+            
+            console.log('添加模型:', modelData);
+            closeAddModelModal();
+            alert('模型添加成功！');
+        }
+
+        // 测试模型
+        function testModel(modelId) {
+            alert(`正在测试模型 ${modelId}...`);
+            
+            // 模拟测试过程
+            setTimeout(() => {
+                const success = Math.random() > 0.2; // 80% 成功率
+                if (success) {
+                    alert(`模型 ${modelId} 测试成功！\n响应时间: 1.2s\n内存使用: 正常`);
+                } else {
+                    alert(`模型 ${modelId} 测试失败！\n错误: 连接超时`);
+                }
+            }, 2000);
+        }
+
+        // 测试向量模型
+        function testEmbedding(modelId) {
+            alert(`正在测试向量模型 ${modelId}...`);
+            
+            setTimeout(() => {
+                alert(`向量模型 ${modelId} 测试成功！\n向量维度: 检查通过\n相似度计算: 正常`);
+            }, 1500);
+        }
+
+        // 编辑模型
+        function editModel(modelId) {
+            alert(`编辑模型 ${modelId} 配置`);
+        }
+
+        // 设为默认
+        function setDefault(modelId) {
+            if (confirm(`确定将 ${modelId} 设为默认LLM模型吗？`)) {
+                alert(`${modelId} 已设为默认模型`);
+                location.reload();
+            }
+        }
+
+        // 设为默认向量模型
+        function setDefaultEmbedding(modelId) {
+            if (confirm(`确定将 ${modelId} 设为默认向量模型吗？`)) {
+                alert(`${modelId} 已设为默认向量模型`);
+                location.reload();
+            }
+        }
+
+        // 重启模型
+        function restartModel(modelId) {
+            if (confirm(`确定要重启模型 ${modelId} 吗？`)) {
+                alert(`正在重启模型 ${modelId}...`);
+            }
+        }
+
+        // 停止模型
+        function stopModel(modelId) {
+            if (confirm(`确定要停止模型 ${modelId} 吗？`)) {
+                alert(`模型 ${modelId} 已停止`);
+            }
+        }
+
+        // 启动模型
+        function startModel(modelId) {
+            alert(`正在启动模型 ${modelId}...`);
+        }
+
+        // 移除模型
+        function removeModel(modelId) {
+            if (confirm(`确定要删除模型 ${modelId} 吗？此操作不可撤销。`)) {
+                alert(`模型 ${modelId} 已删除`);
+            }
+        }
+
+        // 检查所有模型健康状态
+        function checkAllModels() {
+            alert('正在检查所有模型健康状态...');
+            
+            setTimeout(() => {
+                alert('健康检查完成！\n\n在线模型: 4/5\n离线模型: 1/5\n\n详细结果已发送至管理员邮箱。');
+            }, 3000);
+        }
+
+        // 点击模态框背景关闭
+        document.getElementById('addModelModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddModelModal();
+            }
+        });
+    </script>
+</body>
+</html>

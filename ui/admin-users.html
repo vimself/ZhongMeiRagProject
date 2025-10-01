@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理 - RAG知识问答系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: #F9FAFB;
+        }
+        .modal-animation {
+            animation: fadeIn 0.2s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 侧边栏 -->
+    <div class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-30">
+        <!-- Logo区域 -->
+        <div class="flex items-center p-6 border-b border-gray-200">
+            <div class="bg-white w-10 h-10 rounded-lg flex items-center justify-center mr-3 border border-gray-200 shadow-sm">
+                <img src="logo.png" alt="RAG系统" class="w-full h-full object-contain">
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-gray-900">RAG系统</h1>
+                <p class="text-xs text-gray-500">管理后台</p>
+            </div>
+        </div>
+
+        <!-- 导航菜单 -->
+        <nav class="mt-6">
+            <div class="px-4 space-y-2">
+                <a href="dashboard.html?role=admin" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-home w-5 h-5 mr-3"></i>
+                    <span>仪表板</span>
+                </a>
+                
+                <a href="chat.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-comments w-5 h-5 mr-3"></i>
+                    <span>智能问答</span>
+                </a>
+                
+                <a href="search.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-search w-5 h-5 mr-3"></i>
+                    <span>文档搜索</span>
+                </a>
+
+                <!-- 管理员功能 -->
+                <div class="border-t border-gray-200 mt-4 pt-4">
+                    <p class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">管理功能</p>
+                    
+                    <a href="admin-users.html" class="flex items-center px-4 py-3 text-blue-600 bg-blue-50 rounded-lg">
+                        <i class="fas fa-users w-5 h-5 mr-3"></i>
+                        <span class="font-medium">用户管理</span>
+                    </a>
+                    
+                    <a href="admin-knowledge.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-database w-5 h-5 mr-3"></i>
+                        <span>知识库管理</span>
+                    </a>
+                    
+                    <a href="upload.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-upload w-5 h-5 mr-3"></i>
+                        <span>文件上传</span>
+                    </a>
+                    
+                    <a href="admin-models.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-cogs w-5 h-5 mr-3"></i>
+                        <span>模型管理</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- 主内容区域 -->
+    <div class="ml-64 min-h-screen">
+        <!-- 顶部栏 -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">用户管理</h2>
+                    <p class="text-sm text-gray-500">管理系统用户账号和权限</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="openAddUserModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                        <i class="fas fa-plus mr-2"></i>添加用户
+                    </button>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span id="currentTime"></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容 -->
+        <main class="p-6">
+            <!-- 统计卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-blue-100 rounded-lg">
+                            <i class="fas fa-users text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">总用户数</p>
+                            <p class="text-2xl font-bold text-gray-900">156</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 rounded-lg">
+                            <i class="fas fa-user-check text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">活跃用户</p>
+                            <p class="text-2xl font-bold text-gray-900">142</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-yellow-100 rounded-lg">
+                            <i class="fas fa-user-shield text-yellow-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">管理员</p>
+                            <p class="text-2xl font-bold text-gray-900">8</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-red-100 rounded-lg">
+                            <i class="fas fa-user-times text-red-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">禁用用户</p>
+                            <p class="text-2xl font-bold text-gray-900">6</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 搜索和筛选 -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="flex-1">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" id="searchInput" placeholder="搜索用户姓名、邮箱或手机号..."
+                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <select id="roleFilter" class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">全部角色</option>
+                            <option value="admin">管理员</option>
+                            <option value="user">普通用户</option>
+                        </select>
+                        <select id="statusFilter" class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">全部状态</option>
+                            <option value="active">活跃</option>
+                            <option value="disabled">禁用</option>
+                        </select>
+                        <button onclick="exportUsers()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg transition-colors duration-200">
+                            <i class="fas fa-download mr-2"></i>导出
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户表格 -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 table-hover">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <input type="checkbox" class="rounded border-gray-300">
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    用户信息
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    角色
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    状态
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    最后登录
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    创建时间
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    操作
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- 用户数据将通过JavaScript动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页 -->
+                <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center text-sm text-gray-500">
+                            显示第 1-10 项，共 156 项
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 hover:bg-gray-50" disabled>
+                                上一页
+                            </button>
+                            <button class="px-3 py-1 bg-blue-600 text-white rounded-md text-sm">1</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">2</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">3</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                                下一页
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 添加/编辑用户模态框 -->
+    <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full modal-animation">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                    <h3 id="modalTitle" class="text-lg font-semibold text-gray-900">添加用户</h3>
+                    <button onclick="closeUserModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="userForm" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">姓名 *</label>
+                        <input type="text" id="userName" name="name" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">邮箱 *</label>
+                        <input type="email" id="userEmail" name="email" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">手机号</label>
+                        <input type="tel" id="userPhone" name="phone"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">角色 *</label>
+                        <select id="userRole" name="role" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="user">普通用户</option>
+                            <option value="admin">管理员</option>
+                        </select>
+                    </div>
+
+                    <div id="passwordSection">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">密码 *</label>
+                        <input type="password" id="userPassword" name="password"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="userActive" name="active" checked
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">启用用户</span>
+                        </label>
+                    </div>
+                </form>
+
+                <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+                    <button onclick="closeUserModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                        取消
+                    </button>
+                    <button onclick="saveUser()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200">
+                        <span id="saveButtonText">保存</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认删除模态框 -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full modal-animation">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">确认删除</h3>
+                            <p class="text-sm text-gray-500">此操作不可撤销</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-6">确定要删除用户 <strong id="deleteUserName"></strong> 吗？删除后该用户将无法登录系统。</p>
+                    
+                    <div class="flex items-center justify-end space-x-3">
+                        <button onclick="closeDeleteModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                            取消
+                        </button>
+                        <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200">
+                            确认删除
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEditUserId = null;
+        let userToDelete = null;
+
+        // 更新时间显示
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleString('zh-CN', {
+                month: 'numeric',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeStr;
+        }
+        
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // 模拟用户数据
+        const mockUsers = [
+            { id: 1, name: '张三', email: 'zhangsan@company.com', phone: '138****1234', role: 'admin', status: 'active', lastLogin: '2024-09-25 09:30', createdAt: '2024-01-15' },
+            { id: 2, name: '李四', email: 'lisi@company.com', phone: '139****5678', role: 'user', status: 'active', lastLogin: '2024-09-25 08:45', createdAt: '2024-02-20' },
+            { id: 3, name: '王五', email: 'wangwu@company.com', phone: '136****9012', role: 'user', status: 'active', lastLogin: '2024-09-24 16:20', createdAt: '2024-03-10' },
+            { id: 4, name: '赵六', email: 'zhaoliu@company.com', phone: '135****3456', role: 'user', status: 'disabled', lastLogin: '2024-09-20 14:30', createdAt: '2024-01-25' },
+            { id: 5, name: '钱七', email: 'qianqi@company.com', phone: '137****7890', role: 'admin', status: 'active', lastLogin: '2024-09-25 07:15', createdAt: '2024-04-05' }
+        ];
+
+        // 渲染用户表格
+        function renderUserTable(users = mockUsers) {
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <input type="checkbox" class="rounded border-gray-300">
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-white text-sm font-medium">${user.name.charAt(0)}</span>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">${user.name}</div>
+                                <div class="text-sm text-gray-500">${user.email}</div>
+                                <div class="text-sm text-gray-500">${user.phone}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}">
+                            <i class="fas ${user.role === 'admin' ? 'fa-user-shield' : 'fa-user'} mr-1"></i>
+                            ${user.role === 'admin' ? '管理员' : '普通用户'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            <i class="fas ${user.status === 'active' ? 'fa-circle' : 'fa-times-circle'} mr-1"></i>
+                            ${user.status === 'active' ? '活跃' : '禁用'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.lastLogin}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.createdAt}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="editUser(${user.id})" class="text-blue-600 hover:text-blue-900">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="toggleUserStatus(${user.id})" class="text-${user.status === 'active' ? 'yellow' : 'green'}-600 hover:text-${user.status === 'active' ? 'yellow' : 'green'}-900">
+                                <i class="fas fa-${user.status === 'active' ? 'pause' : 'play'}"></i>
+                            </button>
+                            <button onclick="resetPassword(${user.id})" class="text-purple-600 hover:text-purple-900">
+                                <i class="fas fa-key"></i>
+                            </button>
+                            <button onclick="deleteUser(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-900">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 打开添加用户模态框
+        function openAddUserModal() {
+            currentEditUserId = null;
+            document.getElementById('modalTitle').textContent = '添加用户';
+            document.getElementById('saveButtonText').textContent = '保存';
+            document.getElementById('passwordSection').classList.remove('hidden');
+            document.getElementById('userForm').reset();
+            document.getElementById('userActive').checked = true;
+            document.getElementById('userModal').classList.remove('hidden');
+        }
+
+        // 编辑用户
+        function editUser(userId) {
+            currentEditUserId = userId;
+            const user = mockUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            document.getElementById('modalTitle').textContent = '编辑用户';
+            document.getElementById('saveButtonText').textContent = '更新';
+            document.getElementById('passwordSection').classList.add('hidden');
+            
+            document.getElementById('userName').value = user.name;
+            document.getElementById('userEmail').value = user.email;
+            document.getElementById('userPhone').value = user.phone;
+            document.getElementById('userRole').value = user.role;
+            document.getElementById('userActive').checked = user.status === 'active';
+            
+            document.getElementById('userModal').classList.remove('hidden');
+        }
+
+        // 关闭用户模态框
+        function closeUserModal() {
+            document.getElementById('userModal').classList.add('hidden');
+            currentEditUserId = null;
+        }
+
+        // 保存用户
+        function saveUser() {
+            const formData = new FormData(document.getElementById('userForm'));
+            const userData = Object.fromEntries(formData.entries());
+            
+            if (currentEditUserId) {
+                // 更新用户
+                const userIndex = mockUsers.findIndex(u => u.id === currentEditUserId);
+                if (userIndex !== -1) {
+                    mockUsers[userIndex] = {
+                        ...mockUsers[userIndex],
+                        ...userData,
+                        status: userData.active ? 'active' : 'disabled'
+                    };
+                }
+            } else {
+                // 添加用户
+                const newUser = {
+                    id: Math.max(...mockUsers.map(u => u.id)) + 1,
+                    ...userData,
+                    status: userData.active ? 'active' : 'disabled',
+                    lastLogin: '-',
+                    createdAt: new Date().toISOString().split('T')[0]
+                };
+                mockUsers.unshift(newUser);
+            }
+            
+            renderUserTable();
+            closeUserModal();
+            
+            // 显示成功消息
+            showSuccessMessage(currentEditUserId ? '用户更新成功' : '用户创建成功');
+        }
+
+        // 切换用户状态
+        function toggleUserStatus(userId) {
+            const user = mockUsers.find(u => u.id === userId);
+            if (user) {
+                user.status = user.status === 'active' ? 'disabled' : 'active';
+                renderUserTable();
+                showSuccessMessage(`用户已${user.status === 'active' ? '启用' : '禁用'}`);
+            }
+        }
+
+        // 重置密码
+        function resetPassword(userId) {
+            const user = mockUsers.find(u => u.id === userId);
+            if (user && confirm(`确定要重置用户 ${user.name} 的密码吗？`)) {
+                showSuccessMessage('密码重置成功，新密码已发送至用户邮箱');
+            }
+        }
+
+        // 删除用户
+        function deleteUser(userId, userName) {
+            userToDelete = userId;
+            document.getElementById('deleteUserName').textContent = userName;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        // 关闭删除模态框
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            userToDelete = null;
+        }
+
+        // 确认删除
+        function confirmDelete() {
+            if (userToDelete) {
+                const userIndex = mockUsers.findIndex(u => u.id === userToDelete);
+                if (userIndex !== -1) {
+                    mockUsers.splice(userIndex, 1);
+                    renderUserTable();
+                    showSuccessMessage('用户删除成功');
+                }
+            }
+            closeDeleteModal();
+        }
+
+        // 导出用户
+        function exportUsers() {
+            showSuccessMessage('用户数据导出成功');
+        }
+
+        // 显示成功消息
+        function showSuccessMessage(message) {
+            // 这里可以实现toast通知或其他反馈机制
+            alert(message);
+        }
+
+        // 搜索和筛选功能
+        document.getElementById('searchInput').addEventListener('input', filterUsers);
+        document.getElementById('roleFilter').addEventListener('change', filterUsers);
+        document.getElementById('statusFilter').addEventListener('change', filterUsers);
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            const filteredUsers = mockUsers.filter(user => {
+                const matchSearch = !searchTerm || 
+                    user.name.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm) ||
+                    user.phone.includes(searchTerm);
+                
+                const matchRole = !roleFilter || user.role === roleFilter;
+                const matchStatus = !statusFilter || user.status === statusFilter;
+
+                return matchSearch && matchRole && matchStatus;
+            });
+
+            renderUserTable(filteredUsers);
+        }
+
+        // 点击模态框背景关闭
+        document.getElementById('userModal').addEventListener('click', function(e) {
+            if (e.target === this) closeUserModal();
+        });
+
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDeleteModal();
+        });
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            renderUserTable();
+        });
+    </script>
+</body>
+</html>

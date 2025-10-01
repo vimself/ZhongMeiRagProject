@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理 - RAG知识问答系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .knowledge-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .knowledge-card {
+            transition: all 0.3s ease;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 侧边栏 -->
+    <div class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-30">
+        <!-- Logo区域 -->
+        <div class="flex items-center p-6 border-b border-gray-200">
+            <div class="bg-white w-10 h-10 rounded-lg flex items-center justify-center mr-3 border border-gray-200 shadow-sm">
+                <img src="logo.png" alt="RAG系统" class="w-full h-full object-contain">
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-gray-900">RAG系统</h1>
+                <p class="text-xs text-gray-500">管理后台</p>
+            </div>
+        </div>
+
+        <!-- 导航菜单 -->
+        <nav class="mt-6">
+            <div class="px-4 space-y-2">
+                <a href="dashboard.html?role=admin" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-home w-5 h-5 mr-3"></i>
+                    <span>仪表板</span>
+                </a>
+                
+                <a href="chat.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-comments w-5 h-5 mr-3"></i>
+                    <span>智能问答</span>
+                </a>
+                
+                <a href="search.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-search w-5 h-5 mr-3"></i>
+                    <span>文档搜索</span>
+                </a>
+
+                <!-- 管理员功能 -->
+                <div class="border-t border-gray-200 mt-4 pt-4">
+                    <p class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">管理功能</p>
+                    
+                    <a href="admin-users.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-users w-5 h-5 mr-3"></i>
+                        <span>用户管理</span>
+                    </a>
+                    
+                    <a href="admin-knowledge.html" class="flex items-center px-4 py-3 text-blue-600 bg-blue-50 rounded-lg">
+                        <i class="fas fa-database w-5 h-5 mr-3"></i>
+                        <span class="font-medium">知识库管理</span>
+                    </a>
+                    
+                    <a href="upload.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-upload w-5 h-5 mr-3"></i>
+                        <span>文件上传</span>
+                    </a>
+                    
+                    <a href="admin-models.html" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-cogs w-5 h-5 mr-3"></i>
+                        <span>模型管理</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- 主内容区域 -->
+    <div class="ml-64 min-h-screen">
+        <!-- 顶部栏 -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">知识库管理</h2>
+                    <p class="text-sm text-gray-500">管理系统知识库和文档</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="openCreateKBModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                        <i class="fas fa-plus mr-2"></i>创建知识库
+                    </button>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span id="currentTime"></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容 -->
+        <main class="p-6">
+            <!-- 统计卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-blue-100 rounded-lg">
+                            <i class="fas fa-database text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">知识库总数</p>
+                            <p class="text-2xl font-bold text-gray-900">12</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 rounded-lg">
+                            <i class="fas fa-file-alt text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">文档总数</p>
+                            <p class="text-2xl font-bold text-gray-900">1,234</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-yellow-100 rounded-lg">
+                            <i class="fas fa-cloud-upload-alt text-yellow-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">今日上传</p>
+                            <p class="text-2xl font-bold text-gray-900">23</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-purple-100 rounded-lg">
+                            <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">查询次数</p>
+                            <p class="text-2xl font-bold text-gray-900">5,678</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 知识库列表 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl shadow-sm knowledge-card overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-blue-100 rounded-lg mr-3">
+                                    <i class="fas fa-code text-blue-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">技术规范库</h3>
+                                    <p class="text-sm text-gray-500">tech-standards</p>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <button onclick="toggleKBMenu(1)" class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div id="kbMenu1" class="hidden absolute right-0 top-8 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-edit mr-2"></i>编辑设置
+                                    </a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-users mr-2"></i>权限管理
+                                    </a>
+                                    <a href="upload.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-upload mr-2"></i>上传文档
+                                    </a>
+                                    <hr class="my-1">
+                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                        <i class="fas fa-trash mr-2"></i>删除知识库
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-gray-600 text-sm mb-4">包含编程规范、API设计、架构指南等技术文档</p>
+
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">文档数量</span>
+                                <span class="font-medium">156 个</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">存储大小</span>
+                                <span class="font-medium">2.3 GB</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">最后更新</span>
+                                <span class="font-medium">2小时前</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between text-sm mb-2">
+                                <span class="text-gray-600">处理进度</span>
+                                <span class="font-medium">98%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full progress-bar" style="width: 98%"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-circle text-green-400 mr-1 text-xs"></i>活跃
+                                </span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <i class="fas fa-users mr-1"></i>25 用户
+                                </span>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                <i class="fas fa-eye mr-1"></i>1.2k 查看
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm knowledge-card overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-green-100 rounded-lg mr-3">
+                                    <i class="fas fa-book text-green-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">产品手册</h3>
+                                    <p class="text-sm text-gray-500">product-manual</p>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <button onclick="toggleKBMenu(2)" class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div id="kbMenu2" class="hidden absolute right-0 top-8 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-edit mr-2"></i>编辑设置
+                                    </a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-users mr-2"></i>权限管理
+                                    </a>
+                                    <a href="upload.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-upload mr-2"></i>上传文档
+                                    </a>
+                                    <hr class="my-1">
+                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                        <i class="fas fa-trash mr-2"></i>删除知识库
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-gray-600 text-sm mb-4">产品功能介绍、使用指南、常见问题等</p>
+
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">文档数量</span>
+                                <span class="font-medium">89 个</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">存储大小</span>
+                                <span class="font-medium">1.5 GB</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">最后更新</span>
+                                <span class="font-medium">1天前</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between text-sm mb-2">
+                                <span class="text-gray-600">处理进度</span>
+                                <span class="font-medium">100%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-600 h-2 rounded-full progress-bar" style="width: 100%"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-circle text-green-400 mr-1 text-xs"></i>活跃
+                                </span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <i class="fas fa-users mr-1"></i>42 用户
+                                </span>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                <i class="fas fa-eye mr-1"></i>892 查看
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm knowledge-card overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-yellow-100 rounded-lg mr-3">
+                                    <i class="fas fa-cogs text-yellow-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">运维文档</h3>
+                                    <p class="text-sm text-gray-500">ops-docs</p>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <button onclick="toggleKBMenu(3)" class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div id="kbMenu3" class="hidden absolute right-0 top-8 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-edit mr-2"></i>编辑设置
+                                    </a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-users mr-2"></i>权限管理
+                                    </a>
+                                    <a href="upload.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-upload mr-2"></i>上传文档
+                                    </a>
+                                    <hr class="my-1">
+                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                        <i class="fas fa-trash mr-2"></i>删除知识库
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-gray-600 text-sm mb-4">系统部署、监控、故障处理等运维相关文档</p>
+
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">文档数量</span>
+                                <span class="font-medium">67 个</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">存储大小</span>
+                                <span class="font-medium">890 MB</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">最后更新</span>
+                                <span class="font-medium">3天前</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between text-sm mb-2">
+                                <span class="text-gray-600">处理进度</span>
+                                <span class="font-medium">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-yellow-500 h-2 rounded-full progress-bar" style="width: 85%"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    <i class="fas fa-circle text-yellow-400 mr-1 text-xs"></i>处理中
+                                </span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <i class="fas fa-users mr-1"></i>18 用户
+                                </span>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                <i class="fas fa-eye mr-1"></i>456 查看
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 添加更多知识库卡片 -->
+                <div class="bg-gray-100 rounded-xl border-2 border-dashed border-gray-300 knowledge-card overflow-hidden cursor-pointer hover:bg-gray-50" onclick="openCreateKBModal()">
+                    <div class="p-6 text-center">
+                        <div class="p-4 bg-gray-200 rounded-full inline-flex items-center justify-center mb-4">
+                            <i class="fas fa-plus text-gray-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">创建新知识库</h3>
+                        <p class="text-gray-500 text-sm">点击创建新的知识库</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 创建知识库模态框 -->
+    <div id="createKBModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">创建知识库</h3>
+                    <button onclick="closeCreateKBModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="kbForm" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">知识库名称 *</label>
+                        <input type="text" id="kbName" name="name" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="例如：技术规范库">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">标识符 *</label>
+                        <input type="text" id="kbSlug" name="slug" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="例如：tech-standards">
+                        <p class="text-xs text-gray-500 mt-1">用于URL和系统内部标识，只能包含字母、数字、连字符</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">描述</label>
+                        <textarea id="kbDescription" name="description" rows="3"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="简要描述该知识库的用途和内容"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">图标</label>
+                        <div class="flex items-center space-x-3">
+                            <div class="grid grid-cols-6 gap-2">
+                                <button type="button" onclick="selectIcon('fa-code')" class="p-2 border border-gray-300 rounded hover:border-blue-500 icon-btn">
+                                    <i class="fas fa-code text-gray-600"></i>
+                                </button>
+                                <button type="button" onclick="selectIcon('fa-book')" class="p-2 border border-gray-300 rounded hover:border-blue-500 icon-btn">
+                                    <i class="fas fa-book text-gray-600"></i>
+                                </button>
+                                <button type="button" onclick="selectIcon('fa-database')" class="p-2 border border-gray-300 rounded hover:border-blue-500 icon-btn">
+                                    <i class="fas fa-database text-gray-600"></i>
+                                </button>
+                                <button type="button" onclick="selectIcon('fa-cogs')" class="p-2 border border-gray-300 rounded hover:border-blue-500 icon-btn">
+                                    <i class="fas fa-cogs text-gray-600"></i>
+                                </button>
+                                <button type="button" onclick="selectIcon('fa-shield-alt')" class="p-2 border border-gray-300 rounded hover:border-blue-500 icon-btn">
+                                    <i class="fas fa-shield-alt text-gray-600"></i>
+                                </button>
+                                <button type="button" onclick="selectIcon('fa-chart-line')" class="p-2 border border-gray-300 rounded hover:border-blue-500 icon-btn">
+                                    <i class="fas fa-chart-line text-gray-600"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedIcon" name="icon" value="fa-database">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">切片大小</label>
+                            <select id="chunkSize" name="chunkSize" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="512">512</option>
+                                <option value="1024" selected>1024</option>
+                                <option value="2048">2048</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">重叠大小</label>
+                            <select id="overlapSize" name="overlapSize" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="50">50</option>
+                                <option value="100" selected>100</option>
+                                <option value="200">200</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="kbPublic" name="public" checked
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">设为公开（所有用户可访问）</span>
+                        </label>
+                    </div>
+                </form>
+
+                <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+                    <button onclick="closeCreateKBModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                        取消
+                    </button>
+                    <button onclick="createKnowledgeBase()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200">
+                        创建知识库
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 更新时间显示
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleString('zh-CN', {
+                month: 'numeric',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeStr;
+        }
+        
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // 切换知识库菜单
+        function toggleKBMenu(id) {
+            // 关闭所有其他菜单
+            document.querySelectorAll('[id^="kbMenu"]').forEach(menu => {
+                if (menu.id !== `kbMenu${id}`) {
+                    menu.classList.add('hidden');
+                }
+            });
+            
+            // 切换当前菜单
+            const menu = document.getElementById(`kbMenu${id}`);
+            menu.classList.toggle('hidden');
+        }
+
+        // 点击外部关闭菜单
+        document.addEventListener('click', function(event) {
+            const isMenuButton = event.target.closest('button[onclick^="toggleKBMenu"]');
+            const isMenu = event.target.closest('[id^="kbMenu"]');
+            
+            if (!isMenuButton && !isMenu) {
+                document.querySelectorAll('[id^="kbMenu"]').forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
+
+        // 打开创建知识库模态框
+        function openCreateKBModal() {
+            document.getElementById('createKBModal').classList.remove('hidden');
+        }
+
+        // 关闭创建知识库模态框
+        function closeCreateKBModal() {
+            document.getElementById('createKBModal').classList.add('hidden');
+            document.getElementById('kbForm').reset();
+            // 重置图标选择
+            document.querySelectorAll('.icon-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+        }
+
+        // 选择图标
+        function selectIcon(iconClass) {
+            // 重置所有图标按钮样式
+            document.querySelectorAll('.icon-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+            
+            // 设置选中的图标按钮样式
+            event.target.closest('.icon-btn').classList.add('border-blue-500', 'bg-blue-50');
+            
+            // 设置隐藏字段值
+            document.getElementById('selectedIcon').value = iconClass;
+        }
+
+        // 创建知识库
+        function createKnowledgeBase() {
+            const formData = new FormData(document.getElementById('kbForm'));
+            const kbData = Object.fromEntries(formData.entries());
+            
+            // 验证必填字段
+            if (!kbData.name || !kbData.slug) {
+                alert('请填写必填字段');
+                return;
+            }
+            
+            // 模拟创建知识库
+            console.log('创建知识库:', kbData);
+            
+            closeCreateKBModal();
+            
+            // 显示成功消息
+            alert('知识库创建成功！');
+            
+            // 这里可以刷新页面或添加新的知识库卡片到页面
+        }
+
+        // 根据名称自动生成标识符
+        document.getElementById('kbName').addEventListener('input', function() {
+            const name = this.value;
+            const slug = name.toLowerCase()
+                .replace(/[\s\u4e00-\u9fa5]+/g, '-') // 将空格和中文替换为连字符
+                .replace(/[^\w\-]/g, '') // 移除非字母数字和连字符的字符
+                .replace(/\-+/g, '-') // 多个连字符合并为一个
+                .replace(/^\-|\-$/g, ''); // 移除开头和结尾的连字符
+            
+            document.getElementById('kbSlug').value = slug;
+        });
+
+        // 点击模态框背景关闭
+        document.getElementById('createKBModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCreateKBModal();
+            }
+        });
+    </script>
+</body>
+</html>

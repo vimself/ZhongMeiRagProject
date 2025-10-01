@@ -1,0 +1,16 @@
+{
+  "name": "rag-mvp-ui-prototype",
+  "version": "1.0.0",
+  "description": "RAG知识问答系统高保真UI原型",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx http-server . -p 3000 -o",
+    "dev": "npx http-server . -p 3000 -o --cors"
+  },
+  "keywords": ["ui", "prototype", "rag", "knowledge-base"],
+  "author": "UI Designer",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档搜索 - RAG知识问答系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .highlight {
+            background-color: #FEF3C7;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        .search-result:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .search-result {
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" onclick="goBack()" class="text-gray-600 hover:text-gray-900 mr-4">
+                        <i class="fas fa-arrow-left text-lg"></i>
+                    </a>
+                    <div class="flex items-center">
+                        <div class="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-search text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-bold text-gray-900">文档搜索</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-500" id="searchTime"></span>
+                    <div class="relative">
+                        <button class="flex items-center text-gray-700 hover:text-gray-900">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-2">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <span class="text-sm">张三</span>
+                            <i class="fas fa-chevron-down text-xs ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 搜索区域 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="flex-1 relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" 
+                        id="searchInput"
+                        placeholder="搜索文档内容、技术问题、API接口..."
+                        class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                        onkeypress="handleSearchKeyPress(event)">
+                </div>
+                <button onclick="performSearch()" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-medium transition-colors duration-200">
+                    <i class="fas fa-search mr-2"></i>搜索
+                </button>
+            </div>
+
+            <!-- 过滤器 -->
+            <div class="flex flex-wrap items-center gap-4">
+                <div class="flex items-center space-x-2">
+                    <label class="text-sm font-medium text-gray-700">知识库:</label>
+                    <select id="knowledgeFilter" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">全部知识库</option>
+                        <option value="tech">技术规范库</option>
+                        <option value="product">产品手册</option>
+                        <option value="ops">运维文档</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                    <label class="text-sm font-medium text-gray-700">文档类型:</label>
+                    <select id="typeFilter" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">全部类型</option>
+                        <option value="pdf">PDF文档</option>
+                        <option value="md">Markdown</option>
+                        <option value="doc">Word文档</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <label class="text-sm font-medium text-gray-700">排序:</label>
+                    <select id="sortFilter" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="relevance">相关度</option>
+                        <option value="date">更新时间</option>
+                        <option value="name">文档名称</option>
+                    </select>
+                </div>
+
+                <button onclick="exportResults()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    <i class="fas fa-download mr-1"></i>导出结果
+                </button>
+            </div>
+        </div>
+
+        <!-- 搜索结果 -->
+        <div id="searchResults" class="hidden">
+            <!-- 结果统计 -->
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <span class="text-lg font-medium text-gray-900">搜索结果</span>
+                        <span id="resultCount" class="text-sm text-gray-500">找到 0 个结果</span>
+                        <span id="searchDuration" class="text-sm text-gray-400">(0.00 秒)</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="toggleView('list')" id="listView" class="p-2 text-gray-600 hover:text-blue-600 bg-blue-50 rounded">
+                            <i class="fas fa-list"></i>
+                        </button>
+                        <button onclick="toggleView('grid')" id="gridView" class="p-2 text-gray-600 hover:text-blue-600 rounded">
+                            <i class="fas fa-th"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 结果列表 -->
+            <div id="resultsList" class="space-y-4">
+                <!-- 搜索结果项将通过JavaScript动态生成 -->
+            </div>
+
+            <!-- 分页 -->
+            <div class="flex justify-center mt-8">
+                <nav class="flex items-center space-x-2">
+                    <button class="px-3 py-2 text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="px-3 py-2 bg-blue-600 text-white rounded">1</button>
+                    <button class="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">2</button>
+                    <button class="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">3</button>
+                    <span class="px-3 py-2 text-gray-500">...</span>
+                    <button class="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">10</button>
+                    <button class="px-3 py-2 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- 空状态/推荐搜索 -->
+        <div id="emptyState" class="text-center py-12">
+            <div class="max-w-md mx-auto">
+                <div class="bg-gray-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-search text-gray-400 text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">开始搜索文档</h3>
+                <p class="text-gray-600 mb-8">输入关键词快速查找相关技术文档和规范</p>
+                
+                <!-- 热门搜索 -->
+                <div>
+                    <p class="text-sm font-medium text-gray-700 mb-4">热门搜索:</p>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <button onclick="quickSearch('API设计规范')" class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm hover:bg-blue-200 transition-colors duration-200">
+                            API设计规范
+                        </button>
+                        <button onclick="quickSearch('数据库连接池')" class="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm hover:bg-green-200 transition-colors duration-200">
+                            数据库连接池
+                        </button>
+                        <button onclick="quickSearch('Redis缓存')" class="px-4 py-2 bg-red-100 text-red-800 rounded-full text-sm hover:bg-red-200 transition-colors duration-200">
+                            Redis缓存
+                        </button>
+                        <button onclick="quickSearch('微服务架构')" class="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition-colors duration-200">
+                            微服务架构
+                        </button>
+                        <button onclick="quickSearch('安全规范')" class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm hover:bg-yellow-200 transition-colors duration-200">
+                            安全规范
+                        </button>
+                        <button onclick="quickSearch('性能优化')" class="px-4 py-2 bg-indigo-100 text-indigo-800 rounded-full text-sm hover:bg-indigo-200 transition-colors duration-200">
+                            性能优化
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文档预览模态框 -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                    <div>
+                        <h3 id="previewTitle" class="text-lg font-semibold text-gray-900">文档预览</h3>
+                        <p id="previewSource" class="text-sm text-gray-500">来源：技术规范库</p>
+                    </div>
+                    <button onclick="closePreview()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div id="previewContent" class="p-6 overflow-y-auto max-h-[70vh]">
+                    <!-- 预览内容 -->
+                </div>
+                <div class="flex items-center justify-between p-6 border-t border-gray-200">
+                    <div class="flex items-center space-x-4">
+                        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            <i class="fas fa-download mr-1"></i>下载文档
+                        </button>
+                        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            <i class="fas fa-share mr-1"></i>分享
+                        </button>
+                    </div>
+                    <button onclick="closePreview()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
+                        关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 更新时间
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleString('zh-CN');
+            document.getElementById('searchTime').textContent = timeStr;
+        }
+        
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // 搜索功能
+        function handleSearchKeyPress(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        }
+
+        function quickSearch(query) {
+            document.getElementById('searchInput').value = query;
+            performSearch();
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            // 显示搜索结果区域
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('searchResults').classList.remove('hidden');
+
+            // 模拟搜索延迟
+            const startTime = performance.now();
+            
+            setTimeout(() => {
+                const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+                displaySearchResults(query, duration);
+            }, 500);
+        }
+
+        function displaySearchResults(query, duration) {
+            // 模拟搜索结果数据
+            const mockResults = [
+                {
+                    title: "RESTful API设计规范指南",
+                    source: "技术规范库",
+                    type: "PDF",
+                    excerpt: "RESTful API是一种基于HTTP协议的Web服务架构风格，通过统一的接口规范来实现不同系统间的数据交互。在设计<span class='highlight'>API接口</span>时，应该遵循资源导向的设计原则...",
+                    lastModified: "2024-09-20",
+                    confidence: 95,
+                    pages: "第15-28页"
+                },
+                {
+                    title: "数据库连接池配置与优化",
+                    source: "技术规范库",
+                    type: "PDF",
+                    excerpt: "数据库连接池是应用程序与数据库之间的中间层，通过复用数据库连接来提高应用性能。合理的<span class='highlight'>连接池配置</span>对系统性能至关重要...",
+                    lastModified: "2024-09-18",
+                    confidence: 88,
+                    pages: "第5-12页"
+                },
+                {
+                    title: "Redis缓存策略最佳实践",
+                    source: "技术规范库",
+                    type: "PDF",
+                    excerpt: "Redis作为高性能的键值存储系统，在缓存场景中有着广泛的应用。选择合适的<span class='highlight'>缓存策略</span>能够显著提升应用程序的响应速度...",
+                    lastModified: "2024-09-15",
+                    confidence: 92,
+                    pages: "第33-45页"
+                },
+                {
+                    title: "微服务架构设计原则",
+                    source: "技术规范库",
+                    type: "PDF",
+                    excerpt: "微服务架构是一种将单一应用程序开发为一套小服务的方法，每个服务运行在自己的进程中。在进行<span class='highlight'>微服务拆分</span>时需要考虑业务边界...",
+                    lastModified: "2024-09-12",
+                    confidence: 85,
+                    pages: "第1-18页"
+                },
+                {
+                    title: "系统安全规范手册",
+                    source: "产品手册",
+                    type: "PDF",
+                    excerpt: "系统安全是软件开发过程中的重要考量，涉及身份认证、授权管理、数据加密等多个方面。建立完善的<span class='highlight'>安全体系</span>是保障系统稳定运行的基础...",
+                    lastModified: "2024-09-10",
+                    confidence: 78,
+                    pages: "第22-35页"
+                }
+            ];
+
+            // 更新结果统计
+            document.getElementById('resultCount').textContent = `找到 ${mockResults.length} 个结果`;
+            document.getElementById('searchDuration').textContent = `(${duration} 秒)`;
+
+            // 渲染结果列表
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = mockResults.map((result, index) => `
+                <div class="bg-white rounded-xl shadow-sm p-6 search-result cursor-pointer" onclick="previewDocument('${result.title}', '${result.source}', ${index})">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-blue-600 hover:text-blue-800 mb-2">
+                                ${result.title}
+                            </h3>
+                            <div class="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                                <span class="flex items-center">
+                                    <i class="fas fa-folder mr-1"></i>
+                                    ${result.source}
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-file-pdf mr-1"></i>
+                                    ${result.type}
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-calendar mr-1"></i>
+                                    ${result.lastModified}
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-file-alt mr-1"></i>
+                                    ${result.pages}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="ml-4 text-right">
+                            <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${result.confidence >= 90 ? 'bg-green-100 text-green-800' : result.confidence >= 80 ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}">
+                                <i class="fas fa-star mr-1 text-xs"></i>
+                                ${result.confidence}%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-700 leading-relaxed mb-4">${result.excerpt}</p>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                <i class="fas fa-eye mr-1"></i>预览
+                            </button>
+                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                <i class="fas fa-download mr-1"></i>下载
+                            </button>
+                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                <i class="fas fa-bookmark mr-1"></i>收藏
+                            </button>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="text-gray-400 hover:text-blue-600">
+                                <i class="fas fa-thumbs-up"></i>
+                            </button>
+                            <button class="text-gray-400 hover:text-red-600">
+                                <i class="fas fa-thumbs-down"></i>
+                            </button>
+                            <button class="text-gray-400 hover:text-green-600">
+                                <i class="fas fa-share"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 视图切换
+        function toggleView(viewType) {
+            const listBtn = document.getElementById('listView');
+            const gridBtn = document.getElementById('gridView');
+            
+            if (viewType === 'list') {
+                listBtn.classList.add('bg-blue-50', 'text-blue-600');
+                gridBtn.classList.remove('bg-blue-50', 'text-blue-600');
+                // 实现列表视图布局
+            } else {
+                gridBtn.classList.add('bg-blue-50', 'text-blue-600');
+                listBtn.classList.remove('bg-blue-50', 'text-blue-600');
+                // 实现网格视图布局
+            }
+        }
+
+        // 文档预览
+        function previewDocument(title, source, index) {
+            document.getElementById('previewTitle').textContent = title;
+            document.getElementById('previewSource').textContent = `来源：${source}`;
+            
+            // 模拟文档内容
+            const mockContent = `
+                <div class="prose max-w-none">
+                    <h2>文档概述</h2>
+                    <p>这是文档 "${title}" 的预览内容。在实际应用中，这里会显示文档的具体内容，包括文本、图表、代码示例等。</p>
+                    
+                    <h3>主要内容</h3>
+                    <ul>
+                        <li>概念介绍和基础知识</li>
+                        <li>实施步骤和最佳实践</li>
+                        <li>代码示例和配置说明</li>
+                        <li>常见问题和解决方案</li>
+                    </ul>
+                    
+                    <h3>代码示例</h3>
+                    <pre class="bg-gray-100 p-4 rounded-lg overflow-x-auto"><code>// 示例代码
+function example() {
+    console.log("这是一个示例代码片段");
+    return "success";
+}</code></pre>
+                    
+                    <p>更多详细内容请下载完整文档查看。</p>
+                </div>
+            `;
+            
+            document.getElementById('previewContent').innerHTML = mockContent;
+            document.getElementById('previewModal').classList.remove('hidden');
+        }
+
+        function closePreview() {
+            document.getElementById('previewModal').classList.add('hidden');
+        }
+
+        // 导出结果
+        function exportResults() {
+            // 模拟导出功能
+            alert('搜索结果导出功能（实际项目中会生成CSV文件）');
+        }
+
+        // 返回上一页
+        function goBack() {
+            const userRole = localStorage.getItem('userRole') || 'user';
+            if (userRole === 'admin') {
+                window.location.href = 'dashboard.html?role=admin';
+            } else {
+                window.location.href = 'knowledge.html';
+            }
+        }
+
+        // 点击模态框背景关闭
+        document.getElementById('previewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePreview();
+            }
+        });
+    </script>
+</body>
+</html>

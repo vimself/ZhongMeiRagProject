@@ -1,0 +1,2763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仪表板 - RAG知识问答系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sidebar-transition {
+            transition: all 0.3s ease;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* Chat page styles */
+        .message-animation {
+            animation: fadeInUp 0.3s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .typing-indicator {
+            display: inline-block;
+        }
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #9CA3AF;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: #D1D5DB;
+            border-radius: 3px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        /* Search page styles */
+        .highlight {
+            background-color: #FEF3C7;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        .search-result:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .search-result {
+            transition: all 0.2s ease;
+        }
+        
+        /* Upload page styles */
+        .upload-area {
+            border: 2px dashed #D1D5DB;
+            transition: all 0.3s ease;
+        }
+        .upload-area.dragover {
+            border-color: #3B82F6;
+            background-color: #EBF8FF;
+        }
+        .file-item {
+            transition: all 0.2s ease;
+        }
+        .file-item:hover {
+            background-color: #F9FAFB;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .processing {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        /* Page transition effects */
+        .page-content {
+            transition: all 0.3s ease;
+        }
+        .page-content.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 侧边栏 -->
+    <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg sidebar-transition z-30">
+        <!-- Logo区域 -->
+        <div class="flex items-center px-6 h-20 border-b border-gray-200">
+            <div class="bg-white w-10 h-10 rounded-lg flex items-center justify-center mr-3 border border-gray-200 shadow-sm">
+                <img src="logo.png" alt="RAG系统" class="w-full h-full object-contain">
+            </div>
+            <div class="leading-tight">
+                <h1 class="text-lg font-bold text-gray-900">RAG系统</h1>
+                <p class="text-xs text-gray-500">知识问答</p>
+            </div>
+        </div>
+
+        <!-- 导航菜单 -->
+        <nav class="mt-6">
+            <div class="px-4 space-y-2">
+                <!-- 普通用户功能 -->
+                <a href="#" onclick="switchPage('dashboard')" id="nav-dashboard" class="flex items-center px-4 py-3 text-blue-600 bg-blue-50 rounded-lg">
+                    <i class="fas fa-home w-5 h-5 mr-3"></i>
+                    <span class="font-medium">仪表板</span>
+                </a>
+                
+                <a href="#" onclick="switchPage('chat')" id="nav-chat" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-comments w-5 h-5 mr-3"></i>
+                    <span>智能问答</span>
+                </a>
+                
+                <a href="#" onclick="switchPage('search')" id="nav-search" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-search w-5 h-5 mr-3"></i>
+                    <span>文档搜索</span>
+                </a>
+
+                <!-- 管理员功能 -->
+                <div id="adminSection" class="hidden">
+                    <div class="border-t border-gray-200 mt-4 pt-4">
+                        <p class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">管理功能</p>
+                        
+                        <a href="#" onclick="switchPage('admin-users')" id="nav-admin-users" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                            <i class="fas fa-users w-5 h-5 mr-3"></i>
+                            <span>用户管理</span>
+                        </a>
+                        
+                        <a href="#" onclick="switchPage('admin-knowledge')" id="nav-admin-knowledge" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                            <i class="fas fa-database w-5 h-5 mr-3"></i>
+                            <span>知识库管理</span>
+                        </a>
+                        
+                        <a href="#" onclick="switchPage('upload')" id="nav-upload" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                            <i class="fas fa-upload w-5 h-5 mr-3"></i>
+                            <span>文件上传</span>
+                        </a>
+                        
+                        <a href="#" onclick="switchPage('admin-models')" id="nav-admin-models" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                            <i class="fas fa-cogs w-5 h-5 mr-3"></i>
+                            <span>模型管理</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 用户信息 -->
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+            <div class="flex items-center">
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                    <i class="fas fa-user text-white text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <p id="userName" class="text-sm font-medium text-gray-900">张三</p>
+                    <p id="userRole" class="text-xs text-gray-500">普通用户</p>
+                </div>
+                <div class="relative">
+                    <button class="text-gray-400 hover:text-gray-600" onclick="toggleUserMenu()">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div id="userMenu" class="hidden absolute bottom-full right-0 mb-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200">
+                        <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-user-edit mr-2"></i>个人设置
+                        </a>
+                        <a href="login.html" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                            <i class="fas fa-sign-out-alt mr-2"></i>退出登录
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主内容区域 -->
+    <div class="ml-64 min-h-screen">
+        <!-- 页面标题动态更新区域 -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6">
+            <div class="flex items-center justify-between h-20">
+                <div class="leading-tight">
+                    <h2 id="pageTitle" class="text-xl font-bold text-gray-900">仪表板</h2>
+                    <p id="pageDescription" class="text-sm text-gray-500">欢迎使用RAG知识问答系统</p>
+                </div>
+                <div class="flex items-center">
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span id="currentTime"></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 页面内容容器 -->
+        <main>
+            <!-- 仪表板页面 -->
+            <div id="page-dashboard" class="page-content p-6">
+                <!-- 统计卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-blue-100 rounded-lg">
+                            <i class="fas fa-comments text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">今日问答</p>
+                            <p class="text-2xl font-bold text-gray-900">156</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-green-500 text-sm font-medium">+12%</span>
+                        <span class="text-gray-500 text-sm">较昨日</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 rounded-lg">
+                            <i class="fas fa-search text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">搜索次数</p>
+                            <p class="text-2xl font-bold text-gray-900">89</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-green-500 text-sm font-medium">+8%</span>
+                        <span class="text-gray-500 text-sm">较昨日</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-yellow-100 rounded-lg">
+                            <i class="fas fa-database text-yellow-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">知识库数量</p>
+                            <p class="text-2xl font-bold text-gray-900">12</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-blue-500 text-sm font-medium">+2</span>
+                        <span class="text-gray-500 text-sm">本周新增</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-purple-100 rounded-lg">
+                            <i class="fas fa-file-alt text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">文档总数</p>
+                            <p class="text-2xl font-bold text-gray-900">1,234</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="text-green-500 text-sm font-medium">+15</span>
+                        <span class="text-gray-500 text-sm">本周新增</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 说明文档与系统状态 -->
+            <div class="flex gap-6">
+                <!-- 左侧：说明文档 -->
+                <div class="flex-1 bg-white p-6 rounded-xl shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">说明文档</h3>
+                    <div class="space-y-3">
+                        <a href="#" onclick="alert('RAG系统简介：\\n\\n本系统是基于检索增强生成(RAG)技术的智能问答平台，通过结合向量检索和大语言模型，为企业提供高效的知识管理和智能问答服务。\\n\\n主要特点：\\n• 支持多种文档格式上传\\n• 智能向量化存储\\n• 精准语义检索\\n• AI驱动的问答生成\\n• 多模型支持\\n• 权限管理\\n\\n适用场景：技术文档查询、企业知识库、客服问答、培训资料等。')" class="flex items-center p-4 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors duration-200">
+                            <div class="p-2 bg-orange-600 rounded-lg mr-4">
+                                <i class="fas fa-book-open text-white"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">RAG系统</p>
+                                <p class="text-sm text-gray-500">了解该系统的RAG技术原理和功能特性</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-orange-600 ml-auto"></i>
+                        </a>
+
+                        <a href="#" onclick="switchPage('chat')" class="flex items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200">
+                            <div class="p-2 bg-blue-600 rounded-lg mr-4">
+                                <i class="fas fa-comments text-white"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">知识库管理</p>
+                                <p class="text-sm text-gray-500">设置文件上传大小限制，分片长度，策略等</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-blue-600 ml-auto"></i>
+                        </a>
+
+                        <a href="#" onclick="switchPage('search')" class="flex items-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors duration-200">
+                            <div class="p-2 bg-green-600 rounded-lg mr-4">
+                                <i class="fas fa-search text-white"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">文件上传</p>
+                                <p class="text-sm text-gray-500">快速文件上传教程指南</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-green-600 ml-auto"></i>
+                        </a>
+
+                        <div id="adminActions" class="hidden">
+                            <a href="#" onclick="switchPage('upload')" class="flex items-center p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors duration-200">
+                                <div class="p-2 bg-yellow-600 rounded-lg mr-4">
+                                    <i class="fas fa-upload text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">模型管理</p>
+                                    <p class="text-sm text-gray-500">添加新的模型教程指南</p>
+                                </div>
+                                <i class="fas fa-arrow-right text-yellow-600 ml-auto"></i>
+                            </a>
+
+                            <a href="#" onclick="switchPage('admin-users')" class="flex items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors duration-200">
+                                <div class="p-2 bg-purple-600 rounded-lg mr-4">
+                                    <i class="fas fa-users text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">用户管理</p>
+                                    <p class="text-sm text-gray-500">用户权限管理和账号设置指南</p>
+                                </div>
+                                <i class="fas fa-arrow-right text-purple-600 ml-auto"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：系统状态 -->
+                <div class="flex-1 bg-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">系统状态</h3>
+                        <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4">
+                         <!-- LLM 模型 -->
+                         <div class="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
+                             <div class="flex items-center justify-between">
+                                 <div class="flex items-center">
+                                     <div class="p-2 bg-blue-600 rounded-lg mr-3">
+                                         <i class="fas fa-brain text-white text-sm"></i>
+                                     </div>
+                                     <div>
+                                         <span class="font-medium text-gray-900">LLM 模型</span>
+                                         <p class="text-xs text-gray-600 mt-1">大语言模型服务</p>
+                                     </div>
+                                 </div>
+                                 <div class="flex items-center">
+                                     <div class="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                                     <span class="text-sm font-semibold text-green-700">在线 3/3</span>
+                                 </div>
+                             </div>
+                         </div>
+
+                         <!-- 向量模型 -->
+                         <div class="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
+                             <div class="flex items-center justify-between">
+                                 <div class="flex items-center">
+                                     <div class="p-2 bg-green-600 rounded-lg mr-3">
+                                         <i class="fas fa-vector-square text-white text-sm"></i>
+                                     </div>
+                                     <div>
+                                         <span class="font-medium text-gray-900">向量模型</span>
+                                         <p class="text-xs text-gray-600 mt-1">嵌入向量服务</p>
+                                     </div>
+                                 </div>
+                                 <div class="flex items-center">
+                                     <div class="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                                     <span class="text-sm font-semibold text-green-700">在线 2/2</span>
+                                 </div>
+                             </div>
+                         </div>
+
+                         <!-- 向量数据库 -->
+                         <div class="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg">
+                             <div class="flex items-center justify-between">
+                                 <div class="flex items-center">
+                                     <div class="p-2 bg-purple-600 rounded-lg mr-3">
+                                         <i class="fas fa-database text-white text-sm"></i>
+                                     </div>
+                                     <div>
+                                         <span class="font-medium text-gray-900">向量数据库</span>
+                                         <p class="text-xs text-gray-600 mt-1">向量存储服务</p>
+                                     </div>
+                                 </div>
+                                 <div class="flex items-center">
+                                     <div class="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                                     <span class="text-sm font-semibold text-green-700">正常</span>
+                                 </div>
+                             </div>
+                         </div>
+
+                         <!-- 关系数据库 -->
+                         <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 p-4 rounded-lg">
+                             <div class="flex items-center justify-between">
+                                 <div class="flex items-center">
+                                     <div class="p-2 bg-yellow-600 rounded-lg mr-3">
+                                         <i class="fas fa-server text-white text-sm"></i>
+                                     </div>
+                                     <div>
+                                         <span class="font-medium text-gray-900">关系数据库</span>
+                                         <p class="text-xs text-gray-600 mt-1">业务数据存储</p>
+                                     </div>
+                                 </div>
+                                 <div class="flex items-center">
+                                     <div class="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                                     <span class="text-sm font-semibold text-green-700">正常</span>
+                                 </div>
+                             </div>
+                         </div>
+                    </div>
+                    
+                    <!-- 整体状态摘要 -->
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
+                                <span class="text-sm font-medium text-gray-700">系统运行正常</span>
+                            </div>
+                            <span class="text-xs text-gray-500">最后更新: 刚刚</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 知识库概览 -->
+            <div class="mt-8 bg-white p-6 rounded-xl shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">我的知识库</h3>
+                    <a href="#" onclick="switchPage('search')" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                        查看全部 <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                        <div class="flex items-center mb-3">
+                            <div class="p-2 bg-blue-100 rounded-lg mr-3">
+                                <i class="fas fa-code text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">技术规范库</h4>
+                                <p class="text-sm text-gray-500">156 个文档</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">包含编程规范、API设计、架构指南等技术文档</p>
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-circle text-green-400 mr-1 text-xs"></i>活跃
+                            </span>
+                            <button class="text-blue-600 hover:text-blue-800 text-sm">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                        <div class="flex items-center mb-3">
+                            <div class="p-2 bg-green-100 rounded-lg mr-3">
+                                <i class="fas fa-book text-green-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">产品手册</h4>
+                                <p class="text-sm text-gray-500">89 个文档</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">产品功能介绍、使用指南、常见问题等</p>
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-circle text-green-400 mr-1 text-xs"></i>活跃
+                            </span>
+                            <button class="text-blue-600 hover:text-blue-800 text-sm">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+                        <div class="flex items-center mb-3">
+                            <div class="p-2 bg-yellow-100 rounded-lg mr-3">
+                                <i class="fas fa-cogs text-yellow-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">运维文档</h4>
+                                <p class="text-sm text-gray-500">67 个文档</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-3">系统部署、监控、故障处理等运维相关文档</p>
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <i class="fas fa-circle text-yellow-400 mr-1 text-xs"></i>正常
+                            </span>
+                            <button class="text-blue-600 hover:text-blue-800 text-sm">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- 智能问答页面 -->
+            <div id="page-chat" class="page-content hidden p-6">
+                <div class="flex h-[calc(100vh-240px)]">
+                    <!-- 左侧控制面板 -->
+                    <div class="w-80 bg-white rounded-xl shadow-sm mr-6 flex flex-col">
+                        <!-- 知识库选择 -->
+                        <div class="p-4 border-b border-gray-200">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">选择知识库</label>
+                            <select id="knowledgeBase" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="all">全部知识库</option>
+                                <option value="tech">技术规范库</option>
+                                <option value="product">产品手册</option>
+                                <option value="ops">运维文档</option>
+                            </select>
+                        </div>
+
+                        <!-- 模型选择 -->
+                        <div class="p-4 border-b border-gray-200">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">选择模型</label>
+                            <select id="modelSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="qwen2">Qwen2-7B</option>
+                                <option value="llama3">Llama3-8B</option>
+                                <option value="chatglm">ChatGLM3-6B</option>
+                            </select>
+                        </div>
+
+                        <!-- 会话历史 -->
+                        <div class="flex-1 p-4">
+                            <h3 class="text-sm font-medium text-gray-700 mb-3">会话历史</h3>
+                            <div class="space-y-2 max-h-96 overflow-y-auto scrollbar-thin">
+                                <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors duration-200">
+                                    <p class="text-sm font-medium text-gray-900 truncate">API设计最佳实践</p>
+                                    <p class="text-xs text-gray-500 mt-1">今天 14:30</p>
+                                </div>
+                                <div class="p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+                                    <p class="text-sm font-medium text-gray-900 truncate">数据库连接池配置</p>
+                                    <p class="text-xs text-gray-500 mt-1">今天 10:15</p>
+                                </div>
+                                <div class="p-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200">
+                                    <p class="text-sm font-medium text-gray-900 truncate">Redis缓存策略</p>
+                                    <p class="text-xs text-gray-500 mt-1">昨天 16:45</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4">
+                            <button onclick="newChat()" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg transition-colors duration-200">
+                                <i class="fas fa-plus mr-2"></i>新建对话
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 右侧聊天区域 -->
+                    <div class="flex-1 bg-white rounded-xl shadow-sm flex flex-col">
+                        <!-- 聊天区域顶部 -->
+                        <div class="border-b border-gray-200 px-6 py-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h2 class="text-lg font-semibold text-gray-900">当前会话</h2>
+                                    <p class="text-sm text-gray-500">
+                                        <i class="fas fa-database mr-1"></i>
+                                        <span id="selectedKB">技术规范库</span> · 
+                                        <i class="fas fa-brain mr-1"></i>
+                                        <span id="selectedModel">Qwen2-7B</span>
+                                    </p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="text-gray-600 hover:text-gray-900 p-2">
+                                        <i class="fas fa-bookmark"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-900 p-2">
+                                        <i class="fas fa-share"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 聊天消息区域 -->
+                        <div id="chatMessages" class="flex-1 overflow-y-auto px-6 py-4 space-y-4 scrollbar-thin">
+                            <!-- 欢迎消息 -->
+                            <div class="text-center py-8">
+                                <div class="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-robot text-white text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">RAG智能助手</h3>
+                                <p class="text-gray-600 mb-6">我可以帮您快速查找技术文档，回答技术问题</p>
+                                
+                                <!-- 推荐问题 -->
+                                <div class="max-w-2xl mx-auto">
+                                    <p class="text-sm text-gray-500 mb-4">推荐问题:</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <button onclick="askSuggestion('如何设计RESTful API？')" 
+                                            class="p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all duration-200 text-left">
+                                            <i class="fas fa-code text-blue-600 mr-2"></i>
+                                            <span class="text-sm">如何设计RESTful API？</span>
+                                        </button>
+                                        <button onclick="askSuggestion('数据库连接池最佳实践？')" 
+                                            class="p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all duration-200 text-left">
+                                            <i class="fas fa-database text-green-600 mr-2"></i>
+                                            <span class="text-sm">数据库连接池最佳实践？</span>
+                                        </button>
+                                        <button onclick="askSuggestion('Redis缓存如何优化？')" 
+                                            class="p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all duration-200 text-left">
+                                            <i class="fas fa-memory text-red-600 mr-2"></i>
+                                            <span class="text-sm">Redis缓存如何优化？</span>
+                                        </button>
+                                        <button onclick="askSuggestion('微服务架构注意事项？')" 
+                                            class="p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all duration-200 text-left">
+                                            <i class="fas fa-project-diagram text-purple-600 mr-2"></i>
+                                            <span class="text-sm">微服务架构注意事项？</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 输入区域 -->
+                        <div class="border-t border-gray-200 p-4">
+                            <div class="flex items-end space-x-4">
+                                <div class="flex-1">
+                                    <textarea id="questionInput" 
+                                        placeholder="请输入您的问题..."
+                                        rows="1"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                        onkeypress="handleKeyPress(event)"
+                                        oninput="autoResize(this)"></textarea>
+                                </div>
+                                <button id="sendButton" onclick="sendMessage()" 
+                                    class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center">
+                                    <i class="fas fa-paper-plane mr-2"></i>
+                                    <span>发送</span>
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-center justify-between mt-2 text-xs text-gray-500">
+                                <div class="flex items-center space-x-4">
+                                    <span><i class="fas fa-lightbulb mr-1"></i>Shift+Enter 换行</span>
+                                    <span><i class="fas fa-paper-plane mr-1"></i>Enter 发送</span>
+                                </div>
+                                <div id="charCount">0 / 1000</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文档搜索页面 -->
+            <div id="page-search" class="page-content hidden p-6">
+                <!-- 搜索区域 -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="flex-1 relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" 
+                                id="searchInput"
+                                placeholder="搜索文档内容、技术问题、API接口..."
+                                class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                                onkeypress="handleSearchKeyPress(event)">
+                        </div>
+                        <button onclick="performSearch()" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-medium transition-colors duration-200">
+                            <i class="fas fa-search mr-2"></i>搜索
+                        </button>
+                    </div>
+
+                    <!-- 过滤器 -->
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700">知识库:</label>
+                            <select id="knowledgeFilter" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">全部知识库</option>
+                                <option value="tech">技术规范库</option>
+                                <option value="product">产品手册</option>
+                                <option value="ops">运维文档</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700">文档类型:</label>
+                            <select id="typeFilter" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">全部类型</option>
+                                <option value="pdf">PDF文档</option>
+                                <option value="md">Markdown</option>
+                                <option value="doc">Word文档</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700">排序:</label>
+                            <select id="sortFilter" class="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="relevance">相关度</option>
+                                <option value="date">更新时间</option>
+                                <option value="name">文档名称</option>
+                            </select>
+                        </div>
+
+                        <button onclick="exportResults()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            <i class="fas fa-download mr-1"></i>导出结果
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 搜索结果 -->
+                <div id="searchResults" class="hidden">
+                    <!-- 结果统计 -->
+                    <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <span class="text-lg font-medium text-gray-900">搜索结果</span>
+                                <span id="resultCount" class="text-sm text-gray-500">找到 0 个结果</span>
+                                <span id="searchDuration" class="text-sm text-gray-400">(0.00 秒)</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="toggleView('list')" id="listView" class="p-2 text-gray-600 hover:text-blue-600 bg-blue-50 rounded">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                                <button onclick="toggleView('grid')" id="gridView" class="p-2 text-gray-600 hover:text-blue-600 rounded">
+                                    <i class="fas fa-th"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 结果列表 -->
+                    <div id="resultsList" class="space-y-4">
+                        <!-- 搜索结果项将通过JavaScript动态生成 -->
+                    </div>
+
+                    <!-- 分页 -->
+                    <div class="flex justify-center mt-8">
+                        <nav class="flex items-center space-x-2">
+                            <button class="px-3 py-2 text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="px-3 py-2 bg-blue-600 text-white rounded">1</button>
+                            <button class="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">2</button>
+                            <button class="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">3</button>
+                            <span class="px-3 py-2 text-gray-500">...</span>
+                            <button class="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded">10</button>
+                            <button class="px-3 py-2 text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- 空状态/推荐搜索 -->
+                <div id="emptyState" class="text-center py-12">
+                    <div class="max-w-md mx-auto">
+                        <div class="bg-gray-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-search text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">开始搜索文档</h3>
+                        <p class="text-gray-600 mb-8">输入关键词快速查找相关技术文档和规范</p>
+                        
+                        <!-- 热门搜索 -->
+                        <div>
+                            <p class="text-sm font-medium text-gray-700 mb-4">热门搜索:</p>
+                            <div class="flex flex-wrap justify-center gap-2">
+                                <button onclick="quickSearch('API设计规范')" class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm hover:bg-blue-200 transition-colors duration-200">
+                                    API设计规范
+                                </button>
+                                <button onclick="quickSearch('数据库连接池')" class="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm hover:bg-green-200 transition-colors duration-200">
+                                    数据库连接池
+                                </button>
+                                <button onclick="quickSearch('Redis缓存')" class="px-4 py-2 bg-red-100 text-red-800 rounded-full text-sm hover:bg-red-200 transition-colors duration-200">
+                                    Redis缓存
+                                </button>
+                                <button onclick="quickSearch('微服务架构')" class="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm hover:bg-purple-200 transition-colors duration-200">
+                                    微服务架构
+                                </button>
+                                <button onclick="quickSearch('安全规范')" class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm hover:bg-yellow-200 transition-colors duration-200">
+                                    安全规范
+                                </button>
+                                <button onclick="quickSearch('性能优化')" class="px-4 py-2 bg-indigo-100 text-indigo-800 rounded-full text-sm hover:bg-indigo-200 transition-colors duration-200">
+                                    性能优化
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 文件上传页面 -->
+            <div id="page-upload" class="page-content hidden p-6">
+                <!-- 上传配置 -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">上传设置</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">选择知识库 *</label>
+                            <select id="targetKnowledgeBase" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">请选择知识库</option>
+                                <option value="tech">技术规范库</option>
+                                <option value="product">产品手册</option>
+                                <option value="ops">运维文档</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">文档分类</label>
+                            <select id="documentCategory" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="general">通用文档</option>
+                                <option value="tutorial">教程指南</option>
+                                <option value="reference">参考手册</option>
+                                <option value="faq">常见问题</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">优先级</label>
+                            <select id="processingPriority" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="normal">普通</option>
+                                <option value="high">高优先级</option>
+                                <option value="low">低优先级</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="enableOCR" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">启用OCR文字识别（适用于扫描版PDF）</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 文件上传区域 -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900">上传文件</h2>
+                        <div class="text-sm text-gray-500">
+                            支持格式：PDF, DOC, DOCX, TXT, MD | 单文件最大200MB | 批量最多20个文件
+                        </div>
+                    </div>
+
+                    <!-- 上传区域 -->
+                    <div id="uploadArea" class="upload-area rounded-lg p-8 text-center cursor-pointer">
+                        <div class="max-w-md mx-auto">
+                            <div class="mb-6">
+                                <i class="fas fa-cloud-upload-alt text-6xl text-gray-400"></i>
+                            </div>
+                            <div class="mb-4">
+                                <p class="text-lg font-medium text-gray-900 mb-2">拖拽文件到此处上传</p>
+                                <p class="text-gray-500">或者 <span class="text-blue-600 hover:text-blue-800 font-medium">点击选择文件</span></p>
+                            </div>
+                            <div class="text-sm text-gray-400 space-y-1">
+                                <p>• 支持PDF、Word、Markdown、文本文档</p>
+                                <p>• 单个文件不超过200MB</p>
+                                <p>• 可同时上传多个文件</p>
+                            </div>
+                        </div>
+                        <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.txt,.md" class="hidden">
+                    </div>
+                </div>
+
+                <!-- 上传队列 -->
+                <div id="uploadQueue" class="bg-white rounded-xl shadow-sm p-6 hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900">上传队列</h2>
+                        <div class="flex items-center space-x-3">
+                            <button onclick="pauseAll()" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium">
+                                <i class="fas fa-pause mr-1"></i>暂停全部
+                            </button>
+                            <button onclick="cancelAll()" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                                <i class="fas fa-times mr-1"></i>取消全部
+                            </button>
+                            <button onclick="startProcessing()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                                <i class="fas fa-play mr-1"></i>开始处理
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="fileList" class="space-y-3">
+                        <!-- 文件项将通过JavaScript动态生成 -->
+                    </div>
+
+                    <!-- 批量操作 -->
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-600">总计: <span id="totalFiles">0</span> 个文件</span>
+                                <span class="text-sm text-gray-600">大小: <span id="totalSize">0 MB</span></span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="text-sm text-gray-500">
+                                    总进度: <span id="overallProgress">0%</span>
+                                </div>
+                                <div class="w-32 bg-gray-200 rounded-full h-2">
+                                    <div id="overallProgressBar" class="bg-blue-600 h-2 rounded-full progress-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 处理历史 -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mt-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900">处理历史</h2>
+                        <div class="flex items-center space-x-2">
+                            <select id="historyFilter" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
+                                <option value="all">全部状态</option>
+                                <option value="completed">已完成</option>
+                                <option value="failed">处理失败</option>
+                                <option value="processing">处理中</option>
+                            </select>
+                            <button onclick="refreshHistory()" class="text-blue-600 hover:text-blue-800 text-sm">
+                                <i class="fas fa-refresh mr-1"></i>刷新
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">文件名</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">知识库</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">处理时间</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">文档数</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- 历史记录将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户管理页面 -->
+            <div id="page-admin-users" class="page-content hidden p-6">
+                <!-- 统计卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-blue-100 rounded-lg">
+                                <i class="fas fa-users text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">总用户数</p>
+                                <p class="text-2xl font-bold text-gray-900">156</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 rounded-lg">
+                                <i class="fas fa-user-check text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">活跃用户</p>
+                                <p class="text-2xl font-bold text-gray-900">142</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-yellow-100 rounded-lg">
+                                <i class="fas fa-user-shield text-yellow-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">管理员</p>
+                                <p class="text-2xl font-bold text-gray-900">8</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-red-100 rounded-lg">
+                                <i class="fas fa-user-times text-red-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">禁用用户</p>
+                                <p class="text-2xl font-bold text-gray-900">6</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜索和筛选 -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <div class="flex-1">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="searchInput" placeholder="搜索用户姓名、邮箱或手机号..."
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <select id="roleFilter" class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">全部角色</option>
+                                <option value="admin">管理员</option>
+                                <option value="user">普通用户</option>
+                            </select>
+                            <select id="statusFilter" class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">全部状态</option>
+                                <option value="active">活跃</option>
+                                <option value="disabled">禁用</option>
+                            </select>
+                            <button onclick="exportUsers()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg transition-colors duration-200">
+                                <i class="fas fa-download mr-2"></i>导出
+                            </button>
+                            <button onclick="openAddUserModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors duration-200">
+                                <i class="fas fa-plus mr-2"></i>添加用户
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 用户表格 -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <input type="checkbox" class="rounded border-gray-300">
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        用户信息
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        角色
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        状态
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        最后登录
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        创建时间
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        操作
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- 用户数据将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 分页 -->
+                    <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-gray-500">
+                                显示第 1-10 项，共 156 项
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-500 hover:bg-gray-50" disabled>
+                                    上一页
+                                </button>
+                                <button class="px-3 py-1 bg-blue-600 text-white rounded-md text-sm">1</button>
+                                <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">2</button>
+                                <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">3</button>
+                                <button class="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                                    下一页
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 知识库管理页面 -->
+            <div id="page-admin-knowledge" class="page-content hidden p-6">
+                <!-- 统计卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-blue-100 rounded-lg">
+                                <i class="fas fa-database text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">知识库总数</p>
+                                <p class="text-2xl font-bold text-gray-900">12</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 rounded-lg">
+                                <i class="fas fa-file-alt text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">文档总数</p>
+                                <p class="text-2xl font-bold text-gray-900">1,234</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-yellow-100 rounded-lg">
+                                <i class="fas fa-cloud-upload-alt text-yellow-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">今日上传</p>
+                                <p class="text-2xl font-bold text-gray-900">23</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-purple-100 rounded-lg">
+                                <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">查询次数</p>
+                                <p class="text-2xl font-bold text-gray-900">5,678</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 操作栏 -->
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">知识库列表</h3>
+                    <button onclick="openCreateKBModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                        <i class="fas fa-plus mr-2"></i>创建知识库
+                    </button>
+                </div>
+
+                <!-- 知识库列表 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="knowledgeBaseGrid">
+                    <!-- 知识库卡片将通过JavaScript动态生成 -->
+                </div>
+            </div>
+
+            <!-- 模型管理页面 -->
+            <div id="page-admin-models" class="page-content hidden p-6">
+                <!-- 统计卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-blue-100 rounded-lg">
+                                <i class="fas fa-brain text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">LLM模型</p>
+                                <p class="text-2xl font-bold text-gray-900">3</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 rounded-lg">
+                                <i class="fas fa-vector-square text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">向量模型</p>
+                                <p class="text-2xl font-bold text-gray-900">2</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-yellow-100 rounded-lg">
+                                <i class="fas fa-server text-yellow-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">在线服务</p>
+                                <p class="text-2xl font-bold text-gray-900">4</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-red-100 rounded-lg">
+                                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">离线服务</p>
+                                <p class="text-2xl font-bold text-gray-900">1</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 操作栏 -->
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">模型列表</h3>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="openAddModelModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                            <i class="fas fa-plus mr-2"></i>添加模型
+                        </button>
+                        <button onclick="checkAllModels()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                            <i class="fas fa-heartbeat mr-2"></i>健康检查
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 模型列表 -->
+                <div class="space-y-6" id="modelsList">
+                    <!-- 模型内容将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 用户管理相关模态框 -->
+    <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                    <h3 id="modalTitle" class="text-lg font-semibold text-gray-900">添加用户</h3>
+                    <button onclick="closeUserModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="userForm" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">姓名 *</label>
+                        <input type="text" id="userName" name="name" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">邮箱 *</label>
+                        <input type="email" id="userEmail" name="email" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">手机号</label>
+                        <input type="tel" id="userPhone" name="phone"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">角色 *</label>
+                        <select id="userRole" name="role" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="user">普通用户</option>
+                            <option value="admin">管理员</option>
+                        </select>
+                    </div>
+
+                    <div id="passwordSection">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">密码 *</label>
+                        <input type="password" id="userPassword" name="password"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="userActive" name="active" checked
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">启用用户</span>
+                        </label>
+                    </div>
+                </form>
+
+                <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+                    <button onclick="closeUserModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                        取消
+                    </button>
+                    <button onclick="saveUser()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200">
+                        <span id="saveButtonText">保存</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认删除用户模态框 -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">确认删除</h3>
+                            <p class="text-sm text-gray-500">此操作不可撤销</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-6">确定要删除用户 <strong id="deleteUserName"></strong> 吗？删除后该用户将无法登录系统。</p>
+                    
+                    <div class="flex items-center justify-end space-x-3">
+                        <button onclick="closeDeleteModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                            取消
+                        </button>
+                        <button onclick="confirmDelete()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200">
+                            确认删除
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建知识库模态框 -->
+    <div id="createKBModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">创建知识库</h3>
+                    <button onclick="closeCreateKBModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="kbForm" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">知识库名称 *</label>
+                        <input type="text" id="kbName" name="name" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="例如：技术规范库">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">标识符 *</label>
+                        <input type="text" id="kbSlug" name="slug" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="例如：tech-standards">
+                        <p class="text-xs text-gray-500 mt-1">用于URL和系统内部标识，只能包含字母、数字、连字符</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">描述</label>
+                        <textarea id="kbDescription" name="description" rows="3"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="简要描述该知识库的用途和内容"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="kbPublic" name="public" checked
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">设为公开（所有用户可访问）</span>
+                        </label>
+                    </div>
+                </form>
+
+                <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+                    <button onclick="closeCreateKBModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                        取消
+                    </button>
+                    <button onclick="createKnowledgeBase()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200">
+                        创建知识库
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加模型模态框 -->
+    <div id="addModelModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">添加模型</h3>
+                    <button onclick="closeAddModelModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <form id="modelForm" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">模型类型 *</label>
+                        <select id="modelType" name="type" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">选择模型类型</option>
+                            <option value="llm">大语言模型 (LLM)</option>
+                            <option value="embedding">向量模型 (Embedding)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">模型名称 *</label>
+                        <input type="text" id="modelName" name="name" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="例如：Qwen2-7B-Instruct">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">服务地址 *</label>
+                        <input type="url" id="modelEndpoint" name="endpoint" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="http://localhost:8000/v1">
+                    </div>
+
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="setAsDefault" name="default"
+                                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-700">设为默认模型</span>
+                        </label>
+                    </div>
+                </form>
+
+                <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+                    <button onclick="closeAddModelModal()" class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200">
+                        取消
+                    </button>
+                    <button onclick="addModel()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200">
+                        添加模型
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 'dashboard';
+
+        // 页面切换功能
+        function switchPage(page) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // 重置所有导航项样式
+            document.querySelectorAll('[id^="nav-"]').forEach(nav => {
+                nav.classList.remove('text-blue-600', 'bg-blue-50');
+                nav.classList.add('text-gray-700');
+            });
+
+            // 显示选中的页面
+            document.getElementById(`page-${page}`).classList.remove('hidden');
+
+            // 设置选中的导航项样式
+            const activeNav = document.getElementById(`nav-${page}`);
+            activeNav.classList.remove('text-gray-700');
+            activeNav.classList.add('text-blue-600', 'bg-blue-50');
+
+            // 更新当前页面
+            currentPage = page;
+
+            // 更新页面标题和描述
+            const titles = {
+                'dashboard': '仪表板',
+                'chat': '智能问答',
+                'search': '文档搜索',
+                'upload': '文件上传',
+                'admin-users': '用户管理',
+                'admin-knowledge': '知识库管理',
+                'admin-models': '模型管理'
+            };
+            document.getElementById('pageTitle').textContent = titles[page];
+
+            const descriptions = {
+                'dashboard': '欢迎使用RAG知识问答系统',
+                'chat': 'AI驱动的智能检索对话',
+                'search': '快速查找相关文档内容',
+                'upload': '批量上传和处理文档',
+                'admin-users': '管理系统用户账号和权限',
+                'admin-knowledge': '管理系统知识库和文档',
+                'admin-models': '管理AI模型和推理服务'
+            };
+            document.getElementById('pageDescription').textContent = descriptions[page];
+
+            // 根据页面初始化特定功能
+            if (page === 'upload') {
+                initializeUploadFunctions();
+            } else if (page === 'search') {
+                initializeSearchFunctions();
+            } else if (page === 'chat') {
+                initializeChatFunctions();
+            } else if (page === 'admin-users') {
+                initializeUserManagement();
+            } else if (page === 'admin-knowledge') {
+                initializeKnowledgeManagement();
+            } else if (page === 'admin-models') {
+                initializeModelManagement();
+            }
+        }
+
+        // 更新时间显示
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleString('zh-CN', {
+                month: 'numeric',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeStr;
+        }
+        
+        // 初始化时间并每分钟更新
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // 检查用户角色并显示相应功能
+        function checkUserRole() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const role = urlParams.get('role') || localStorage.getItem('userRole') || 'user';
+            
+            if (role === 'admin') {
+                document.getElementById('adminSection').classList.remove('hidden');
+                document.getElementById('adminActions').classList.remove('hidden');
+                document.getElementById('userRole').textContent = '管理员';
+                document.getElementById('userName').textContent = '管理员';
+            } else {
+                document.getElementById('userRole').textContent = '普通用户';
+                document.getElementById('userName').textContent = '张三';
+            }
+        }
+
+        // 用户菜单切换
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // 点击外部关闭用户菜单
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('userMenu');
+            const button = event.target.closest('button');
+            
+            if (!button && !menu.contains(event.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        // 智能问答页面功能
+        function initializeChatFunctions() {
+            // 监听模型和知识库选择变化
+            const kbSelect = document.getElementById('knowledgeBase');
+            const modelSelect = document.getElementById('modelSelect');
+            
+            if (kbSelect) {
+                kbSelect.addEventListener('change', function() {
+                    const kbNames = {
+                        'all': '全部知识库',
+                        'tech': '技术规范库',
+                        'product': '产品手册',
+                        'ops': '运维文档'
+                    };
+                    document.getElementById('selectedKB').textContent = kbNames[this.value];
+                });
+            }
+
+            if (modelSelect) {
+                modelSelect.addEventListener('change', function() {
+                    document.getElementById('selectedModel').textContent = this.options[this.selectedIndex].text;
+                });
+            }
+        }
+
+        // 自动调整输入框高度
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+            
+            // 更新字符计数
+            const charCount = document.getElementById('charCount');
+            const length = textarea.value.length;
+            charCount.textContent = `${length} / 1000`;
+            charCount.className = length > 1000 ? 'text-red-500' : 'text-gray-500';
+        }
+
+        // 处理回车键
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // 发送消息
+        function sendMessage() {
+            const input = document.getElementById('questionInput');
+            const question = input.value.trim();
+            
+            if (!question) return;
+            
+            // 添加用户消息
+            addMessage(question, 'user');
+            
+            // 清空输入
+            input.value = '';
+            autoResize(input);
+            
+            // 显示AI思考状态
+            showTyping();
+            
+            // 模拟AI回复
+            setTimeout(() => {
+                hideTyping();
+                const response = generateResponse(question);
+                addMessage(response.content, 'assistant', response.references);
+            }, 2000);
+        }
+
+        // 添加消息到聊天区域
+        function addMessage(content, type, references = null) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-animation';
+            
+            if (type === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="flex justify-end mb-4">
+                        <div class="max-w-3xl">
+                            <div class="bg-blue-600 text-white p-4 rounded-lg rounded-br-none">
+                                <p class="whitespace-pre-wrap">${content}</p>
+                            </div>
+                            <div class="text-right mt-1">
+                                <span class="text-xs text-gray-500">${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'})}</span>
+                            </div>
+                        </div>
+                        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center ml-3 flex-shrink-0">
+                            <i class="fas fa-user text-white text-sm"></i>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let referencesHtml = '';
+                if (references && references.length > 0) {
+                    referencesHtml = `
+                        <div class="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                            <h4 class="text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-quote-left mr-1"></i>参考来源:
+                            </h4>
+                            <div class="space-y-2">
+                                ${references.map(ref => `
+                                    <div class="flex items-start space-x-2 text-sm">
+                                        <i class="fas fa-file-alt text-blue-600 mt-0.5"></i>
+                                        <div>
+                                            <span class="font-medium text-gray-900">${ref.document}</span>
+                                            <span class="text-gray-500">- 第${ref.page}页</span>
+                                            <div class="text-gray-600 mt-1">"${ref.excerpt}"</div>
+                                            <div class="text-xs text-gray-500 mt-1">置信度: ${ref.confidence}%</div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                messageDiv.innerHTML = `
+                    <div class="flex justify-start mb-4">
+                        <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                            <i class="fas fa-robot text-white text-sm"></i>
+                        </div>
+                        <div class="max-w-3xl">
+                            <div class="bg-white border border-gray-200 p-4 rounded-lg rounded-bl-none shadow-sm">
+                                <div class="prose prose-sm max-w-none">
+                                    <p class="whitespace-pre-wrap text-gray-900">${content}</p>
+                                </div>
+                                ${referencesHtml}
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-gray-500">${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'})}</span>
+                                <div class="flex items-center space-x-2">
+                                    <button class="text-gray-400 hover:text-blue-600 text-xs">
+                                        <i class="fas fa-thumbs-up"></i>
+                                    </button>
+                                    <button class="text-gray-400 hover:text-blue-600 text-xs">
+                                        <i class="fas fa-thumbs-down"></i>
+                                    </button>
+                                    <button class="text-gray-400 hover:text-blue-600 text-xs">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 显示AI思考状态
+        function showTyping() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'flex justify-start mb-4';
+            typingDiv.innerHTML = `
+                <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center mr-3">
+                    <i class="fas fa-robot text-white text-sm"></i>
+                </div>
+                <div class="bg-white border border-gray-200 p-4 rounded-lg rounded-bl-none shadow-sm">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <span class="text-sm text-gray-500 ml-2">AI正在思考...</span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 隐藏AI思考状态
+        function hideTyping() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // 模拟AI回复生成
+        function generateResponse(question) {
+            const responses = {
+                'API设计': {
+                    content: `基于我对技术规范文档的检索，关于RESTful API设计，建议遵循以下最佳实践：
+
+1. **URL设计原则**
+   - 使用名词而非动词
+   - 资源层级不超过3层
+   - 统一使用复数形式
+
+2. **HTTP方法规范**
+   - GET: 获取资源
+   - POST: 创建资源
+   - PUT: 完整更新资源
+   - PATCH: 部分更新资源
+   - DELETE: 删除资源
+
+3. **状态码使用**
+   - 200: 成功
+   - 201: 创建成功
+   - 400: 请求错误
+   - 401: 未认证
+   - 403: 无权限
+   - 404: 资源不存在
+   - 500: 服务器错误
+
+这些规范有助于提高API的可维护性和开发效率。`,
+                    references: [
+                        {
+                            document: "API设计规范指南",
+                            page: 15,
+                            excerpt: "RESTful API应该使用名词来表示资源，动词通过HTTP方法来体现",
+                            confidence: 95
+                        }
+                    ]
+                },
+                default: {
+                    content: `根据您的问题，我从知识库中检索到了相关信息。
+
+对于"${question}"这个问题，建议您：
+
+1. 查阅相关技术文档了解基础概念
+2. 参考最佳实践和规范标准
+3. 结合具体业务场景进行设计
+4. 注意性能和安全方面的考虑
+
+如果需要更具体的指导，请提供更多上下文信息，我会给出更针对性的建议。`,
+                    references: []
+                }
+            };
+            
+            // 简单的关键词匹配
+            if (question.includes('API') || question.includes('接口')) {
+                return responses['API设计'];
+            }
+            
+            return responses.default;
+        }
+
+        // 建议问题点击
+        function askSuggestion(question) {
+            document.getElementById('questionInput').value = question;
+            sendMessage();
+        }
+
+        // 新建会话
+        function newChat() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-robot text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">RAG智能助手</h3>
+                    <p class="text-gray-600 mb-6">我可以帮您快速查找技术文档，回答技术问题</p>
+                </div>
+            `;
+        }
+
+        // 搜索页面功能
+        function initializeSearchFunctions() {
+            // 搜索功能已在页面切换时初始化
+        }
+
+        // 搜索功能
+        function handleSearchKeyPress(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        }
+
+        function quickSearch(query) {
+            document.getElementById('searchInput').value = query;
+            performSearch();
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            // 显示搜索结果区域
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('searchResults').classList.remove('hidden');
+
+            // 模拟搜索延迟
+            const startTime = performance.now();
+            
+            setTimeout(() => {
+                const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+                displaySearchResults(query, duration);
+            }, 500);
+        }
+
+        function displaySearchResults(query, duration) {
+            // 模拟搜索结果数据
+            const mockResults = [
+                {
+                    title: "RESTful API设计规范指南",
+                    source: "技术规范库",
+                    type: "PDF",
+                    excerpt: "RESTful API是一种基于HTTP协议的Web服务架构风格，通过统一的接口规范来实现不同系统间的数据交互。在设计<span class='highlight'>API接口</span>时，应该遵循资源导向的设计原则...",
+                    lastModified: "2024-09-20",
+                    confidence: 95,
+                    pages: "第15-28页"
+                },
+                {
+                    title: "数据库连接池配置与优化",
+                    source: "技术规范库",
+                    type: "PDF",
+                    excerpt: "数据库连接池是应用程序与数据库之间的中间层，通过复用数据库连接来提高应用性能。合理的<span class='highlight'>连接池配置</span>对系统性能至关重要...",
+                    lastModified: "2024-09-18",
+                    confidence: 88,
+                    pages: "第5-12页"
+                }
+            ];
+
+            // 更新结果统计
+            document.getElementById('resultCount').textContent = `找到 ${mockResults.length} 个结果`;
+            document.getElementById('searchDuration').textContent = `(${duration} 秒)`;
+
+            // 渲染结果列表
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = mockResults.map((result, index) => `
+                <div class="bg-white rounded-xl shadow-sm p-6 search-result cursor-pointer" onclick="previewDocument('${result.title}', '${result.source}', ${index})">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-blue-600 hover:text-blue-800 mb-2">
+                                ${result.title}
+                            </h3>
+                            <div class="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                                <span class="flex items-center">
+                                    <i class="fas fa-folder mr-1"></i>
+                                    ${result.source}
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-file-pdf mr-1"></i>
+                                    ${result.type}
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-calendar mr-1"></i>
+                                    ${result.lastModified}
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-file-alt mr-1"></i>
+                                    ${result.pages}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="ml-4 text-right">
+                            <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${result.confidence >= 90 ? 'bg-green-100 text-green-800' : result.confidence >= 80 ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}">
+                                <i class="fas fa-star mr-1 text-xs"></i>
+                                ${result.confidence}%
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-700 leading-relaxed mb-4">${result.excerpt}</p>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                <i class="fas fa-eye mr-1"></i>预览
+                            </button>
+                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                <i class="fas fa-download mr-1"></i>下载
+                            </button>
+                            <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                <i class="fas fa-bookmark mr-1"></i>收藏
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 视图切换
+        function toggleView(viewType) {
+            const listBtn = document.getElementById('listView');
+            const gridBtn = document.getElementById('gridView');
+            
+            if (viewType === 'list') {
+                listBtn.classList.add('bg-blue-50', 'text-blue-600');
+                gridBtn.classList.remove('bg-blue-50', 'text-blue-600');
+            } else {
+                gridBtn.classList.add('bg-blue-50', 'text-blue-600');
+                listBtn.classList.remove('bg-blue-50', 'text-blue-600');
+            }
+        }
+
+        // 文档预览
+        function previewDocument(title, source, index) {
+            alert(`预览文档：${title}\n来源：${source}\n\n（实际项目中会打开文档预览模态框）`);
+        }
+
+        // 导出结果
+        function exportResults() {
+            alert('搜索结果导出功能（实际项目中会生成CSV文件）');
+        }
+
+        // 上传页面功能
+        function initializeUploadFunctions() {
+            let uploadedFiles = [];
+
+            // 文件上传相关事件
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            // 点击上传区域选择文件
+            uploadArea.addEventListener('click', () => {
+                if (!validateSettings()) return;
+                fileInput.click();
+            });
+
+            // 文件选择事件
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // 拖拽事件
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                if (!validateSettings()) return;
+                
+                const files = Array.from(e.dataTransfer.files);
+                handleFiles(files);
+            });
+
+            // 验证设置
+            function validateSettings() {
+                const knowledgeBase = document.getElementById('targetKnowledgeBase').value;
+                if (!knowledgeBase) {
+                    alert('请先选择知识库');
+                    return false;
+                }
+                return true;
+            }
+
+            // 处理文件选择
+            function handleFileSelect(e) {
+                const files = Array.from(e.target.files);
+                handleFiles(files);
+            }
+
+            // 处理文件
+            function handleFiles(files) {
+                const validFiles = files.filter(file => {
+                    // 验证文件类型和大小
+                    const validTypes = ['.pdf', '.doc', '.docx', '.txt', '.md'];
+                    const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+                    return validTypes.includes(fileExt) && file.size <= 200 * 1024 * 1024;
+                });
+
+                if (validFiles.length === 0) return;
+
+                // 显示成功消息
+                alert(`成功添加 ${validFiles.length} 个文件到上传队列`);
+                document.getElementById('uploadQueue').classList.remove('hidden');
+            }
+        }
+
+        // 文件上传功能的辅助函数
+        function startProcessing() {
+            alert('开始处理上传的文件...');
+        }
+
+        function pauseAll() {
+            alert('暂停所有上传任务');
+        }
+
+        function cancelAll() {
+            if (confirm('确定要取消所有上传任务吗？')) {
+                document.getElementById('uploadQueue').classList.add('hidden');
+            }
+        }
+
+        function refreshHistory() {
+            alert('刷新处理历史');
+        }
+
+        // 用户管理页面功能
+        function initializeUserManagement() {
+            renderUserTable();
+            
+            // 搜索和筛选功能
+            document.getElementById('searchInput').addEventListener('input', filterUsers);
+            document.getElementById('roleFilter').addEventListener('change', filterUsers);
+            document.getElementById('statusFilter').addEventListener('change', filterUsers);
+        }
+
+        // 全局变量存储用户数据
+        let currentEditUserId = null;
+        let userToDelete = null;
+        const mockUsers = [
+            { id: 1, name: '张三', email: 'zhangsan@company.com', phone: '138****1234', role: 'admin', status: 'active', lastLogin: '2024-09-25 09:30', createdAt: '2024-01-15' },
+            { id: 2, name: '李四', email: 'lisi@company.com', phone: '139****5678', role: 'user', status: 'active', lastLogin: '2024-09-25 08:45', createdAt: '2024-02-20' },
+            { id: 3, name: '王五', email: 'wangwu@company.com', phone: '136****9012', role: 'user', status: 'active', lastLogin: '2024-09-24 16:20', createdAt: '2024-03-10' },
+            { id: 4, name: '赵六', email: 'zhaoliu@company.com', phone: '135****3456', role: 'user', status: 'disabled', lastLogin: '2024-09-20 14:30', createdAt: '2024-01-25' },
+            { id: 5, name: '钱七', email: 'qianqi@company.com', phone: '137****7890', role: 'admin', status: 'active', lastLogin: '2024-09-25 07:15', createdAt: '2024-04-05' }
+        ];
+
+        // 渲染用户表格
+        function renderUserTable(users = mockUsers) {
+            const tbody = document.getElementById('userTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <input type="checkbox" class="rounded border-gray-300">
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-white text-sm font-medium">${user.name.charAt(0)}</span>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">${user.name}</div>
+                                <div class="text-sm text-gray-500">${user.email}</div>
+                                <div class="text-sm text-gray-500">${user.phone}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}">
+                            <i class="fas ${user.role === 'admin' ? 'fa-user-shield' : 'fa-user'} mr-1"></i>
+                            ${user.role === 'admin' ? '管理员' : '普通用户'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            <i class="fas ${user.status === 'active' ? 'fa-circle' : 'fa-times-circle'} mr-1"></i>
+                            ${user.status === 'active' ? '活跃' : '禁用'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.lastLogin}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.createdAt}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="editUser(${user.id})" class="text-blue-600 hover:text-blue-900">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="toggleUserStatus(${user.id})" class="text-${user.status === 'active' ? 'yellow' : 'green'}-600 hover:text-${user.status === 'active' ? 'yellow' : 'green'}-900">
+                                <i class="fas fa-${user.status === 'active' ? 'pause' : 'play'}"></i>
+                            </button>
+                            <button onclick="resetPassword(${user.id})" class="text-purple-600 hover:text-purple-900">
+                                <i class="fas fa-key"></i>
+                            </button>
+                            <button onclick="deleteUser(${user.id}, '${user.name}')" class="text-red-600 hover:text-red-900">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 用户管理相关函数
+        function openAddUserModal() {
+            currentEditUserId = null;
+            document.getElementById('modalTitle').textContent = '添加用户';
+            document.getElementById('saveButtonText').textContent = '保存';
+            document.getElementById('passwordSection').classList.remove('hidden');
+            document.getElementById('userForm').reset();
+            document.getElementById('userActive').checked = true;
+            document.getElementById('userModal').classList.remove('hidden');
+        }
+
+        function editUser(userId) {
+            currentEditUserId = userId;
+            const user = mockUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            document.getElementById('modalTitle').textContent = '编辑用户';
+            document.getElementById('saveButtonText').textContent = '更新';
+            document.getElementById('passwordSection').classList.add('hidden');
+            
+            document.getElementById('userName').value = user.name;
+            document.getElementById('userEmail').value = user.email;
+            document.getElementById('userPhone').value = user.phone;
+            document.getElementById('userRole').value = user.role;
+            document.getElementById('userActive').checked = user.status === 'active';
+            
+            document.getElementById('userModal').classList.remove('hidden');
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').classList.add('hidden');
+            currentEditUserId = null;
+        }
+
+        function saveUser() {
+            const formData = new FormData(document.getElementById('userForm'));
+            const userData = Object.fromEntries(formData.entries());
+            
+            if (currentEditUserId) {
+                const userIndex = mockUsers.findIndex(u => u.id === currentEditUserId);
+                if (userIndex !== -1) {
+                    mockUsers[userIndex] = {
+                        ...mockUsers[userIndex],
+                        ...userData,
+                        status: userData.active ? 'active' : 'disabled'
+                    };
+                }
+            } else {
+                const newUser = {
+                    id: Math.max(...mockUsers.map(u => u.id)) + 1,
+                    ...userData,
+                    status: userData.active ? 'active' : 'disabled',
+                    lastLogin: '-',
+                    createdAt: new Date().toISOString().split('T')[0]
+                };
+                mockUsers.unshift(newUser);
+            }
+            
+            renderUserTable();
+            closeUserModal();
+            alert(currentEditUserId ? '用户更新成功' : '用户创建成功');
+        }
+
+        function toggleUserStatus(userId) {
+            const user = mockUsers.find(u => u.id === userId);
+            if (user) {
+                user.status = user.status === 'active' ? 'disabled' : 'active';
+                renderUserTable();
+                alert(`用户已${user.status === 'active' ? '启用' : '禁用'}`);
+            }
+        }
+
+        function resetPassword(userId) {
+            const user = mockUsers.find(u => u.id === userId);
+            if (user && confirm(`确定要重置用户 ${user.name} 的密码吗？`)) {
+                alert('密码重置成功，新密码已发送至用户邮箱');
+            }
+        }
+
+        function deleteUser(userId, userName) {
+            userToDelete = userId;
+            document.getElementById('deleteUserName').textContent = userName;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            userToDelete = null;
+        }
+
+        function confirmDelete() {
+            if (userToDelete) {
+                const userIndex = mockUsers.findIndex(u => u.id === userToDelete);
+                if (userIndex !== -1) {
+                    mockUsers.splice(userIndex, 1);
+                    renderUserTable();
+                    alert('用户删除成功');
+                }
+            }
+            closeDeleteModal();
+        }
+
+        function exportUsers() {
+            alert('用户数据导出成功');
+        }
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            const filteredUsers = mockUsers.filter(user => {
+                const matchSearch = !searchTerm || 
+                    user.name.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm) ||
+                    user.phone.includes(searchTerm);
+                
+                const matchRole = !roleFilter || user.role === roleFilter;
+                const matchStatus = !statusFilter || user.status === statusFilter;
+
+                return matchSearch && matchRole && matchStatus;
+            });
+
+            renderUserTable(filteredUsers);
+        }
+
+        // 知识库管理页面功能
+        function initializeKnowledgeManagement() {
+            renderKnowledgeBaseGrid();
+        }
+
+        const mockKnowledgeBases = [
+            {
+                id: 1,
+                name: '技术规范库',
+                slug: 'tech-standards',
+                description: '包含编程规范、API设计、架构指南等技术文档',
+                docCount: 156,
+                size: '2.3 GB',
+                lastUpdated: '2小时前',
+                progress: 98,
+                status: 'active',
+                users: 25,
+                views: 1200,
+                icon: 'fa-code',
+                color: 'blue'
+            },
+            {
+                id: 2,
+                name: '产品手册',
+                slug: 'product-manual',
+                description: '产品功能介绍、使用指南、常见问题等',
+                docCount: 89,
+                size: '1.5 GB',
+                lastUpdated: '1天前',
+                progress: 100,
+                status: 'active',
+                users: 42,
+                views: 892,
+                icon: 'fa-book',
+                color: 'green'
+            },
+            {
+                id: 3,
+                name: '运维文档',
+                slug: 'ops-docs',
+                description: '系统部署、监控、故障处理等运维相关文档',
+                docCount: 67,
+                size: '890 MB',
+                lastUpdated: '3天前',
+                progress: 85,
+                status: 'processing',
+                users: 18,
+                views: 456,
+                icon: 'fa-cogs',
+                color: 'yellow'
+            }
+        ];
+
+        function renderKnowledgeBaseGrid() {
+            const grid = document.getElementById('knowledgeBaseGrid');
+            if (!grid) return;
+
+            const kbCards = mockKnowledgeBases.map(kb => `
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-${kb.color}-100 rounded-lg mr-3">
+                                    <i class="fas ${kb.icon} text-${kb.color}-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">${kb.name}</h3>
+                                    <p class="text-sm text-gray-500">${kb.slug}</p>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <button onclick="toggleKBMenu(${kb.id})" class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div id="kbMenu${kb.id}" class="hidden absolute right-0 top-8 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-edit mr-2"></i>编辑设置
+                                    </a>
+                                    <a href="#" onclick="switchPage('upload')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-upload mr-2"></i>上传文档
+                                    </a>
+                                    <hr class="my-1">
+                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                        <i class="fas fa-trash mr-2"></i>删除知识库
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-gray-600 text-sm mb-4">${kb.description}</p>
+
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">文档数量</span>
+                                <span class="font-medium">${kb.docCount} 个</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">存储大小</span>
+                                <span class="font-medium">${kb.size}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-600">最后更新</span>
+                                <span class="font-medium">${kb.lastUpdated}</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between text-sm mb-2">
+                                <span class="text-gray-600">处理进度</span>
+                                <span class="font-medium">${kb.progress}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-${kb.color === 'yellow' ? 'yellow-500' : kb.color}-600 h-2 rounded-full" style="width: ${kb.progress}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${kb.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                                    <i class="fas fa-circle text-${kb.status === 'active' ? 'green' : 'yellow'}-400 mr-1 text-xs"></i>
+                                    ${kb.status === 'active' ? '活跃' : '处理中'}
+                                </span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <i class="fas fa-users mr-1"></i>${kb.users} 用户
+                                </span>
+                            </div>
+                            <div class="text-sm text-gray-500">
+                                <i class="fas fa-eye mr-1"></i>${kb.views} 查看
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            const createCard = `
+                <div class="bg-gray-100 rounded-xl border-2 border-dashed border-gray-300 hover:bg-gray-50 cursor-pointer overflow-hidden" onclick="openCreateKBModal()">
+                    <div class="p-6 text-center">
+                        <div class="p-4 bg-gray-200 rounded-full inline-flex items-center justify-center mb-4">
+                            <i class="fas fa-plus text-gray-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">创建新知识库</h3>
+                        <p class="text-gray-500 text-sm">点击创建新的知识库</p>
+                    </div>
+                </div>
+            `;
+
+            grid.innerHTML = kbCards + createCard;
+        }
+
+        function toggleKBMenu(id) {
+            document.querySelectorAll('[id^="kbMenu"]').forEach(menu => {
+                if (menu.id !== `kbMenu${id}`) {
+                    menu.classList.add('hidden');
+                }
+            });
+            
+            const menu = document.getElementById(`kbMenu${id}`);
+            menu.classList.toggle('hidden');
+        }
+
+        function openCreateKBModal() {
+            document.getElementById('createKBModal').classList.remove('hidden');
+        }
+
+        function closeCreateKBModal() {
+            document.getElementById('createKBModal').classList.add('hidden');
+            document.getElementById('kbForm').reset();
+        }
+
+        function createKnowledgeBase() {
+            const formData = new FormData(document.getElementById('kbForm'));
+            const kbData = Object.fromEntries(formData.entries());
+            
+            if (!kbData.name || !kbData.slug) {
+                alert('请填写必填字段');
+                return;
+            }
+            
+            closeCreateKBModal();
+            alert('知识库创建成功！');
+        }
+
+        // 模型管理页面功能
+        function initializeModelManagement() {
+            renderModelsList();
+        }
+
+        const mockModels = {
+            llm: [
+                {
+                    id: 'qwen2',
+                    name: 'Qwen2-7B-Instruct',
+                    description: '阿里云通义千问 7B 指令微调版',
+                    type: 'llm',
+                    size: '7B 参数',
+                    contextLength: '32K tokens',
+                    latency: '1.2s',
+                    memory: '14GB',
+                    endpoint: 'http://localhost:8000/v1',
+                    status: 'online',
+                    isDefault: true,
+                    color: 'blue'
+                },
+                {
+                    id: 'llama3',
+                    name: 'Llama3-8B-Instruct',
+                    description: 'Meta开源Llama 8B 指令版',
+                    type: 'llm',
+                    size: '8B 参数',
+                    contextLength: '8K tokens',
+                    latency: '1.5s',
+                    memory: '16GB',
+                    endpoint: 'http://localhost:8001/v1',
+                    status: 'online',
+                    isDefault: false,
+                    color: 'green'
+                },
+                {
+                    id: 'chatglm3',
+                    name: 'ChatGLM3-6B',
+                    description: '智谱AI ChatGLM3 6B版本',
+                    type: 'llm',
+                    size: '6B 参数',
+                    contextLength: '8K tokens',
+                    latency: '-',
+                    memory: '12GB',
+                    endpoint: 'http://localhost:8002/v1',
+                    status: 'offline',
+                    isDefault: false,
+                    color: 'red'
+                }
+            ],
+            embedding: [
+                {
+                    id: 'bge',
+                    name: 'BGE-Large-zh',
+                    description: '智源BGE中文向量模型',
+                    type: 'embedding',
+                    dimensions: '1024',
+                    maxLength: '512 tokens',
+                    speed: '200ms',
+                    memory: '2GB',
+                    endpoint: 'http://localhost:8010/embed',
+                    status: 'online',
+                    isDefault: true,
+                    color: 'purple'
+                },
+                {
+                    id: 'm3e',
+                    name: 'M3E-Base',
+                    description: 'Moka M3E中文向量模型',
+                    type: 'embedding',
+                    dimensions: '768',
+                    maxLength: '512 tokens',
+                    speed: '150ms',
+                    memory: '1.5GB',
+                    endpoint: 'http://localhost:8011/embed',
+                    status: 'online',
+                    isDefault: false,
+                    color: 'orange'
+                }
+            ]
+        };
+
+        function renderModelsList() {
+            const container = document.getElementById('modelsList');
+            if (!container) return;
+
+            let html = '';
+
+            // LLM模型
+            html += `
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">大语言模型 (LLM)</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            `;
+
+            mockModels.llm.forEach(model => {
+                html += renderModelCard(model);
+            });
+
+            html += `
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">向量模型 (Embedding)</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            `;
+
+            mockModels.embedding.forEach(model => {
+                html += renderModelCard(model);
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function renderModelCard(model) {
+            const isOnline = model.status === 'online';
+            const cardClass = isOnline ? '' : 'opacity-75';
+            
+            return `
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden ${cardClass}">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-${model.color}-100 rounded-lg mr-4">
+                                    <i class="fas ${model.type === 'llm' ? 'fa-brain' : 'fa-vector-square'} text-${model.color}-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-900">${model.name}</h4>
+                                    <p class="text-sm text-gray-500">${model.description}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${isOnline ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                    <i class="fas fa-circle text-${isOnline ? 'green' : 'red'}-400 mr-1 ${isOnline ? 'animate-pulse' : ''}"></i>
+                                    ${isOnline ? '在线' : '离线'}
+                                </span>
+                                ${model.isDefault ? '<span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"><i class="fas fa-star mr-1"></i>默认</span>' : ''}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <p class="text-xs text-gray-500">${model.type === 'llm' ? '模型大小' : '向量维度'}</p>
+                                <p class="text-sm font-medium">${model.type === 'llm' ? model.size : model.dimensions}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">${model.type === 'llm' ? '上下文长度' : '最大长度'}</p>
+                                <p class="text-sm font-medium">${model.type === 'llm' ? model.contextLength : model.maxLength}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">${model.type === 'llm' ? '推理延迟' : '处理速度'}</p>
+                                <p class="text-sm font-medium ${model.status === 'offline' ? 'text-gray-400' : ''}">${model.type === 'llm' ? model.latency : model.speed}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">${model.type === 'llm' ? 'GPU' : ''}内存</p>
+                                <p class="text-sm font-medium">${model.memory}</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <p class="text-xs text-gray-500 mb-1">服务地址</p>
+                            <p class="text-sm font-mono bg-gray-100 px-2 py-1 rounded ${model.status === 'offline' ? 'text-gray-400' : 'text-gray-800'}">${model.endpoint}</p>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                ${isOnline ? `
+                                    <button onclick="testModel('${model.id}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        <i class="fas fa-flask mr-1"></i>测试
+                                    </button>
+                                    <button onclick="editModel('${model.id}')" class="text-gray-600 hover:text-gray-800 text-sm font-medium">
+                                        <i class="fas fa-cog mr-1"></i>配置
+                                    </button>
+                                    ${!model.isDefault ? `<button onclick="setDefault('${model.id}')" class="text-purple-600 hover:text-purple-800 text-sm font-medium">
+                                        <i class="fas fa-star mr-1"></i>设为默认
+                                    </button>` : ''}
+                                ` : `
+                                    <button onclick="startModel('${model.id}')" class="text-green-600 hover:text-green-800 text-sm font-medium">
+                                        <i class="fas fa-play mr-1"></i>启动
+                                    </button>
+                                    <button onclick="editModel('${model.id}')" class="text-gray-600 hover:text-gray-800 text-sm font-medium">
+                                        <i class="fas fa-cog mr-1"></i>配置
+                                    </button>
+                                `}
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                ${isOnline ? `
+                                    <button onclick="restartModel('${model.id}')" class="text-yellow-600 hover:text-yellow-800 text-sm">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                    <button onclick="stopModel('${model.id}')" class="text-red-600 hover:text-red-800 text-sm">
+                                        <i class="fas fa-stop"></i>
+                                    </button>
+                                ` : `
+                                    <button onclick="removeModel('${model.id}')" class="text-red-600 hover:text-red-800 text-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 模型管理相关函数
+        function openAddModelModal() {
+            document.getElementById('addModelModal').classList.remove('hidden');
+        }
+
+        function closeAddModelModal() {
+            document.getElementById('addModelModal').classList.add('hidden');
+            document.getElementById('modelForm').reset();
+        }
+
+        function addModel() {
+            const formData = new FormData(document.getElementById('modelForm'));
+            const modelData = Object.fromEntries(formData.entries());
+            
+            closeAddModelModal();
+            alert('模型添加成功！');
+        }
+
+        function testModel(modelId) {
+            alert(`正在测试模型 ${modelId}...`);
+            setTimeout(() => {
+                alert(`模型 ${modelId} 测试成功！`);
+            }, 1000);
+        }
+
+        function editModel(modelId) {
+            alert(`编辑模型 ${modelId} 配置`);
+        }
+
+        function setDefault(modelId) {
+            if (confirm(`确定将 ${modelId} 设为默认模型吗？`)) {
+                alert(`${modelId} 已设为默认模型`);
+                renderModelsList();
+            }
+        }
+
+        function restartModel(modelId) {
+            if (confirm(`确定要重启模型 ${modelId} 吗？`)) {
+                alert(`正在重启模型 ${modelId}...`);
+            }
+        }
+
+        function stopModel(modelId) {
+            if (confirm(`确定要停止模型 ${modelId} 吗？`)) {
+                alert(`模型 ${modelId} 已停止`);
+            }
+        }
+
+        function startModel(modelId) {
+            alert(`正在启动模型 ${modelId}...`);
+        }
+
+        function removeModel(modelId) {
+            if (confirm(`确定要删除模型 ${modelId} 吗？此操作不可撤销。`)) {
+                alert(`模型 ${modelId} 已删除`);
+            }
+        }
+
+        function checkAllModels() {
+            alert('正在检查所有模型健康状态...');
+            setTimeout(() => {
+                alert('健康检查完成！\n\n在线模型: 4/5\n离线模型: 1/5');
+            }, 2000);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            checkUserRole();
+            
+            // 点击外部关闭模态框
+            document.getElementById('userModal').addEventListener('click', function(e) {
+                if (e.target === this) closeUserModal();
+            });
+            
+            document.getElementById('deleteModal').addEventListener('click', function(e) {
+                if (e.target === this) closeDeleteModal();
+            });
+            
+            document.getElementById('createKBModal').addEventListener('click', function(e) {
+                if (e.target === this) closeCreateKBModal();
+            });
+            
+            document.getElementById('addModelModal').addEventListener('click', function(e) {
+                if (e.target === this) closeAddModelModal();
+            });
+
+            // 点击外部关闭知识库菜单
+            document.addEventListener('click', function(event) {
+                const isMenuButton = event.target.closest('button[onclick^="toggleKBMenu"]');
+                const isMenu = event.target.closest('[id^="kbMenu"]');
+                
+                if (!isMenuButton && !isMenu) {
+                    document.querySelectorAll('[id^="kbMenu"]').forEach(menu => {
+                        menu.classList.add('hidden');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件上传 - RAG知识问答系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .upload-area {
+            border: 2px dashed #D1D5DB;
+            transition: all 0.3s ease;
+        }
+        .upload-area.dragover {
+            border-color: #3B82F6;
+            background-color: #EBF8FF;
+        }
+        .file-item {
+            transition: all 0.2s ease;
+        }
+        .file-item:hover {
+            background-color: #F9FAFB;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
+        .processing {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" onclick="goBack()" class="text-gray-600 hover:text-gray-900 mr-4">
+                        <i class="fas fa-arrow-left text-lg"></i>
+                    </a>
+                    <div class="flex items-center">
+                        <div class="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-upload text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-bold text-gray-900">文件上传</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-500" id="uploadTime"></div>
+                    <div class="relative">
+                        <button class="flex items-center text-gray-700 hover:text-gray-900">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-2">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <span class="text-sm" id="userDisplayName">用户</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 上传配置 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">上传设置</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">选择知识库 *</label>
+                    <select id="targetKnowledgeBase" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">请选择知识库</option>
+                        <option value="tech">技术规范库</option>
+                        <option value="product">产品手册</option>
+                        <option value="ops">运维文档</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">文档分类</label>
+                    <select id="documentCategory" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="general">通用文档</option>
+                        <option value="tutorial">教程指南</option>
+                        <option value="reference">参考手册</option>
+                        <option value="faq">常见问题</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">优先级</label>
+                    <select id="processingPriority" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="normal">普通</option>
+                        <option value="high">高优先级</option>
+                        <option value="low">低优先级</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-4">
+                <label class="flex items-center">
+                    <input type="checkbox" id="enableOCR" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <span class="ml-2 text-sm text-gray-700">启用OCR文字识别（适用于扫描版PDF）</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 文件上传区域 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">上传文件</h2>
+                <div class="text-sm text-gray-500">
+                    支持格式：PDF, DOC, DOCX, TXT, MD | 单文件最大200MB | 批量最多20个文件
+                </div>
+            </div>
+
+            <!-- 上传区域 -->
+            <div id="uploadArea" class="upload-area rounded-lg p-8 text-center cursor-pointer">
+                <div class="max-w-md mx-auto">
+                    <div class="mb-6">
+                        <i class="fas fa-cloud-upload-alt text-6xl text-gray-400"></i>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-lg font-medium text-gray-900 mb-2">拖拽文件到此处上传</p>
+                        <p class="text-gray-500">或者 <span class="text-blue-600 hover:text-blue-800 font-medium">点击选择文件</span></p>
+                    </div>
+                    <div class="text-sm text-gray-400 space-y-1">
+                        <p>• 支持PDF、Word、Markdown、文本文档</p>
+                        <p>• 单个文件不超过200MB</p>
+                        <p>• 可同时上传多个文件</p>
+                    </div>
+                </div>
+                <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.txt,.md" class="hidden">
+            </div>
+        </div>
+
+        <!-- 上传队列 -->
+        <div id="uploadQueue" class="bg-white rounded-xl shadow-sm p-6 hidden">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">上传队列</h2>
+                <div class="flex items-center space-x-3">
+                    <button onclick="pauseAll()" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium">
+                        <i class="fas fa-pause mr-1"></i>暂停全部
+                    </button>
+                    <button onclick="cancelAll()" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                        <i class="fas fa-times mr-1"></i>取消全部
+                    </button>
+                    <button onclick="startProcessing()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        <i class="fas fa-play mr-1"></i>开始处理
+                    </button>
+                </div>
+            </div>
+
+            <div id="fileList" class="space-y-3">
+                <!-- 文件项将通过JavaScript动态生成 -->
+            </div>
+
+            <!-- 批量操作 -->
+            <div class="mt-6 pt-4 border-t border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600">总计: <span id="totalFiles">0</span> 个文件</span>
+                        <span class="text-sm text-gray-600">大小: <span id="totalSize">0 MB</span></span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="text-sm text-gray-500">
+                            总进度: <span id="overallProgress">0%</span>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="overallProgressBar" class="bg-blue-600 h-2 rounded-full progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 处理历史 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mt-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">处理历史</h2>
+                <div class="flex items-center space-x-2">
+                    <select id="historyFilter" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
+                        <option value="all">全部状态</option>
+                        <option value="completed">已完成</option>
+                        <option value="failed">处理失败</option>
+                        <option value="processing">处理中</option>
+                    </select>
+                    <button onclick="refreshHistory()" class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i class="fas fa-refresh mr-1"></i>刷新
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">文件名</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">知识库</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">处理时间</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">文档数</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- 历史记录将通过JavaScript动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let uploadedFiles = [];
+        let processingFiles = [];
+
+        // 更新时间显示
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('uploadTime').textContent = now.toLocaleString('zh-CN');
+        }
+        
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // 文件上传相关事件
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        // 点击上传区域选择文件
+        uploadArea.addEventListener('click', () => {
+            if (!validateSettings()) return;
+            fileInput.click();
+        });
+
+        // 文件选择事件
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // 拖拽事件
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            if (!validateSettings()) return;
+            
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles(files);
+        });
+
+        // 验证设置
+        function validateSettings() {
+            const knowledgeBase = document.getElementById('targetKnowledgeBase').value;
+            if (!knowledgeBase) {
+                alert('请先选择知识库');
+                return false;
+            }
+            return true;
+        }
+
+        // 处理文件选择
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            handleFiles(files);
+        }
+
+        // 处理文件
+        function handleFiles(files) {
+            const validFiles = files.filter(file => {
+                // 验证文件类型
+                const validTypes = ['.pdf', '.doc', '.docx', '.txt', '.md'];
+                const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+                if (!validTypes.includes(fileExt)) {
+                    alert(`文件 ${file.name} 格式不支持`);
+                    return false;
+                }
+                
+                // 验证文件大小 (200MB)
+                if (file.size > 200 * 1024 * 1024) {
+                    alert(`文件 ${file.name} 超过200MB限制`);
+                    return false;
+                }
+                
+                return true;
+            });
+
+            if (validFiles.length === 0) return;
+
+            // 检查总文件数量
+            if (uploadedFiles.length + validFiles.length > 20) {
+                alert('批量上传最多支持20个文件');
+                return;
+            }
+
+            // 添加到上传列表
+            validFiles.forEach(file => {
+                const fileItem = {
+                    id: Date.now() + Math.random(),
+                    file: file,
+                    name: file.name,
+                    size: file.size,
+                    status: 'pending',
+                    progress: 0,
+                    knowledgeBase: document.getElementById('targetKnowledgeBase').value,
+                    category: document.getElementById('documentCategory').value,
+                    priority: document.getElementById('processingPriority').value,
+                    enableOCR: document.getElementById('enableOCR').checked
+                };
+                uploadedFiles.push(fileItem);
+            });
+
+            updateFileList();
+            showUploadQueue();
+        }
+
+        // 显示上传队列
+        function showUploadQueue() {
+            document.getElementById('uploadQueue').classList.remove('hidden');
+        }
+
+        // 更新文件列表
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            
+            fileList.innerHTML = uploadedFiles.map(file => `
+                <div class="file-item border border-gray-200 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center flex-1 min-w-0">
+                            <div class="p-2 bg-gray-100 rounded mr-3">
+                                <i class="fas ${getFileIcon(file.name)} text-gray-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">${file.name}</p>
+                                <p class="text-xs text-gray-500">${formatFileSize(file.size)} • ${getKnowledgeBaseName(file.knowledgeBase)}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(file.status)}">
+                                <i class="fas ${getStatusIcon(file.status)} mr-1"></i>
+                                ${getStatusText(file.status)}
+                            </span>
+                            
+                            ${file.status === 'pending' || file.status === 'paused' ? `
+                                <button onclick="removeFile('${file.id}')" class="text-red-600 hover:text-red-800 text-sm">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            ` : ''}
+                            
+                            ${file.status === 'failed' ? `
+                                <button onclick="retryFile('${file.id}')" class="text-blue-600 hover:text-blue-800 text-sm">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    ${file.status !== 'pending' ? `
+                        <div class="mb-2">
+                            <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
+                                <span>${file.status === 'processing' ? '处理中' : file.status === 'completed' ? '已完成' : '进度'}</span>
+                                <span>${file.progress}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-${file.status === 'completed' ? 'green' : file.status === 'failed' ? 'red' : 'blue'}-600 h-2 rounded-full progress-bar ${file.status === 'processing' ? 'processing' : ''}" style="width: ${file.progress}%"></div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${file.status === 'completed' ? `
+                        <div class="text-xs text-gray-500 mt-2">
+                            <i class="fas fa-check-circle text-green-600 mr-1"></i>
+                            已生成 ${Math.floor(Math.random() * 50) + 10} 个文档片段
+                        </div>
+                    ` : ''}
+                    
+                    ${file.status === 'failed' ? `
+                        <div class="text-xs text-red-600 mt-2">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            处理失败：文档格式解析错误，请检查文件格式
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            updateSummary();
+        }
+
+        // 更新汇总信息
+        function updateSummary() {
+            const totalFiles = uploadedFiles.length;
+            const totalSize = uploadedFiles.reduce((sum, file) => sum + file.size, 0);
+            const completedFiles = uploadedFiles.filter(f => f.status === 'completed').length;
+            const overallProgress = totalFiles > 0 ? Math.round((completedFiles / totalFiles) * 100) : 0;
+
+            document.getElementById('totalFiles').textContent = totalFiles;
+            document.getElementById('totalSize').textContent = (totalSize / (1024 * 1024)).toFixed(1);
+            document.getElementById('overallProgress').textContent = overallProgress + '%';
+            document.getElementById('overallProgressBar').style.width = overallProgress + '%';
+        }
+
+        // 获取文件图标
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            switch (ext) {
+                case 'pdf': return 'fa-file-pdf';
+                case 'doc':
+                case 'docx': return 'fa-file-word';
+                case 'txt': return 'fa-file-alt';
+                case 'md': return 'fa-file-code';
+                default: return 'fa-file';
+            }
+        }
+
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        // 获取知识库名称
+        function getKnowledgeBaseName(value) {
+            const names = {
+                'tech': '技术规范库',
+                'product': '产品手册',
+                'ops': '运维文档'
+            };
+            return names[value] || value;
+        }
+
+        // 获取状态样式
+        function getStatusBadge(status) {
+            switch (status) {
+                case 'pending': return 'bg-gray-100 text-gray-800';
+                case 'processing': return 'bg-blue-100 text-blue-800';
+                case 'completed': return 'bg-green-100 text-green-800';
+                case 'failed': return 'bg-red-100 text-red-800';
+                case 'paused': return 'bg-yellow-100 text-yellow-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // 获取状态图标
+        function getStatusIcon(status) {
+            switch (status) {
+                case 'pending': return 'fa-clock';
+                case 'processing': return 'fa-spinner fa-spin';
+                case 'completed': return 'fa-check';
+                case 'failed': return 'fa-times';
+                case 'paused': return 'fa-pause';
+                default: return 'fa-clock';
+            }
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending': return '等待中';
+                case 'processing': return '处理中';
+                case 'completed': return '已完成';
+                case 'failed': return '失败';
+                case 'paused': return '已暂停';
+                default: return '未知';
+            }
+        }
+
+        // 移除文件
+        function removeFile(fileId) {
+            uploadedFiles = uploadedFiles.filter(f => f.id !== fileId);
+            updateFileList();
+        }
+
+        // 重试文件
+        function retryFile(fileId) {
+            const file = uploadedFiles.find(f => f.id === fileId);
+            if (file) {
+                file.status = 'pending';
+                file.progress = 0;
+                updateFileList();
+            }
+        }
+
+        // 开始处理
+        function startProcessing() {
+            const pendingFiles = uploadedFiles.filter(f => f.status === 'pending');
+            
+            if (pendingFiles.length === 0) {
+                alert('没有待处理的文件');
+                return;
+            }
+
+            // 模拟文件处理
+            pendingFiles.forEach((file, index) => {
+                setTimeout(() => {
+                    processFile(file);
+                }, index * 1000);
+            });
+        }
+
+        // 处理单个文件
+        function processFile(file) {
+            file.status = 'processing';
+            updateFileList();
+
+            // 模拟处理进度
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15 + 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    file.progress = progress;
+                    file.status = Math.random() > 0.1 ? 'completed' : 'failed'; // 90%成功率
+                    updateFileList();
+                    clearInterval(interval);
+                } else {
+                    file.progress = Math.floor(progress);
+                    updateFileList();
+                }
+            }, 500);
+        }
+
+        // 暂停全部
+        function pauseAll() {
+            uploadedFiles.forEach(file => {
+                if (file.status === 'processing') {
+                    file.status = 'paused';
+                }
+            });
+            updateFileList();
+        }
+
+        // 取消全部
+        function cancelAll() {
+            if (confirm('确定要取消所有上传任务吗？')) {
+                uploadedFiles = uploadedFiles.filter(f => f.status === 'completed');
+                updateFileList();
+            }
+        }
+
+        // 初始化处理历史
+        function initHistory() {
+            const mockHistory = [
+                { name: 'API设计规范.pdf', kb: 'tech', status: 'completed', time: '2024-09-25 10:30', docs: 25 },
+                { name: '数据库优化指南.docx', kb: 'tech', status: 'completed', time: '2024-09-25 09:15', docs: 18 },
+                { name: '产品需求文档.pdf', kb: 'product', status: 'processing', time: '2024-09-25 11:00', docs: '-' },
+                { name: '系统架构图.pdf', kb: 'ops', status: 'failed', time: '2024-09-25 08:45', docs: '-' }
+            ];
+
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = mockHistory.map(item => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <i class="fas ${getFileIcon(item.name)} text-gray-400 mr-3"></i>
+                            <span class="text-sm font-medium text-gray-900">${item.name}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${getKnowledgeBaseName(item.kb)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadge(item.status)}">
+                            <i class="fas ${getStatusIcon(item.status)} mr-1"></i>
+                            ${getStatusText(item.status)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${item.time}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${item.docs}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex items-center space-x-2">
+                            ${item.status === 'failed' ? `
+                                <button class="text-blue-600 hover:text-blue-900">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            ` : ''}
+                            <button class="text-gray-600 hover:text-gray-900">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 刷新历史
+        function refreshHistory() {
+            initHistory();
+        }
+
+        // 返回上一页
+        function goBack() {
+            const userRole = localStorage.getItem('userRole') || 'user';
+            if (userRole === 'admin') {
+                window.location.href = 'dashboard.html?role=admin';
+            } else {
+                window.location.href = 'knowledge.html';
+            }
+        }
+
+        // 初始化用户信息
+        function initializeUser() {
+            const userName = localStorage.getItem('userName') || '用户';
+            const userRole = localStorage.getItem('userRole') || 'user';
+            
+            document.getElementById('userDisplayName').textContent = userName;
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeUser();
+            initHistory();
+        });
+</body>
+</html>
