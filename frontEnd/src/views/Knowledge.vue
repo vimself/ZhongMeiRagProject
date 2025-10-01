@@ -252,8 +252,10 @@ function goToKnowledgeDetail(id) {
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  height: 88px;
   margin-bottom: 32px;
+  flex-shrink: 0;
 }
 
 .page-title {

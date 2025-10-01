@@ -785,7 +785,542 @@ export async function getKnowledgeBaseDetail(params) {
 
 ## 4. RAG 智能问答模块
 
-*待补充:当生成智能问答相关前端界面时,此部分将被填充*
+### 4.1 获取知识库列表（对话页面）
+
+**功能描述**: 获取用户可访问的知识库简化列表，用于智能问答页面的知识库选择下拉框。
+
+**业务背景**: 用户在智能问答时需要选择要查询的知识库范围，此接口提供知识库的简化列表。
+
+**接口地址**: `/api/chat/knowledge-bases`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{}
+```
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "id": "string, 知识库ID",
+      "name": "string, 知识库名称"
+    }
+  ]
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    { "id": "kb_001", "name": "技术规范库" },
+    { "id": "kb_002", "name": "产品手册" },
+    { "id": "kb_003", "name": "运维文档" }
+  ]
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 获取知识库列表（对话页面）
+ * - 接口地址: /api/chat/knowledge-bases
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: Array<{id, name}>
+ */
+export async function getKnowledgeBaseList() {
+  return await apiRequest('/api/chat/knowledge-bases', {
+    method: 'POST',
+    body: {},
+    needAuth: true
+  });
+}
+```
+
+---
+
+### 4.2 获取可用模型列表
+
+**功能描述**: 获取系统配置的可用大语言模型列表，用于智能问答页面的模型选择下拉框。
+
+**业务背景**: 不同的模型有不同的能力和性能特点，用户可根据需求选择合适的模型进行对话。
+
+**接口地址**: `/api/chat/models`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{}
+```
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "id": "string, 模型ID",
+      "name": "string, 模型名称",
+      "description": "string, 模型描述"
+    }
+  ]
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "id": "qwen2-7b",
+      "name": "Qwen2-7B",
+      "description": "通义千问2 7B版本，适合日常问答"
+    },
+    {
+      "id": "qwen2-14b",
+      "name": "Qwen2-14B",
+      "description": "通义千问2 14B版本，性能更强"
+    }
+  ]
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 获取可用模型列表
+ * - 接口地址: /api/chat/models
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: Array<{id, name, description}>
+ */
+export async function getModelList() {
+  return await apiRequest('/api/chat/models', {
+    method: 'POST',
+    body: {},
+    needAuth: true
+  });
+}
+```
+
+---
+
+### 4.3 获取会话历史列表
+
+**功能描述**: 获取当前用户的历史会话列表，按时间倒序排列，用于智能问答页面左侧的会话历史展示。
+
+**业务背景**: 用户可以查看和切换历史对话，继续之前的对话或回顾历史记录。
+
+**接口地址**: `/api/chat/sessions`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "limit": "number, 返回数量限制，默认20"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| limit | number | 否 | 返回数量限制 | 20 |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "id": "string, 会话ID",
+      "title": "string, 会话标题",
+      "time": "string, 时间显示（如'今天 14:30'）",
+      "createdAt": "string, 创建时间戳"
+    }
+  ]
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "id": "session_001",
+      "title": "API设计最佳实践",
+      "time": "今天 14:30",
+      "createdAt": "2025-10-01T14:30:00Z"
+    },
+    {
+      "id": "session_002",
+      "title": "数据库连接池配置",
+      "time": "今天 10:15",
+      "createdAt": "2025-10-01T10:15:00Z"
+    }
+  ]
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 获取会话历史列表
+ * - 接口地址: /api/chat/sessions
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: Array<Session>
+ */
+export async function getSessionHistory(params = {}) {
+  return await apiRequest('/api/chat/sessions', {
+    method: 'POST',
+    body: { limit: 20, ...params },
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 会话按创建时间倒序排列
+- time字段为前端友好的相对时间显示
+- title字段通常为会话的第一条用户消息或自动生成的摘要
+
+---
+
+### 4.4 创建新会话
+
+**功能描述**: 创建一个新的对话会话。
+
+**业务背景**: 用户点击"新建对话"按钮时调用，开启新的问答会话。
+
+**接口地址**: `/api/chat/session/create`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "knowledgeBaseId": "string, 知识库ID，'all'表示全部知识库",
+  "modelId": "string, 模型ID"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| knowledgeBaseId | string | 是 | 知识库ID，"all"表示全部知识库 | "kb_001" |
+| modelId | string | 是 | 模型ID | "qwen2-7b" |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "创建成功",
+  "body": {
+    "id": "string, 会话ID",
+    "title": "string, 会话标题",
+    "createdAt": "string, 创建时间"
+  }
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "创建成功",
+  "body": {
+    "id": "session_12345",
+    "title": "新对话",
+    "createdAt": "2025-10-01T15:20:00Z"
+  }
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 创建新会话
+ * - 接口地址: /api/chat/session/create
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: {id, title, createdAt}
+ */
+export async function createSession(params) {
+  return await apiRequest('/api/chat/session/create', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+---
+
+### 4.5 发送消息
+
+**功能描述**: 向指定会话发送用户问题，获取AI回答及引用来源。
+
+**业务背景**: 用户在对话框中输入问题并发送时调用，实现智能问答的核心功能。
+
+**接口地址**: `/api/chat/message/send`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "sessionId": "string, 会话ID",
+  "question": "string, 用户问题",
+  "knowledgeBaseId": "string, 知识库ID",
+  "modelId": "string, 模型ID"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| sessionId | string | 是 | 会话ID | "session_001" |
+| question | string | 是 | 用户问题，最大1000字符 | "如何设计RESTful API?" |
+| knowledgeBaseId | string | 是 | 知识库ID | "kb_001" |
+| modelId | string | 是 | 模型ID | "qwen2-7b" |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "answer": "string, AI生成的回答",
+    "references": [
+      {
+        "title": "string, 文档标题",
+        "page": "number, 页码",
+        "content": "string, 引用内容片段",
+        "score": "number, 相关性得分(0-1)"
+      }
+    ]
+  }
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "answer": "RESTful API 设计的最佳实践包括：\n\n1. 使用名词而非动词定义资源路径\n2. 使用HTTP方法表示操作\n3. 使用复数形式命名资源集合\n4. 提供适当的状态码\n\n详细内容请参考引用文档。",
+    "references": [
+      {
+        "title": "API设计规范.pdf",
+        "page": 12,
+        "content": "RESTful API设计原则...",
+        "score": 0.95
+      },
+      {
+        "title": "架构最佳实践.pdf",
+        "page": 34,
+        "content": "HTTP方法使用指南...",
+        "score": 0.88
+      }
+    ]
+  }
+}
+```
+
+**失败响应示例**:
+```json
+{
+  "error": 3001,
+  "message": "会话不存在",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 发送消息
+ * - 接口地址: /api/chat/message/send
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: {answer, references}
+ */
+export async function sendChatMessage(params) {
+  return await apiRequest('/api/chat/message/send', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 问题长度限制1000字符
+- 回答可能需要5-15秒，前端需显示加载状态
+- references数组可能为空，表示未找到相关引用
+- score表示引用与问题的相关性得分，越接近1越相关
+- 建议前端实现流式显示（Server-Sent Events），MVP阶段可以一次性返回
+
+---
+
+### 4.6 获取会话消息列表
+
+**功能描述**: 获取指定会话的所有历史消息，用于加载历史对话。
+
+**业务背景**: 用户点击会话历史记录时，需要加载该会话的完整对话内容。
+
+**接口地址**: `/api/chat/session/messages`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 无
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "sessionId": "string, 会话ID"
+}
+```
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "id": "string, 消息ID",
+      "role": "string, 角色: user-用户, assistant-助手",
+      "content": "string, 消息内容",
+      "references": "Array, 引用来源（仅assistant消息有）",
+      "createdAt": "string, 创建时间"
+    }
+  ]
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "id": "msg_001",
+      "role": "user",
+      "content": "如何设计RESTful API?",
+      "createdAt": "2025-10-01T14:30:00Z"
+    },
+    {
+      "id": "msg_002",
+      "role": "assistant",
+      "content": "RESTful API 设计的最佳实践...",
+      "references": [
+        {
+          "title": "API设计规范.pdf",
+          "page": 12,
+          "content": "...",
+          "score": 0.95
+        }
+      ],
+      "createdAt": "2025-10-01T14:30:05Z"
+    }
+  ]
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 获取会话消息列表
+ * - 接口地址: /api/chat/session/messages
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 返回值: Array<Message>
+ */
+export async function getSessionMessages(params) {
+  return await apiRequest('/api/chat/session/messages', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
 
 ---
 
@@ -829,6 +1364,10 @@ export async function getKnowledgeBaseDetail(params) {
 | 1004 | 密码格式不符合要求 | 提示密码规则 |
 | 2001 | 知识库不存在 | 提示知识库已删除或不存在 |
 | 2002 | 知识库名称已存在 | 提示修改知识库名称 |
+| 3001 | 会话不存在 | 提示会话已删除或不存在 |
+| 3002 | 问题内容为空 | 提示输入问题 |
+| 3003 | 问题长度超限 | 提示问题不能超过1000字符 |
+| 3004 | 模型不可用 | 提示选择其他模型 |
 
 *更多错误码将随着接口的增加而补充*
 
@@ -864,6 +1403,7 @@ export async function getKnowledgeBaseDetail(params) {
 |------|------|---------|--------|
 | 2025-10-01 | v1.0 | 初始化文档,添加用户认证模块接口 | AI Assistant |
 | 2025-10-01 | v1.1 | 添加知识库管理模块接口(统计、列表、详情) | AI Assistant |
+| 2025-10-01 | v1.2 | 添加RAG智能问答模块接口(会话、消息、模型) | AI Assistant |
 
 ---
 

@@ -5,7 +5,16 @@
 
 import { API_BASE_URL, USE_MOCK } from './env'
 import { getToken } from './storage'
-import { mockLogin, mockGetKnowledgeBaseStats, mockGetKnowledgeBaseList } from '../api/mock'
+import { 
+  mockLogin, 
+  mockGetKnowledgeBaseStats, 
+  mockGetKnowledgeBaseList,
+  mockGetChatKnowledgeBaseList,
+  mockGetModelList,
+  mockGetSessionHistory,
+  mockCreateSession,
+  mockSendChatMessage
+} from '../api/mock'
 
 /**
  * 通用API请求函数
@@ -110,6 +119,16 @@ async function getMockData(url, body) {
     return mockGetKnowledgeBaseStats()
   } else if (url.includes('/knowledge-base/list')) {
     return mockGetKnowledgeBaseList()
+  } else if (url.includes('/chat/knowledge-bases')) {
+    return mockGetChatKnowledgeBaseList()
+  } else if (url.includes('/chat/models')) {
+    return mockGetModelList()
+  } else if (url.includes('/chat/sessions')) {
+    return mockGetSessionHistory()
+  } else if (url.includes('/chat/session/create')) {
+    return mockCreateSession(body)
+  } else if (url.includes('/chat/message/send')) {
+    return mockSendChatMessage(body)
   }
 
   // 默认返回成功

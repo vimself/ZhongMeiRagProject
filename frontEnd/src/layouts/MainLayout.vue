@@ -157,8 +157,10 @@ async function handleLogout() {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 24px 20px;
+  height: 88px;
+  padding: 0 20px;
   border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
 }
 
 .logo-icon {
@@ -191,7 +193,7 @@ async function handleLogout() {
 /* 导航菜单 */
 .sidebar-nav {
   flex: 1;
-  padding: 16px 12px;
+  padding: 20px 12px;
   overflow-y: auto;
 }
 

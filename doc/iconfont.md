@@ -351,6 +351,165 @@
 
 ---
 
+## 智能问答页面 (Chat.vue)
+
+### 1. 页面功能图标
+
+#### 1.1 时间图标 (Time Icon)
+- **文件名**: `icon-time-chat.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-time-chat.svg`
+- **尺寸**: 16x16 px
+- **用途**: 页面右上角当前时间显示
+- **当前状态**: 使用Emoji占位符 "🕐" (需要替换)
+- **设计要求**: 时钟风格图标
+
+### 2. 左侧面板图标
+
+#### 2.1 加号图标 (Plus Icon)
+- **文件名**: `icon-plus.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-plus.svg`
+- **尺寸**: 18x18 px
+- **用途**: "新建对话"按钮图标
+- **当前状态**: 使用文本符号 "+" (需要替换)
+- **设计要求**: 简洁的加号图标
+- **颜色**: 白色 (#ffffff)
+
+### 3. 对话区头部图标
+
+#### 3.1 知识库图标 (KB Icon)
+- **文件名**: `icon-kb.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-kb.svg`
+- **尺寸**: 14x14 px
+- **用途**: 对话区显示当前知识库
+- **当前状态**: 使用Emoji占位符 "📚" (需要替换)
+- **设计要求**: 书本/数据库风格图标
+
+#### 3.2 模型图标 (Model Icon)
+- **文件名**: `icon-model.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-model.svg`
+- **尺寸**: 14x14 px
+- **用途**: 对话区显示当前模型
+- **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
+- **设计要求**: 机器人/AI风格图标
+
+#### 3.3 收起侧边栏图标 (Sidebar Icon)
+- **文件名**: `icon-sidebar.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-sidebar.svg`
+- **尺寸**: 16x16 px
+- **用途**: 收起/展开左侧面板按钮
+- **当前状态**: 使用Emoji占位符 "📌" (需要替换)
+- **设计要求**: 侧边栏/固定图标
+
+#### 3.4 分享图标 (Share Icon)
+- **文件名**: `icon-share.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-share.svg`
+- **尺寸**: 16x16 px
+- **用途**: 分享对话按钮
+- **当前状态**: 使用Emoji占位符 "📤" (需要替换)
+- **设计要求**: 分享/导出风格图标
+
+### 4. 空状态图标
+
+#### 4.1 机器人头像图标 (Robot Icon)
+- **文件名**: `icon-robot.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-robot.svg`
+- **尺寸**: 40x40 px
+- **用途**: 空状态中央的RAG智能助手图标
+- **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
+- **设计要求**: 友好的机器人头像
+- **颜色**: 白色 (#ffffff)，用于紫色渐变背景
+
+### 5. 推荐问题图标
+
+#### 5.1 代码建议图标 (Code Suggest Icon)
+- **文件名**: `icon-code-suggest.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-code-suggest.svg`
+- **尺寸**: 20x20 px
+- **用途**: 推荐问题"如何设计RESTful API?"
+- **当前状态**: 使用Emoji占位符 "⚡" (需要替换)
+- **设计要求**: 代码/闪电风格图标
+
+#### 5.2 数据库建议图标 (Database Suggest Icon)
+- **文件名**: `icon-database-suggest.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-database-suggest.svg`
+- **尺寸**: 20x20 px
+- **用途**: 推荐问题"数据库连接池最佳实践?"
+- **当前状态**: 使用Emoji占位符 "🗄️" (需要替换)
+- **设计要求**: 数据库/服务器风格图标
+
+#### 5.3 Redis建议图标 (Redis Suggest Icon)
+- **文件名**: `icon-redis-suggest.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-redis-suggest.svg`
+- **尺寸**: 20x20 px
+- **用途**: 推荐问题"Redis缓存如何优化?"
+- **当前状态**: 使用Emoji占位符 "🔴" (需要替换)
+- **设计要求**: Redis标志或红色圆形图标
+
+#### 5.4 微服务建议图标 (Microservice Suggest Icon)
+- **文件名**: `icon-microservice-suggest.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-microservice-suggest.svg`
+- **尺寸**: 20x20 px
+- **用途**: 推荐问题"微服务架构注意事项?"
+- **当前状态**: 使用Emoji占位符 "🎯" (需要替换)
+- **设计要求**: 目标/架构风格图标
+
+### 6. 消息头像图标
+
+#### 6.1 用户消息头像 (User Message Icon)
+- **文件名**: `icon-user-msg.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-user-msg.svg`
+- **尺寸**: 18x18 px
+- **用途**: 用户消息的头像图标
+- **当前状态**: 使用Emoji占位符 "👤" (需要替换)
+- **设计要求**: 用户轮廓图标
+- **颜色**: 深色系（用于浅蓝色背景）
+
+#### 6.2 助手消息头像 (Assistant Message Icon)
+- **文件名**: `icon-assistant-msg.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-assistant-msg.svg`
+- **尺寸**: 18x18 px
+- **用途**: AI助手消息的头像图标
+- **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
+- **设计要求**: 机器人/AI图标
+- **颜色**: 白色（用于紫色渐变背景）
+
+#### 6.3 文档引用图标 (Document Reference Icon)
+- **文件名**: `icon-document-ref.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-document-ref.svg`
+- **尺寸**: 14x14 px
+- **用途**: 引用来源列表中的文档图标
+- **当前状态**: 使用Emoji占位符 "📄" (需要替换)
+- **设计要求**: 文档/文件风格图标
+
+### 7. 输入区图标
+
+#### 7.1 发送图标 (Send Icon)
+- **文件名**: `icon-send.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-send.svg`
+- **尺寸**: 16x16 px
+- **用途**: 发送消息按钮
+- **当前状态**: 使用Emoji占位符 "✈️" (需要替换)
+- **设计要求**: 纸飞机/发送风格图标
+- **颜色**: 白色 (#ffffff)
+
+#### 7.2 键盘图标 (Keyboard Icon)
+- **文件名**: `icon-keyboard.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-keyboard.svg`
+- **尺寸**: 14x14 px
+- **用途**: 输入提示区域
+- **当前状态**: 使用Emoji占位符 "⌨️" (需要替换)
+- **设计要求**: 键盘风格图标
+
+#### 7.3 快捷键图标 (Command Icon)
+- **文件名**: `icon-command.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-command.svg`
+- **尺寸**: 14x14 px
+- **用途**: 输入提示区域快捷键标识
+- **当前状态**: 使用文本符号 "⌘" (需要替换)
+- **设计要求**: Command键符号图标
+
+---
+
 ## 待补充的图标
 
 随着项目开发进度，其他页面需要的图标将在此处补充：
@@ -359,7 +518,6 @@
 - [ ] 用户管理页面图标
 - [ ] 模型管理页面图标
 - [ ] 知识库详情页面图标
-- [ ] 智能问答对话页面图标
 - [ ] 搜索结果页面图标
 
 ---
@@ -370,6 +528,7 @@
 |------|------|---------|--------|
 | 2025-10-01 | v1.0 | 创建文档，添加登录页面所需图标 | AI Assistant |
 | 2025-10-01 | v1.1 | 添加主布局和我的知识库页面所需图标 | AI Assistant |
+| 2025-10-01 | v1.2 | 添加智能问答页面所需图标(15个) | AI Assistant |
 
 ---
 
