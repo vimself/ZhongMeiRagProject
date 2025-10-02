@@ -709,3 +709,222 @@ export function mockGetSystemStatus() {
   }
 }
 
+/**
+ * 模拟获取用户管理统计数据
+ * @returns {object} 模拟响应
+ */
+export function mockGetUserStats() {
+  return {
+    success: true,
+    data: {
+      totalUsers: 156,
+      activeUsers: 142,
+      adminUsers: 8,
+      disabledUsers: 6
+    },
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟获取用户列表
+ * @param {object} params - 查询参数
+ * @returns {object} 模拟响应
+ */
+export function mockGetUserList(params) {
+  const { keyword = '', role = '', status = '', page = 1, pageSize = 10 } = params
+
+  // 模拟用户数据
+  const allUsers = [
+    {
+      id: 'user_001',
+      name: '张三',
+      username: 'zhangsan',
+      email: 'zhangsan@company.com',
+      phone: '138****1234',
+      role: 'admin',
+      status: 'active',
+      avatarColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      lastLogin: '2024-09-25 09:30',
+      createdAt: '2024-01-15'
+    },
+    {
+      id: 'user_002',
+      name: '李四',
+      username: 'lisi',
+      email: 'lisi@company.com',
+      phone: '139****5678',
+      role: 'user',
+      status: 'active',
+      avatarColor: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+      lastLogin: '2024-09-25 08:45',
+      createdAt: '2024-02-20'
+    },
+    {
+      id: 'user_003',
+      name: '王五',
+      username: 'wangwu',
+      email: 'wangwu@company.com',
+      phone: '136****9012',
+      role: 'user',
+      status: 'active',
+      avatarColor: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      lastLogin: '2024-09-24 16:20',
+      createdAt: '2024-03-10'
+    },
+    {
+      id: 'user_004',
+      name: '赵六',
+      username: 'zhaoliu',
+      email: 'zhaoliu@company.com',
+      phone: '135****3456',
+      role: 'user',
+      status: 'disabled',
+      avatarColor: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      lastLogin: '2024-09-20 14:30',
+      createdAt: '2024-01-25'
+    },
+    {
+      id: 'user_005',
+      name: '钱七',
+      username: 'qianqi',
+      email: 'qianqi@company.com',
+      phone: '137****7890',
+      role: 'admin',
+      status: 'active',
+      avatarColor: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
+      lastLogin: '2024-09-25 07:15',
+      createdAt: '2024-04-05'
+    }
+  ]
+
+  // 筛选
+  let filteredUsers = allUsers.filter(user => {
+    const matchKeyword = !keyword || 
+      user.name.includes(keyword) || 
+      user.email.includes(keyword) || 
+      user.phone.includes(keyword)
+    const matchRole = !role || user.role === role
+    const matchStatus = !status || user.status === status
+    
+    return matchKeyword && matchRole && matchStatus
+  })
+
+  // 分页
+  const start = (page - 1) * pageSize
+  const end = start + pageSize
+  const pagedUsers = filteredUsers.slice(start, end)
+
+  return {
+    success: true,
+    data: {
+      list: pagedUsers,
+      total: filteredUsers.length,
+      page: page,
+      pageSize: pageSize
+    },
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟创建用户
+ * @param {object} params - 创建参数
+ * @returns {object} 模拟响应
+ */
+export function mockCreateUser(params) {
+  const { username } = params
+  
+  // 模拟用户名重复检查
+  if (username === 'zhangsan') {
+    throw new Error('用户名已存在')
+  }
+
+  return {
+    success: true,
+    data: {
+      id: 'user_' + Date.now(),
+      ...params,
+      createdAt: new Date().toISOString()
+    },
+    message: '创建成功'
+  }
+}
+
+/**
+ * 模拟更新用户
+ * @param {object} params - 更新参数
+ * @returns {object} 模拟响应
+ */
+export function mockUpdateUser(params) {
+  return {
+    success: true,
+    data: {
+      ...params,
+      updatedAt: new Date().toISOString()
+    },
+    message: '更新成功'
+  }
+}
+
+/**
+ * 模拟删除用户
+ * @param {object} params - 删除参数
+ * @returns {object} 模拟响应
+ */
+export function mockDeleteUser(params) {
+  return {
+    success: true,
+    data: {},
+    message: '删除成功'
+  }
+}
+
+/**
+ * 模拟切换用户状态
+ * @param {object} params - 切换参数
+ * @returns {object} 模拟响应
+ */
+export function mockToggleUserStatus(params) {
+  const { status } = params
+  return {
+    success: true,
+    data: {
+      status: status
+    },
+    message: status === 'active' ? '启用成功' : '禁用成功'
+  }
+}
+
+/**
+ * 模拟重置用户密码
+ * @param {object} params - 重置参数
+ * @returns {object} 模拟响应
+ */
+export function mockResetUserPassword(params) {
+  return {
+    success: true,
+    data: {
+      newPassword: 'Temp' + Math.random().toString(36).slice(-6)
+    },
+    message: '密码重置成功'
+  }
+}
+
+/**
+ * 模拟导出用户列表
+ * @param {object} params - 导出参数
+ * @returns {object} 模拟响应
+ */
+export function mockExportUsers(params) {
+  return {
+    success: true,
+    data: {
+      downloadUrl: '/downloads/users-' + Date.now() + '.csv',
+      fileName: 'users-' + new Date().toISOString().split('T')[0] + '.csv',
+      expiresIn: 3600
+    },
+    message: '导出成功'
+  }
+}
+

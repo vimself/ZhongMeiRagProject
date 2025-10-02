@@ -25,7 +25,15 @@ import {
   mockGetLoginRecords,
   mockChangeUserPassword,
   mockGetDashboardStats,
-  mockGetSystemStatus
+  mockGetSystemStatus,
+  mockGetUserStats,
+  mockGetUserList,
+  mockCreateUser,
+  mockUpdateUser,
+  mockDeleteUser,
+  mockToggleUserStatus,
+  mockResetUserPassword,
+  mockExportUsers
 } from '../api/mock'
 
 /**
@@ -165,6 +173,22 @@ async function getMockData(url, body) {
     return mockGetDashboardStats()
   } else if (url.includes('/dashboard/system-status') || url.includes('/dashboard/refresh-status')) {
     return mockGetSystemStatus()
+  } else if (url.includes('/admin/users/stats')) {
+    return mockGetUserStats()
+  } else if (url.includes('/admin/users/list')) {
+    return mockGetUserList(body)
+  } else if (url.includes('/admin/users/create')) {
+    return mockCreateUser(body)
+  } else if (url.includes('/admin/users/update')) {
+    return mockUpdateUser(body)
+  } else if (url.includes('/admin/users/delete')) {
+    return mockDeleteUser(body)
+  } else if (url.includes('/admin/users/toggle-status')) {
+    return mockToggleUserStatus(body)
+  } else if (url.includes('/admin/users/reset-password')) {
+    return mockResetUserPassword(body)
+  } else if (url.includes('/admin/users/export')) {
+    return mockExportUsers(body)
   }
 
   // 默认返回成功

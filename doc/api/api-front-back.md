@@ -2826,7 +2826,575 @@ export async function exportSearchResults(params) {
 
 ## 8. 用户管理模块
 
-*待补充:当生成用户管理相关前端界面时,此部分将被填充*
+### 8.1 获取用户统计数据
+
+**功能描述**: 获取用户管理概览统计信息，包括总用户数、活跃用户数、管理员数、禁用用户数等关键指标。
+
+**业务背景**: 用于管理员用户管理页面展示系统用户概况，快速了解系统用户状态分布。
+
+**接口地址**: `/api/admin/users/stats`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{}
+```
+
+**参数说明**:
+无参数
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "totalUsers": 156,
+    "activeUsers": 142,
+    "adminUsers": 8,
+    "disabledUsers": 6
+  }
+}
+```
+
+**Body 数据结构**:
+| 字段名 | 类型 | 说明 | 示例值 |
+|--------|------|------|--------|
+| totalUsers | number | 总用户数 | 156 |
+| activeUsers | number | 活跃用户数 | 142 |
+| adminUsers | number | 管理员数量 | 8 |
+| disabledUsers | number | 禁用用户数 | 6 |
+
+**前端调用示例**:
+```javascript
+export async function getUserStats() {
+  return await apiRequest('/api/admin/users/stats', {
+    method: 'POST',
+    body: {},
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 该接口仅管理员可访问
+- 统计数据实时计算
+
+---
+
+### 8.2 获取用户列表
+
+**功能描述**: 获取系统用户列表，支持关键词搜索、角色筛选、状态筛选和分页查询。
+
+**业务背景**: 用于用户管理页面展示和管理所有系统用户，支持多维度筛选和搜索。
+
+**接口地址**: `/api/admin/users/list`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "keyword": "string, 搜索关键词（姓名/邮箱/手机号），可选",
+  "role": "string, 角色筛选（admin/user），可选",
+  "status": "string, 状态筛选（active/disabled），可选",
+  "page": "number, 页码",
+  "pageSize": "number, 每页数量"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| keyword | string | 否 | 搜索关键词 | "张三" |
+| role | string | 否 | 角色筛选 | "admin" |
+| status | string | 否 | 状态筛选 | "active" |
+| page | number | 否 | 页码，默认1 | 1 |
+| pageSize | number | 否 | 每页数量，默认10 | 10 |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "list": [
+      {
+        "id": "user_001",
+        "name": "张三",
+        "username": "zhangsan",
+        "email": "zhangsan@company.com",
+        "phone": "138****1234",
+        "role": "admin",
+        "status": "active",
+        "avatarColor": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        "lastLogin": "2024-09-25 09:30",
+        "createdAt": "2024-01-15"
+      }
+    ],
+    "total": 156,
+    "page": 1,
+    "pageSize": 10
+  }
+}
+```
+
+**Body 数据结构**:
+| 字段名 | 类型 | 说明 | 示例值 |
+|--------|------|------|--------|
+| list | array | 用户列表 | - |
+| list[].id | string | 用户ID | "user_001" |
+| list[].name | string | 姓名 | "张三" |
+| list[].username | string | 用户名 | "zhangsan" |
+| list[].email | string | 邮箱 | "zhangsan@company.com" |
+| list[].phone | string | 手机号（部分隐藏） | "138****1234" |
+| list[].role | string | 角色：admin/user | "admin" |
+| list[].status | string | 状态：active/disabled | "active" |
+| list[].avatarColor | string | 头像背景色 | "linear-gradient(...)" |
+| list[].lastLogin | string | 最后登录时间 | "2024-09-25 09:30" |
+| list[].createdAt | string | 创建时间 | "2024-01-15" |
+| total | number | 总数 | 156 |
+
+**前端调用示例**:
+```javascript
+export async function getUserList(params = {}) {
+  return await apiRequest('/api/admin/users/list', {
+    method: 'POST',
+    body: {
+      page: 1,
+      pageSize: 10,
+      ...params
+    },
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 手机号需要部分隐藏（中间4位用*代替）
+- avatarColor用于前端展示用户头像背景色
+
+---
+
+### 8.3 创建用户
+
+**功能描述**: 创建新用户账号，设置用户基本信息、角色和初始密码。
+
+**业务背景**: 管理员添加新用户到系统中，分配相应角色和权限。
+
+**接口地址**: `/api/admin/users/create`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "name": "string, 姓名",
+  "username": "string, 用户名",
+  "email": "string, 邮箱",
+  "phone": "string, 手机号",
+  "role": "string, 角色（admin/user）",
+  "password": "string, 初始密码"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| name | string | 是 | 姓名 | "李四" |
+| username | string | 是 | 用户名（唯一） | "lisi" |
+| email | string | 是 | 邮箱地址 | "lisi@company.com" |
+| phone | string | 是 | 手机号 | "13900001234" |
+| role | string | 是 | 角色 | "user" |
+| password | string | 是 | 初始密码 | "Pass@123" |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "创建成功",
+  "body": {
+    "id": "user_123",
+    "username": "lisi",
+    "createdAt": "2024-10-02T10:30:00Z"
+  }
+}
+```
+
+**失败响应示例**:
+```json
+{
+  "error": 400,
+  "message": "用户名已存在",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+export async function createUser(params) {
+  return await apiRequest('/api/admin/users/create', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 用户名必须唯一
+- 密码需要符合复杂度要求（至少6位）
+- 邮箱和手机号格式需要验证
+
+---
+
+### 8.4 更新用户信息
+
+**功能描述**: 更新用户的基本信息，包括姓名、邮箱、手机号、角色等。
+
+**业务背景**: 管理员修改用户资料或调整用户角色。
+
+**接口地址**: `/api/admin/users/update`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "id": "string, 用户ID",
+  "name": "string, 姓名",
+  "email": "string, 邮箱",
+  "phone": "string, 手机号",
+  "role": "string, 角色"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| id | string | 是 | 用户ID | "user_001" |
+| name | string | 是 | 姓名 | "张三" |
+| email | string | 是 | 邮箱 | "zhangsan@company.com" |
+| phone | string | 是 | 手机号 | "13800001234" |
+| role | string | 是 | 角色 | "admin" |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "更新成功",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+export async function updateUser(params) {
+  return await apiRequest('/api/admin/users/update', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+---
+
+### 8.5 删除用户
+
+**功能描述**: 删除用户账号，此操作不可恢复。
+
+**业务背景**: 管理员删除不再使用的用户账号。
+
+**接口地址**: `/api/admin/users/delete`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "userId": "string, 用户ID"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| userId | string | 是 | 要删除的用户ID | "user_001" |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "删除成功",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+export async function deleteUser(params) {
+  return await apiRequest('/api/admin/users/delete', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 删除操作不可恢复，建议前端二次确认
+- 不能删除当前登录的管理员
+
+---
+
+### 8.6 切换用户状态
+
+**功能描述**: 启用或禁用用户账号。
+
+**业务背景**: 管理员临时禁用或重新启用用户账号。
+
+**接口地址**: `/api/admin/users/toggle-status`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "userId": "string, 用户ID",
+  "status": "string, 目标状态（active/disabled）"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| userId | string | 是 | 用户ID | "user_001" |
+| status | string | 是 | 目标状态 | "disabled" |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "禁用成功",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+export async function toggleUserStatus(params) {
+  return await apiRequest('/api/admin/users/toggle-status', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 禁用用户后，该用户无法登录系统
+- 不能禁用当前登录的管理员
+
+---
+
+### 8.7 重置用户密码
+
+**功能描述**: 重置用户密码为随机密码，并返回新密码。
+
+**业务背景**: 用户忘记密码时，管理员帮助重置。
+
+**接口地址**: `/api/admin/users/reset-password`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "userId": "string, 用户ID"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| userId | string | 是 | 用户ID | "user_001" |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "密码重置成功",
+  "body": {
+    "newPassword": "Temp8x9kl2"
+  }
+}
+```
+
+**Body 数据结构**:
+| 字段名 | 类型 | 说明 | 示例值 |
+|--------|------|------|--------|
+| newPassword | string | 新密码（明文，仅此次返回） | "Temp8x9kl2" |
+
+**前端调用示例**:
+```javascript
+export async function resetUserPassword(params) {
+  return await apiRequest('/api/admin/users/reset-password', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 新密码仅在响应中返回一次
+- 建议用户首次登录后修改密码
+
+---
+
+### 8.8 导出用户列表
+
+**功能描述**: 导出用户列表为CSV文件。
+
+**业务背景**: 管理员需要导出用户数据进行统计分析。
+
+**接口地址**: `/api/admin/users/export`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "keyword": "string, 搜索关键词，可选",
+  "role": "string, 角色筛选，可选",
+  "status": "string, 状态筛选，可选"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| keyword | string | 否 | 搜索关键词 | "张" |
+| role | string | 否 | 角色筛选 | "admin" |
+| status | string | 否 | 状态筛选 | "active" |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "导出成功",
+  "body": {
+    "downloadUrl": "/downloads/users-20241002.csv",
+    "fileName": "users-2024-10-02.csv",
+    "expiresIn": 3600
+  }
+}
+```
+
+**Body 数据结构**:
+| 字段名 | 类型 | 说明 | 示例值 |
+|--------|------|------|--------|
+| downloadUrl | string | 下载链接 | "/downloads/users-20241002.csv" |
+| fileName | string | 文件名 | "users-2024-10-02.csv" |
+| expiresIn | number | 过期时间（秒） | 3600 |
+
+**前端调用示例**:
+```javascript
+export async function exportUsers(params = {}) {
+  return await apiRequest('/api/admin/users/export', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 导出文件为CSV格式，UTF-8编码
+- 文件链接有效期为1小时
+- 手机号导出时保持部分隐藏
 
 ---
 

@@ -941,11 +941,196 @@
 
 ---
 
+---
+
+## 用户管理页面 (UserManagement.vue)
+
+### 1. 页面标题区域图标
+
+#### 1.1 时间图标 (Time Icon)
+- **文件名**: `icon-time-usermgmt.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-time-usermgmt.svg`
+- **尺寸**: 16x16 px
+- **用途**: 页面右上角当前时间显示
+- **当前状态**: 使用Emoji占位符 "🕐" (需要替换)
+- **设计要求**: 时钟风格图标
+- **颜色**: #6b7280
+
+### 2. 统计卡片图标
+
+#### 2.1 总用户数图标 (Users Total Icon)
+- **文件名**: `icon-users-total.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-users-total.svg`
+- **尺寸**: 28x28 px
+- **用途**: 总用户数统计卡片
+- **当前状态**: 使用Emoji占位符 "👥" (需要替换)
+- **设计要求**: 多用户/团队风格图标
+- **颜色**: 蓝色系 (#2563eb)，卡片背景 #dbeafe
+
+#### 2.2 活跃用户图标 (Users Active Icon)
+- **文件名**: `icon-users-active.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-users-active.svg`
+- **尺寸**: 28x28 px
+- **用途**: 活跃用户统计卡片
+- **当前状态**: 使用Emoji占位符 "✅" (需要替换)
+- **设计要求**: 勾选/激活风格图标
+- **颜色**: 绿色系 (#10b981)，卡片背景 #d1fae5
+
+#### 2.3 管理员图标 (Admin Users Icon)
+- **文件名**: `icon-users-admin.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-users-admin.svg`
+- **尺寸**: 28x28 px
+- **用途**: 管理员数量统计卡片
+- **当前状态**: 使用Emoji占位符 "👑" (需要替换)
+- **设计要求**: 皇冠/管理员风格图标
+- **颜色**: 黄色系 (#f59e0b)，卡片背景 #fef3c7
+
+#### 2.4 禁用用户图标 (Disabled Users Icon)
+- **文件名**: `icon-users-disabled.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-users-disabled.svg`
+- **尺寸**: 28x28 px
+- **用途**: 禁用用户统计卡片
+- **当前状态**: 使用Emoji占位符 "🚫" (需要替换)
+- **设计要求**: 禁止/禁用风格图标
+- **颜色**: 红色系 (#ef4444)，卡片背景 #fee2e2
+
+### 3. 搜索和操作区图标
+
+#### 3.1 搜索输入框图标 (Search Input Icon)
+- **文件名**: `icon-search-input-user.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-search-input-user.svg`
+- **尺寸**: 18x18 px
+- **用途**: 搜索输入框前的图标
+- **当前状态**: 使用Emoji占位符 "🔍" (需要替换)
+- **设计要求**: 放大镜风格图标
+- **颜色**: #6b7280
+
+#### 3.2 导出图标 (Export Icon)
+- **文件名**: `icon-export-users.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-export-users.svg`
+- **尺寸**: 16x16 px
+- **用途**: 导出用户列表按钮
+- **当前状态**: 使用Emoji占位符 "📥" (需要替换)
+- **设计要求**: 下载/导出风格图标
+- **颜色**: #10b981 (按钮文字色)
+
+#### 3.3 添加用户图标 (Add User Icon)
+- **文件名**: `icon-add-user.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-add-user.svg`
+- **尺寸**: 20x20 px
+- **用途**: 添加用户按钮
+- **当前状态**: 使用文本符号 "+" (需要替换)
+- **设计要求**: 加号图标
+- **颜色**: #ffffff (白色，用于蓝色按钮)
+
+### 4. 用户表格角色和状态图标
+
+#### 4.1 管理员角色图标 (Role Admin Icon)
+- **文件名**: `icon-role-admin.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-role-admin.svg`
+- **尺寸**: 14x14 px
+- **用途**: 角色标签中的管理员图标
+- **当前状态**: 使用Emoji占位符 "👑" (需要替换)
+- **设计要求**: 皇冠风格图标
+- **颜色**: #7c3aed (紫色)
+
+#### 4.2 普通用户角色图标 (Role User Icon)
+- **文件名**: `icon-role-user.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-role-user.svg`
+- **尺寸**: 14x14 px
+- **用途**: 角色标签中的普通用户图标
+- **当前状态**: 使用Emoji占位符 "👤" (需要替换)
+- **设计要求**: 用户轮廓风格图标
+- **颜色**: #2563eb (蓝色)
+
+### 5. 操作按钮图标
+
+#### 5.1 编辑图标 (Edit Icon)
+- **文件名**: `icon-edit-user.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-edit-user.svg`
+- **尺寸**: 16x16 px
+- **用途**: 编辑用户按钮
+- **当前状态**: 使用Emoji占位符 "✏️" (需要替换)
+- **设计要求**: 铅笔/编辑风格图标
+- **颜色**: #6b7280，Hover时 #ffffff
+
+#### 5.2 重置密码图标 (Reset Password Icon)
+- **文件名**: `icon-reset-password.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-reset-password.svg`
+- **尺寸**: 16x16 px
+- **用途**: 重置用户密码按钮
+- **当前状态**: 使用Emoji占位符 "🔑" (需要替换)
+- **设计要求**: 钥匙/密码风格图标
+- **颜色**: #6b7280，Hover时 #ffffff
+
+#### 5.3 启用图标 (Enable Icon)
+- **文件名**: `icon-enable-user.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-enable-user.svg`
+- **尺寸**: 16x16 px
+- **用途**: 启用用户按钮
+- **当前状态**: 使用Emoji占位符 "▶️" (需要替换)
+- **设计要求**: 播放/启用风格图标
+- **颜色**: #6b7280，Hover时 #ffffff (绿色按钮背景 #10b981)
+
+#### 5.4 禁用图标 (Disable Icon)
+- **文件名**: `icon-disable-user.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-disable-user.svg`
+- **尺寸**: 16x16 px
+- **用途**: 禁用用户按钮
+- **当前状态**: 使用Emoji占位符 "⏸️" (需要替换)
+- **设计要求**: 暂停/禁用风格图标
+- **颜色**: #6b7280，Hover时 #ffffff
+
+#### 5.5 删除图标 (Delete Icon)
+- **文件名**: `icon-delete-user.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-delete-user.svg`
+- **尺寸**: 16x16 px
+- **用途**: 删除用户按钮
+- **当前状态**: 使用Emoji占位符 "🗑️" (需要替换)
+- **设计要求**: 垃圾桶风格图标
+- **颜色**: #6b7280，Hover时 #ffffff (红色按钮背景 #ef4444)
+
+### 6. 对话框图标
+
+#### 6.1 关闭图标 (Close Icon)
+- **文件名**: `icon-close-dialog.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-close-dialog.svg`
+- **尺寸**: 18x18 px
+- **用途**: 对话框关闭按钮
+- **当前状态**: 使用文本符号 "✕" (需要替换)
+- **设计要求**: 叉号风格图标
+- **颜色**: #6b7280
+
+#### 6.2 加载图标 (Loading Icon)
+- **文件名**: `icon-loading-dialog.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-loading-dialog.svg`
+- **尺寸**: 16x16 px
+- **用途**: 对话框提交按钮加载状态
+- **当前状态**: 使用CSS动画实现的旋转圆圈 (可保留或替换)
+- **设计要求**: 圆形旋转动画
+- **颜色**: #ffffff，用于蓝色按钮
+
+### 7. 空状态图标
+
+#### 7.1 空状态图标 (Empty State Icon)
+- **文件名**: `icon-empty-users.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-empty-users.svg`
+- **尺寸**: 64x64 px
+- **用途**: 用户列表为空时的占位图标
+- **当前状态**: 使用Emoji占位符 "📭" (需要替换)
+- **设计要求**: 空文件夹/空盒子风格
+- **颜色**: 灰色系 (#9ca3af)
+
+---
+
 ## 待补充的图标
 
 随着项目开发进度，其他页面需要的图标将在此处补充：
 
 - [ ] 知识库详情页面图标
+- [ ] 知识库管理页面图标
+- [ ] 文件上传页面图标
+- [ ] 模型管理页面图标
 
 ---
 
@@ -959,6 +1144,7 @@
 | 2025-10-01 | v1.3 | 添加文档搜索页面所需图标(10个) | AI Assistant |
 | 2025-10-01 | v1.4 | 添加个人设置页面所需图标(11个) | AI Assistant |
 | 2025-10-02 | v1.5 | 添加仪表板页面所需图标(17个)和管理员菜单图标(5个) | AI Assistant |
+| 2025-10-02 | v1.6 | 添加用户管理页面所需图标(17个，移除数据统计图标) | AI Assistant |
 
 ---
 
