@@ -743,13 +743,208 @@
 
 ---
 
+## 仪表板页面 (DashboardNew.vue)
+
+### 1. 统计卡片图标
+
+#### 1.1 今日问答图标 (Chat Stat Icon)
+- **文件名**: `icon-chat-stat.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-chat-stat.svg`
+- **尺寸**: 28x28 px
+- **用途**: 今日问答统计卡片
+- **当前状态**: 使用Emoji占位符 "💬" (需要替换)
+- **设计要求**: 对话气泡风格图标
+- **颜色**: 蓝色系 (#dbeafe背景)
+
+#### 1.2 搜索统计图标 (Search Stat Icon)
+- **文件名**: `icon-search-stat.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-search-stat.svg`
+- **尺寸**: 28x28 px
+- **用途**: 搜索次数统计卡片
+- **当前状态**: 使用Emoji占位符 "🔍" (需要替换)
+- **设计要求**: 放大镜风格图标
+- **颜色**: 绿色系 (#d1fae5背景)
+
+#### 1.3 知识库统计图标 (KB Stat Icon)
+- **文件名**: `icon-kb-stat.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-kb-stat.svg`
+- **尺寸**: 28x28 px
+- **用途**: 知识库数量统计卡片
+- **当前状态**: 使用Emoji占位符 "💾" (需要替换)
+- **设计要求**: 数据库/存储风格图标
+- **颜色**: 黄色系 (#fef3c7背景)
+
+#### 1.4 文档统计图标 (Doc Stat Icon)
+- **文件名**: `icon-doc-stat.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-doc-stat.svg`
+- **尺寸**: 28x28 px
+- **用途**: 文档总数统计卡片
+- **当前状态**: 使用Emoji占位符 "📄" (需要替换)
+- **设计要求**: 文档/文件风格图标
+- **颜色**: 紫色系 (#e9d5ff背景)
+
+### 2. 说明文档卡片图标
+
+#### 2.1 RAG系统图标 (RAG Icon)
+- **文件名**: `icon-rag.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-rag.svg`
+- **尺寸**: 24x24 px
+- **用途**: RAG系统说明文档卡片
+- **当前状态**: 使用Emoji占位符 "📚" (需要替换)
+- **设计要求**: 书籍/知识风格图标
+- **颜色**: 白色，用于橙色渐变背景
+
+#### 2.2 知识库管理文档图标 (Knowledge Doc Icon)
+- **文件名**: `icon-knowledge-doc.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-knowledge-doc.svg`
+- **尺寸**: 24x24 px
+- **用途**: 知识库管理说明文档卡片
+- **当前状态**: 使用Emoji占位符 "📂" (需要替换)
+- **设计要求**: 文件夹风格图标
+- **颜色**: 白色，用于蓝色渐变背景
+
+#### 2.3 文件上传文档图标 (Upload Doc Icon)
+- **文件名**: `icon-upload-doc.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-upload-doc.svg`
+- **尺寸**: 24x24 px
+- **用途**: 文件上传说明文档卡片
+- **当前状态**: 使用Emoji占位符 "📤" (需要替换)
+- **设计要求**: 上传/导出风格图标
+- **颜色**: 白色，用于绿色渐变背景
+
+#### 2.4 模型管理文档图标 (Model Doc Icon)
+- **文件名**: `icon-model-doc.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-model-doc.svg`
+- **尺寸**: 24x24 px
+- **用途**: 模型管理说明文档卡片
+- **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
+- **设计要求**: AI/机器人风格图标
+- **颜色**: 白色，用于棕色渐变背景
+
+#### 2.5 用户管理文档图标 (User Doc Icon)
+- **文件名**: `icon-user-doc.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-user-doc.svg`
+- **尺寸**: 24x24 px
+- **用途**: 用户管理说明文档卡片
+- **当前状态**: 使用Emoji占位符 "👥" (需要替换)
+- **设计要求**: 多用户/团队风格图标
+- **颜色**: 白色，用于紫色渐变背景
+
+#### 2.6 箭头图标 (Arrow Right Icon)
+- **文件名**: `icon-arrow-right.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-arrow-right.svg`
+- **尺寸**: 18x18 px
+- **用途**: 说明文档卡片右侧箭头
+- **当前状态**: 使用文本符号 "→" (需要替换)
+- **设计要求**: 简洁箭头图标
+- **颜色**: #d1d5db，Hover时 #667eea
+
+### 3. 系统状态卡片图标
+
+#### 3.1 LLM模型图标 (LLM Icon)
+- **文件名**: `icon-llm.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-llm.svg`
+- **尺寸**: 22x22 px
+- **用途**: LLM模型状态卡片
+- **当前状态**: 使用Emoji占位符 "🔥" (需要替换)
+- **设计要求**: 火焰/AI风格图标
+- **颜色**: 深色，用于白色背景
+
+#### 3.2 向量模型图标 (Vector Icon)
+- **文件名**: `icon-vector.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-vector.svg`
+- **尺寸**: 22x22 px
+- **用途**: 向量模型状态卡片
+- **当前状态**: 使用Emoji占位符 "📊" (需要替换)
+- **设计要求**: 图表/向量风格图标
+- **颜色**: 深色，用于白色背景
+
+#### 3.3 向量数据库图标 (Vector DB Icon)
+- **文件名**: `icon-vector-db.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-vector-db.svg`
+- **尺寸**: 22x22 px
+- **用途**: 向量数据库状态卡片
+- **当前状态**: 使用Emoji占位符 "💾" (需要替换)
+- **设计要求**: 数据库风格图标
+- **颜色**: 深色，用于白色背景
+
+#### 3.4 关系数据库图标 (Relation DB Icon)
+- **文件名**: `icon-relation-db.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-relation-db.svg`
+- **尺寸**: 22x22 px
+- **用途**: 关系数据库状态卡片
+- **当前状态**: 使用Emoji占位符 "🗄️" (需要替换)
+- **设计要求**: 服务器/数据库风格图标
+- **颜色**: 深色，用于白色背景
+
+#### 3.5 刷新图标 (Refresh Icon)
+- **文件名**: `icon-refresh.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-refresh.svg`
+- **尺寸**: 18x18 px
+- **用途**: 系统状态刷新按钮
+- **当前状态**: 使用文本符号 "↻" (需要替换)
+- **设计要求**: 循环箭头风格图标
+- **颜色**: #6b7280
+
+#### 3.6 检查圆圈图标 (Check Circle Icon)
+- **文件名**: `icon-check-circle.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-check-circle.svg`
+- **尺寸**: 12x12 px
+- **用途**: 系统运行正常指示器
+- **当前状态**: 使用文本符号 "●" (需要替换)
+- **设计要求**: 实心圆点图标
+- **颜色**: #10b981（绿色）
+
+---
+
+## 主布局导航栏 - 管理员菜单图标
+
+### 1. 仪表板图标 (Dashboard Icon)
+- **文件名**: `icon-dashboard.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-dashboard.svg`
+- **尺寸**: 20x20 px
+- **用途**: 导航菜单"仪表板"项（管理员）
+- **当前状态**: 使用Emoji占位符 "📊" (需要替换)
+- **设计要求**: 仪表盘/图表风格图标
+
+### 2. 用户管理图标 (User Management Icon)
+- **文件名**: `icon-user-mgmt.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-user-mgmt.svg`
+- **尺寸**: 20x20 px
+- **用途**: 导航菜单"用户管理"项（管理员）
+- **当前状态**: 使用Emoji占位符 "👥" (需要替换)
+- **设计要求**: 多用户/团队风格图标
+
+### 3. 知识库管理图标 (KB Management Icon)
+- **文件名**: `icon-kb-mgmt.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-kb-mgmt.svg`
+- **尺寸**: 20x20 px
+- **用途**: 导航菜单"知识库管理"项（管理员）
+- **当前状态**: 使用Emoji占位符 "📁" (需要替换)
+- **设计要求**: 文件夹/知识库风格图标
+
+### 4. 文件上传管理图标 (Upload Management Icon)
+- **文件名**: `icon-upload-mgmt.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-upload-mgmt.svg`
+- **尺寸**: 20x20 px
+- **用途**: 导航菜单"文件上传"项（管理员）
+- **当前状态**: 使用Emoji占位符 "📤" (需要替换)
+- **设计要求**: 上传/导入风格图标
+
+### 5. 模型管理图标 (Model Management Icon)
+- **文件名**: `icon-model-mgmt.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-model-mgmt.svg`
+- **尺寸**: 20x20 px
+- **用途**: 导航菜单"模型管理"项（管理员）
+- **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
+- **设计要求**: AI/机器人风格图标
+
+---
+
 ## 待补充的图标
 
 随着项目开发进度，其他页面需要的图标将在此处补充：
 
-- [ ] 文档上传页面图标
-- [ ] 用户管理页面图标
-- [ ] 模型管理页面图标
 - [ ] 知识库详情页面图标
 
 ---
@@ -763,6 +958,7 @@
 | 2025-10-01 | v1.2 | 添加智能问答页面所需图标(15个) | AI Assistant |
 | 2025-10-01 | v1.3 | 添加文档搜索页面所需图标(10个) | AI Assistant |
 | 2025-10-01 | v1.4 | 添加个人设置页面所需图标(11个) | AI Assistant |
+| 2025-10-02 | v1.5 | 添加仪表板页面所需图标(17个)和管理员菜单图标(5个) | AI Assistant |
 
 ---
 

@@ -38,7 +38,7 @@ frontEnd/
 │   │   ├── Chat.vue      # 智能问答页面
 │   │   ├── Search.vue    # 文档搜索页面(开发中)
 │   │   ├── Profile.vue   # 个人设置页面(基本信息+安全设置)
-│   │   └── Dashboard.vue # 旧首页(已废弃)
+│   │   └── DashboardAdmin.vue # 管理员首页（仪表盘）
 │   ├── App.vue           # 根组件
 │   └── main.js           # 入口文件
 ├── public/               # 公共资源

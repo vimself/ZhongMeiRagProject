@@ -639,3 +639,73 @@ export function mockChangeUserPassword(params) {
   }
 }
 
+/**
+ * 模拟获取仪表盘统计数据
+ * @returns {object} 模拟响应
+ */
+export function mockGetDashboardStats() {
+  return {
+    success: true,
+    data: {
+      todayQuestions: {
+        count: 156,
+        change: 12,
+        changeType: 'increase'
+      },
+      searchCount: {
+        count: 89,
+        change: 8,
+        changeType: 'increase'
+      },
+      knowledgeBaseCount: {
+        count: 12,
+        newCount: 2
+      },
+      documentCount: {
+        count: 1234,
+        newCount: 15
+      }
+    },
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟获取系统状态
+ * @returns {object} 模拟响应
+ */
+export function mockGetSystemStatus() {
+  return {
+    success: true,
+    data: {
+      llmModel: {
+        name: 'LLM 模型',
+        description: '大语言模型服务',
+        status: 'online',
+        online: 3,
+        total: 3
+      },
+      vectorModel: {
+        name: '向量模型',
+        description: '嵌入向量服务',
+        status: 'online',
+        online: 2,
+        total: 2
+      },
+      vectorDb: {
+        name: '向量数据库',
+        description: '向量存储服务',
+        status: 'normal'
+      },
+      relationalDb: {
+        name: '关系数据库',
+        description: '业务数据存储',
+        status: 'normal'
+      },
+      systemStatus: 'normal',
+      lastUpdate: '刚刚'
+    },
+    message: '获取成功'
+  }
+}
+

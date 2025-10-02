@@ -23,7 +23,9 @@ import {
   mockUploadUserAvatar,
   mockGetDepartmentList,
   mockGetLoginRecords,
-  mockChangeUserPassword
+  mockChangeUserPassword,
+  mockGetDashboardStats,
+  mockGetSystemStatus
 } from '../api/mock'
 
 /**
@@ -159,6 +161,10 @@ async function getMockData(url, body) {
     return mockGetLoginRecords(body)
   } else if (url.includes('/user/change-password')) {
     return mockChangeUserPassword(body)
+  } else if (url.includes('/dashboard/stats')) {
+    return mockGetDashboardStats()
+  } else if (url.includes('/dashboard/system-status') || url.includes('/dashboard/refresh-status')) {
+    return mockGetSystemStatus()
   }
 
   // 默认返回成功

@@ -12,13 +12,14 @@
 
 - [1. 用户认证模块](#1-用户认证模块)
 - [2. 个人中心模块](#2-个人中心模块)
-- [3. 知识库管理模块](#3-知识库管理模块)
-- [4. 文档管理模块](#4-文档管理模块)
-- [5. 智能问答模块](#5-智能问答模块)
-- [6. 搜索模块](#6-搜索模块)
-- [7. 用户管理模块](#7-用户管理模块)
-- [8. 模型管理模块](#8-模型管理模块)
-- [9. 权限管理模块](#9-权限管理模块)
+- [3. 仪表板模块](#3-仪表板模块)
+- [4. 知识库管理模块](#4-知识库管理模块)
+- [5. 文档管理模块](#5-文档管理模块)
+- [6. 智能问答模块](#6-智能问答模块)
+- [7. 搜索模块](#7-搜索模块)
+- [8. 用户管理模块](#8-用户管理模块)
+- [9. 模型管理模块](#9-模型管理模块)
+- [10. 权限管理模块](#10-权限管理模块)
 
 ---
 
@@ -1035,9 +1036,401 @@ export async function changeUserPassword(params) {
 
 ---
 
-## 3. 知识库管理模块
+## 3. 仪表板模块
 
-### 3.1 获取知识库统计数据
+### 3.1 获取仪表板统计数据
+
+**功能描述**: 获取管理员仪表板首页的关键统计指标，包括今日问答、搜索次数、知识库数量、文档总数等核心数据及其变化趋势。
+
+**业务背景**: 管理员登录后进入仪表板，需要一目了然地查看系统整体运行情况和关键指标，帮助管理员快速了解系统使用状况。
+
+**接口地址**: `/api/dashboard/stats`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{}
+```
+
+**参数说明**:
+无参数
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "todayQuestions": {
+      "count": "number, 今日问答次数",
+      "change": "number, 变化百分比",
+      "changeType": "string, 变化类型: increase/decrease"
+    },
+    "searchCount": {
+      "count": "number, 搜索次数",
+      "change": "number, 变化百分比",
+      "changeType": "string, 变化类型"
+    },
+    "knowledgeBaseCount": {
+      "count": "number, 知识库数量",
+      "newCount": "number, 本周新增数量"
+    },
+    "documentCount": {
+      "count": "number, 文档总数",
+      "newCount": "number, 本周新增数量"
+    }
+  }
+}
+```
+
+**Body 数据结构说明**:
+| 字段名 | 类型 | 说明 | 示例值 |
+|--------|------|------|--------|
+| todayQuestions.count | number | 今日系统问答总次数 | 156 |
+| todayQuestions.change | number | 较昨日变化百分比 | 12 |
+| todayQuestions.changeType | string | 变化类型 | "increase" |
+| searchCount.count | number | 今日搜索总次数 | 89 |
+| searchCount.change | number | 较昨日变化百分比 | 8 |
+| knowledgeBaseCount.count | number | 系统知识库总数 | 12 |
+| knowledgeBaseCount.newCount | number | 本周新增知识库数 | 2 |
+| documentCount.count | number | 系统文档总数 | 1234 |
+| documentCount.newCount | number | 本周新增文档数 | 15 |
+
+**请求示例**:
+```
+POST /api/dashboard/stats
+Content-Type: application/json
+Authorization: Bearer eyJhbGc...
+
+{}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "todayQuestions": {
+      "count": 156,
+      "change": 12,
+      "changeType": "increase"
+    },
+    "searchCount": {
+      "count": 89,
+      "change": 8,
+      "changeType": "increase"
+    },
+    "knowledgeBaseCount": {
+      "count": 12,
+      "newCount": 2
+    },
+    "documentCount": {
+      "count": 1234,
+      "newCount": 15
+    }
+  }
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 获取仪表板统计数据
+ * - 接口地址: /api/dashboard/stats
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 需要权限: admin
+ * - 返回值: 统计数据对象
+ */
+export async function getDashboardStats() {
+  return await apiRequest('/api/dashboard/stats', {
+    method: 'POST',
+    body: {},
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 仅管理员可访问此接口
+- 统计数据实时计算，可能有1-2分钟延迟
+- changeType 仅有 increase/decrease 两种值
+- change 为正数表示增长，负数表示下降
+
+---
+
+### 3.2 获取系统状态
+
+**功能描述**: 获取系统各个服务的运行状态，包括LLM模型、向量模型、向量数据库、关系数据库等核心服务的在线状态和健康情况。
+
+**业务背景**: 管理员需要实时监控系统各个服务的运行状态，及时发现和处理服务异常，确保系统稳定运行。
+
+**接口地址**: `/api/dashboard/system-status`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{}
+```
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "llmModel": {
+      "name": "string, 服务名称",
+      "description": "string, 服务描述",
+      "status": "string, 状态: online/offline",
+      "online": "number, 在线数量",
+      "total": "number, 总数量"
+    },
+    "vectorModel": {
+      "name": "string, 服务名称",
+      "description": "string, 服务描述",
+      "status": "string, 状态",
+      "online": "number, 在线数量",
+      "total": "number, 总数量"
+    },
+    "vectorDb": {
+      "name": "string, 服务名称",
+      "description": "string, 服务描述",
+      "status": "string, 状态: normal/error"
+    },
+    "relationalDb": {
+      "name": "string, 服务名称",
+      "description": "string, 服务描述",
+      "status": "string, 状态"
+    },
+    "systemStatus": "string, 系统整体状态: normal/warning/error",
+    "lastUpdate": "string, 最后更新时间"
+  }
+}
+```
+
+**Body 数据结构说明**:
+| 字段名 | 类型 | 说明 | 示例值 |
+|--------|------|------|--------|
+| llmModel.name | string | LLM模型服务名称 | "LLM 模型" |
+| llmModel.description | string | 服务描述 | "大语言模型服务" |
+| llmModel.status | string | 服务状态 | "online" |
+| llmModel.online | number | 在线实例数 | 3 |
+| llmModel.total | number | 总实例数 | 3 |
+| vectorModel | object | 向量模型服务信息，字段同llmModel | - |
+| vectorDb.name | string | 向量数据库服务名称 | "向量数据库" |
+| vectorDb.status | string | 服务状态 | "normal" |
+| relationalDb | object | 关系数据库服务信息，字段同vectorDb | - |
+| systemStatus | string | 系统整体状态 | "normal" |
+| lastUpdate | string | 最后更新时间 | "刚刚" |
+
+**请求示例**:
+```
+POST /api/dashboard/system-status
+Content-Type: application/json
+Authorization: Bearer eyJhbGc...
+
+{}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "llmModel": {
+      "name": "LLM 模型",
+      "description": "大语言模型服务",
+      "status": "online",
+      "online": 3,
+      "total": 3
+    },
+    "vectorModel": {
+      "name": "向量模型",
+      "description": "嵌入向量服务",
+      "status": "online",
+      "online": 2,
+      "total": 2
+    },
+    "vectorDb": {
+      "name": "向量数据库",
+      "description": "向量存储服务",
+      "status": "normal"
+    },
+    "relationalDb": {
+      "name": "关系数据库",
+      "description": "业务数据存储",
+      "status": "normal"
+    },
+    "systemStatus": "normal",
+    "lastUpdate": "刚刚"
+  }
+}
+```
+
+**失败响应示例**:
+```json
+{
+  "error": 403,
+  "message": "权限不足，仅管理员可访问",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 获取系统状态
+ * - 接口地址: /api/dashboard/system-status
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 需要权限: admin
+ * - 返回值: 系统状态对象
+ */
+export async function getSystemStatus() {
+  return await apiRequest('/api/dashboard/system-status', {
+    method: 'POST',
+    body: {},
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 仅管理员可访问此接口
+- status 值: online-在线, offline-离线, normal-正常, error-错误
+- systemStatus 为 error 时应进行告警提示
+- lastUpdate 为前端友好的相对时间显示
+
+---
+
+### 3.3 刷新系统状态
+
+**功能描述**: 手动触发刷新系统状态检查，获取最新的服务运行情况。
+
+**业务背景**: 管理员发现系统状态异常时，可以手动刷新获取最新状态，或定期刷新监控系统健康。
+
+**接口地址**: `/api/dashboard/refresh-status`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{}
+```
+
+**响应格式**: 
+同 3.2 获取系统状态接口的响应格式
+
+**请求示例**:
+```
+POST /api/dashboard/refresh-status
+Content-Type: application/json
+Authorization: Bearer eyJhbGc...
+
+{}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "刷新成功",
+  "body": {
+    "llmModel": {
+      "name": "LLM 模型",
+      "description": "大语言模型服务",
+      "status": "online",
+      "online": 3,
+      "total": 3
+    },
+    "vectorModel": {
+      "name": "向量模型",
+      "description": "嵌入向量服务",
+      "status": "online",
+      "online": 2,
+      "total": 2
+    },
+    "vectorDb": {
+      "name": "向量数据库",
+      "description": "向量存储服务",
+      "status": "normal"
+    },
+    "relationalDb": {
+      "name": "关系数据库",
+      "description": "业务数据存储",
+      "status": "normal"
+    },
+    "systemStatus": "normal",
+    "lastUpdate": "刚刚"
+  }
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 刷新系统状态
+ * - 接口地址: /api/dashboard/refresh-status
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 需要权限: admin
+ * - 返回值: 刷新后的系统状态
+ */
+export async function refreshSystemStatus() {
+  return await apiRequest('/api/dashboard/refresh-status', {
+    method: 'POST',
+    body: {},
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 仅管理员可访问此接口
+- 刷新操作会触发所有服务的健康检查
+- 避免频繁调用，建议间隔至少10秒
+- 刷新可能需要2-3秒完成
+
+---
+
+## 4. 知识库管理模块
+
+### 4.1 获取知识库统计数据
 
 **功能描述**: 获取当前用户可访问的知识库统计信息，包括可访问知识库数量、可查阅文档数量、今日问答次数等，用于首页展示统计卡片。
 
@@ -1133,7 +1526,7 @@ export async function getKnowledgeBaseStats() {
 
 ---
 
-### 3.2 获取知识库列表
+### 4.2 获取知识库列表
 
 **功能描述**: 获取当前用户有权访问的知识库列表，包含知识库的基本信息、统计数据、状态等详细信息，用于知识库页面展示。
 
@@ -1314,7 +1707,7 @@ export async function getKnowledgeBaseList(params = {}) {
 
 ---
 
-### 3.3 获取知识库详情
+### 4.3 获取知识库详情
 
 **功能描述**: 获取指定知识库的详细信息，包括完整配置、文档列表、授权用户等。
 
@@ -1437,15 +1830,15 @@ export async function getKnowledgeBaseDetail(params) {
 
 ---
 
-## 4. 文档管理模块
+## 5. 文档管理模块
 
 *待补充:当生成文档管理相关前端界面时,此部分将被填充*
 
 ---
 
-## 5. 智能问答模块
+## 6. 智能问答模块
 
-### 5.1 获取知识库列表（对话页面）
+### 6.1 获取知识库列表（对话页面）
 
 **功能描述**: 获取用户可访问的知识库简化列表，用于智能问答页面的知识库选择下拉框。
 
@@ -1517,7 +1910,7 @@ export async function getKnowledgeBaseList() {
 
 ---
 
-### 5.2 获取可用模型列表
+### 6.2 获取可用模型列表
 
 **功能描述**: 获取系统配置的可用大语言模型列表，用于智能问答页面的模型选择下拉框。
 
@@ -1597,7 +1990,7 @@ export async function getModelList() {
 
 ---
 
-### 5.3 获取会话历史列表
+### 6.3 获取会话历史列表
 
 **功能描述**: 获取当前用户的历史会话列表，按时间倒序排列，用于智能问答页面左侧的会话历史展示。
 
@@ -1692,7 +2085,7 @@ export async function getSessionHistory(params = {}) {
 
 ---
 
-### 5.4 创建新会话
+### 6.4 创建新会话
 
 **功能描述**: 创建一个新的对话会话。
 
@@ -1772,7 +2165,7 @@ export async function createSession(params) {
 
 ---
 
-### 5.5 发送消息
+### 6.5 发送消息
 
 **功能描述**: 向指定会话发送用户问题，获取AI回答及引用来源。
 
@@ -1890,7 +2283,7 @@ export async function sendChatMessage(params) {
 
 ---
 
-### 5.6 获取会话消息列表
+### 6.6 获取会话消息列表
 
 **功能描述**: 获取指定会话的所有历史消息，用于加载历史对话。
 
@@ -1984,9 +2377,9 @@ export async function getSessionMessages(params) {
 
 ---
 
-## 6. 搜索模块
+## 7. 搜索模块
 
-### 6.1 搜索文档
+### 7.1 搜索文档
 
 **功能描述**: 在知识库中搜索文档内容，支持关键词搜索和向量检索，返回相关文档列表及高亮摘要。
 
@@ -2172,7 +2565,7 @@ export async function searchDocuments(params) {
 
 ---
 
-### 6.2 获取热门搜索关键词
+### 7.2 获取热门搜索关键词
 
 **功能描述**: 获取系统中的热门搜索关键词列表，基于搜索频率统计，用于搜索页面的热门搜索标签展示。
 
@@ -2258,7 +2651,7 @@ export async function getHotKeywords(params = {}) {
 
 ---
 
-### 6.3 获取文档类型列表
+### 7.3 获取文档类型列表
 
 **功能描述**: 获取系统支持的文档类型列表，用于搜索页面筛选器的文档类型下拉选择。
 
@@ -2332,7 +2725,7 @@ export async function getDocTypes() {
 
 ---
 
-### 6.4 导出搜索结果
+### 7.4 导出搜索结果
 
 **功能描述**: 将当前搜索结果导出为CSV文件，包含文档标题、知识库、类型、页码、更新时间等信息。
 
@@ -2431,19 +2824,19 @@ export async function exportSearchResults(params) {
 
 ---
 
-## 7. 用户管理模块
+## 8. 用户管理模块
 
 *待补充:当生成用户管理相关前端界面时,此部分将被填充*
 
 ---
 
-## 8. 模型管理模块
+## 9. 模型管理模块
 
 *待补充:当生成模型管理相关前端界面时,此部分将被填充*
 
 ---
 
-## 9. 权限管理模块
+## 10. 权限管理模块
 
 *待补充:当生成权限管理相关前端界面时,此部分将被填充*
 
@@ -2509,6 +2902,7 @@ export async function exportSearchResults(params) {
 | 2025-10-01 | v1.2 | 添加智能问答模块接口(会话、消息、模型) | AI Assistant |
 | 2025-10-01 | v1.3 | 添加搜索模块接口(搜索文档、热门关键词、文档类型、导出) | AI Assistant |
 | 2025-10-01 | v1.4 | 添加个人中心模块(6个接口): 获取个人信息、更新个人信息、上传头像、获取部门列表、获取登录记录、修改密码 | AI Assistant |
+| 2025-10-02 | v1.5 | 添加仪表板模块(3个接口): 获取仪表板统计数据、获取系统状态、刷新系统状态 | AI Assistant |
 
 ---
 

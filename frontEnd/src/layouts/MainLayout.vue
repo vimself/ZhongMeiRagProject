@@ -13,16 +13,22 @@
 
       <!-- 导航菜单 -->
       <nav class="sidebar-nav">
-        <router-link 
-          v-for="item in menuItems" 
-          :key="item.path"
-          :to="item.path"
-          class="nav-item"
-          :class="{ 'active': isActive(item.path) }"
-        >
-          <i :class="item.icon"></i>
-          <span>{{ item.name }}</span>
-        </router-link>
+        <template v-for="item in menuItems" :key="item.path || item.label">
+          <!-- 分隔符 -->
+          <div v-if="item.type === 'divider'" class="nav-divider">
+            <span class="divider-label">{{ item.label }}</span>
+          </div>
+          <!-- 菜单项 -->
+          <router-link 
+            v-else
+            :to="item.path"
+            class="nav-item"
+            :class="{ 'active': isActive(item.path) }"
+          >
+            <i :class="item.icon"></i>
+            <span>{{ item.name }}</span>
+          </router-link>
+        </template>
       </nav>
 
       <!-- 底部用户信息 -->
@@ -70,8 +76,8 @@ const route = useRoute()
 const userInfo = ref(null)
 const showUserMenu = ref(false)
 
-// 菜单项配置
-const menuItems = ref([
+// 基础菜单（普通用户）
+const baseMenuItems = [
   {
     path: '/knowledge',
     name: '我的知识库',
@@ -87,7 +93,55 @@ const menuItems = ref([
     name: '文档搜索',
     icon: 'icon-search'
   }
-])
+]
+
+// 管理员菜单
+const adminMenuItems = [
+  {
+    path: '/dashboard',
+    name: '仪表板',
+    icon: 'icon-dashboard'
+  },
+  {
+    path: '/chat',
+    name: '智能问答',
+    icon: 'icon-chat'
+  },
+  {
+    path: '/search',
+    name: '文档搜索',
+    icon: 'icon-search'
+  },
+  {
+    type: 'divider',
+    label: '管理功能'
+  },
+  {
+    path: '/admin/users',
+    name: '用户管理',
+    icon: 'icon-user-mgmt'
+  },
+  {
+    path: '/admin/knowledge',
+    name: '知识库管理',
+    icon: 'icon-kb-mgmt'
+  },
+  {
+    path: '/admin/upload',
+    name: '文件上传',
+    icon: 'icon-upload-mgmt'
+  },
+  {
+    path: '/admin/models',
+    name: '模型管理',
+    icon: 'icon-model-mgmt'
+  }
+]
+
+// 根据用户角色决定显示的菜单
+const menuItems = computed(() => {
+  return userInfo.value?.role === 'admin' ? adminMenuItems : baseMenuItems
+})
 
 onMounted(() => {
   userInfo.value = getUserInfo()
@@ -335,7 +389,25 @@ async function handleLogout() {
   min-height: 100vh;
 }
 
+/* 导航分隔符 */
+.nav-divider {
+  margin: 16px 0 12px 0;
+  padding: 0 18px;
+}
+
+.divider-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 /* 图标占位符 */
+.icon-dashboard::before {
+  content: '📊';
+}
+
 .icon-knowledge::before {
   content: '📚';
 }
@@ -346,6 +418,22 @@ async function handleLogout() {
 
 .icon-search::before {
   content: '🔍';
+}
+
+.icon-user-mgmt::before {
+  content: '👥';
+}
+
+.icon-kb-mgmt::before {
+  content: '📁';
+}
+
+.icon-upload-mgmt::before {
+  content: '📤';
+}
+
+.icon-model-mgmt::before {
+  content: '🤖';
 }
 
 .icon-profile::before {
