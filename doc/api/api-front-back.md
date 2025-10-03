@@ -1601,6 +1601,7 @@ Authorization: Bearer {token}
 | status | string | 知识库状态 | "active" |
 | progress | number | 处理进度(仅processing状态) | 85 |
 | viewers | number | 查看该知识库的用户数 | 1200 |
+| tags | Array<string> | 标签列表，最多5个 | ["API设计", "编程规范"] |
 
 **请求示例**:
 ```
@@ -1632,7 +1633,8 @@ Authorization: Bearer eyJhbGc...
       "lastUpdate": "2小时前",
       "status": "active",
       "progress": 100,
-      "viewers": 1200
+      "viewers": 1200,
+      "tags": ["API设计", "编程规范", "架构"]
     },
     {
       "id": "kb_002",
@@ -1646,7 +1648,8 @@ Authorization: Bearer eyJhbGc...
       "lastUpdate": "1天前",
       "status": "active",
       "progress": 100,
-      "viewers": 892
+      "viewers": 892,
+      "tags": ["产品", "使用手册"]
     },
     {
       "id": "kb_003",
@@ -1660,7 +1663,8 @@ Authorization: Bearer eyJhbGc...
       "lastUpdate": "3天前",
       "status": "processing",
       "progress": 85,
-      "viewers": 456
+      "viewers": 456,
+      "tags": ["运维", "部署", "监控"]
     }
   ]
 }
@@ -1827,6 +1831,553 @@ export async function getKnowledgeBaseDetail(params) {
 - 需要用户对该知识库有查看或管理权限
 - permission 字段表示当前用户对该知识库的权限级别
 - visible 字段值: all-所有人可见, authorized-仅授权用户, private-私有
+
+---
+
+### 4.4 获取知识库文档列表
+
+**功能描述**: 获取指定知识库中的所有文档列表，用于知识库详情页面展示文档信息。
+
+**业务背景**: 管理员进入知识库详情页面时需要查看该知识库包含的所有文档。
+
+**接口地址**: `/api/knowledge-base/documents`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 对该知识库有查看权限
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "knowledgeBaseId": "string, 知识库ID",
+  "page": "number, 页码，默认1",
+  "pageSize": "number, 每页数量，默认20"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| knowledgeBaseId | string | 是 | 知识库ID | "kb_001" |
+| page | number | 否 | 页码 | 1 |
+| pageSize | number | 否 | 每页数量 | 20 |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "list": [
+      {
+        "id": "string, 文档ID",
+        "name": "string, 文档名称",
+        "fileName": "string, 文件名",
+        "size": "string, 文件大小",
+        "uploadTime": "string, 上传时间",
+        "tags": "Array<string>, 标签列表",
+        "status": "string, 处理状态: processed-已处理, processing-处理中"
+      }
+    ],
+    "total": "number, 总数",
+    "page": "number, 当前页",
+    "pageSize": "number, 每页数量"
+  }
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "list": [
+      {
+        "id": "doc_001",
+        "name": "RESTful API设计规范v2.0.pdf",
+        "fileName": "RESTful API设计规范v2.0.pdf",
+        "size": "2.3 MB",
+        "uploadTime": "2025-09-28 14:30",
+        "tags": ["API", "规范"],
+        "status": "processed"
+      }
+    ],
+    "total": 3,
+    "page": 1,
+    "pageSize": 20
+  }
+}
+```
+
+**前端调用示例**:
+```javascript
+export async function getKnowledgeBaseDocuments(params) {
+  return await apiRequest('/api/knowledge-base/documents', {
+    method: 'POST',
+    body: {
+      page: 1,
+      pageSize: 20,
+      ...params
+    },
+    needAuth: true
+  });
+}
+```
+
+---
+
+### 4.5 上传文档到知识库
+
+**功能描述**: 上传PDF文档到指定知识库。
+
+**业务背景**: 管理员在知识库详情页面上传文档。
+
+**接口地址**: `/api/knowledge-base/upload-document`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 对该知识库有管理权限
+
+**请求头 (Headers)**:
+```
+Authorization: Bearer {token}
+Content-Type: multipart/form-data
+```
+
+**请求体 (Body)**:
+FormData格式，包含以下字段：
+- `knowledgeBaseId`: 知识库ID
+- `files`: 文件列表（多个文件）
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "上传成功，正在处理中",
+  "body": {
+    "documentId": "string, 文档ID",
+    "status": "string, 状态: processing"
+  }
+}
+```
+
+**前端调用示例**:
+```javascript
+export async function uploadDocument(formData) {
+  return await apiRequest('/api/knowledge-base/upload-document', {
+    method: 'POST',
+    body: formData,
+    needAuth: true,
+    headers: {}
+  });
+}
+```
+
+---
+
+### 4.6 删除知识库文档
+
+**功能描述**: 从知识库中删除指定文档。
+
+**业务背景**: 管理员在知识库详情页面删除不需要的文档。
+
+**接口地址**: `/api/knowledge-base/delete-document`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 对该知识库有管理权限
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "knowledgeBaseId": "string, 知识库ID",
+  "documentId": "string, 文档ID"
+}
+```
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "删除成功",
+  "body": {}
+}
+```
+
+---
+
+### 4.7 获取已上传文件列表
+
+**功能描述**: 获取系统中所有已上传的文件列表，用于创建知识库时选择已有文件。
+
+**业务背景**: 创建知识库时可以选择已上传过的文件，避免重复上传。
+
+**接口地址**: `/api/knowledge-base/uploaded-files`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "keyword": "string, 搜索关键词，可选",
+  "page": "number, 页码，默认1",
+  "pageSize": "number, 每页数量，默认20"
+}
+```
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "list": [
+      {
+        "id": "string, 文件ID",
+        "name": "string, 文件名",
+        "size": "string, 文件大小",
+        "uploadTime": "string, 上传时间",
+        "usedBy": "Array<string>, 被使用的知识库列表"
+      }
+    ],
+    "total": "number, 总数",
+    "page": "number, 当前页",
+    "pageSize": "number, 每页数量"
+  }
+}
+```
+
+---
+
+### 4.8 获取向量模型列表
+
+**功能描述**: 获取系统配置的向量模型列表，用于创建知识库时选择向量模型。
+
+**业务背景**: 创建知识库时需要选择向量模型用于文档向量化。
+
+**接口地址**: `/api/knowledge-base/vector-models`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{}
+```
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "id": "string, 模型ID",
+      "name": "string, 模型名称",
+      "description": "string, 模型描述",
+      "dimension": "number, 向量维度"
+    }
+  ]
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": [
+    {
+      "id": "bge-base-zh",
+      "name": "BGE-Base-zh",
+      "description": "中文向量模型，维度768，适合通用场景",
+      "dimension": 768
+    }
+  ]
+}
+```
+
+---
+
+### 4.9 创建知识库（完整流程）
+
+**功能描述**: 创建知识库，包含基本信息、文件选择和索引设置的完整流程。
+
+**业务背景**: 管理员创建新知识库的三步骤流程。
+
+**接口地址**: `/api/knowledge-base/create-full`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: admin
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "name": "string, 知识库名称",
+  "description": "string, 知识库描述",
+  "tags": "Array<string>, 标签列表",
+  "dataSource": "string, 数据来源: upload/existing",
+  "fileIds": "Array<string>, 文件ID列表（dataSource为existing时）",
+  "files": "Array<File>, 文件列表（dataSource为upload时）",
+  "chunkMethod": "string, 切片方式: smart/length/page",
+  "maxChunkLength": "number, 最大分段长度",
+  "vectorModelId": "string, 向量模型ID",
+  "similarityThreshold": "number, 相似度阈值(0-1)",
+  "maxRecall": "number, 最大召回数量"
+}
+```
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "知识库创建成功，正在处理文档",
+  "body": {
+    "id": "string, 知识库ID",
+    "name": "string, 知识库名称",
+    "status": "string, 状态: processing",
+    "createdAt": "string, 创建时间"
+  }
+}
+```
+
+---
+
+### 4.10 更新知识库
+
+**功能描述**: 更新知识库的基本信息，包括知识库名称、描述、标签和相似度阈值。
+
+**业务背景**: 管理员在知识库管理页面编辑知识库时调用，用于修改知识库的基础配置。
+
+**接口地址**: `/api/knowledge-base/update`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 对该知识库有管理权限
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "id": "string, 知识库ID",
+  "name": "string, 知识库名称",
+  "description": "string, 知识库描述",
+  "tags": "Array<string>, 标签列表",
+  "similarityThreshold": "number, 相似度阈值(0-1)"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| id | string | 是 | 知识库ID | "kb_001" |
+| name | string | 是 | 知识库名称 | "技术规范库v2" |
+| description | string | 是 | 知识库描述 | "包含最新的技术规范文档" |
+| tags | Array<string> | 否 | 标签列表，最多5个 | ["技术", "规范"] |
+| similarityThreshold | number | 否 | 相似度阈值，范围0-1 | 0.75 |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "更新成功",
+  "body": {
+    "id": "string, 知识库ID",
+    "name": "string, 知识库名称",
+    "description": "string, 知识库描述",
+    "tags": "Array<string>, 标签列表",
+    "similarityThreshold": "number, 相似度阈值",
+    "updatedAt": "string, 更新时间"
+  }
+}
+```
+
+**字段说明**:
+| 字段名 | 类型 | 说明 | 示例值 |
+|--------|------|------|--------|
+| id | string | 知识库ID | "kb_001" |
+| name | string | 知识库名称 | "技术规范库v2" |
+| description | string | 知识库描述 | "包含最新的技术规范文档" |
+| tags | Array<string> | 标签列表 | ["技术", "规范"] |
+| similarityThreshold | number | 相似度阈值 | 0.75 |
+| updatedAt | string | 更新时间（ISO 8601格式） | "2025-10-03T14:30:00Z" |
+
+**请求示例**:
+```
+POST /api/knowledge-base/update
+Content-Type: application/json
+Authorization: Bearer eyJhbGc...
+
+{
+  "id": "kb_001",
+  "name": "技术规范库v2",
+  "description": "包含最新的技术规范文档",
+  "tags": ["技术", "规范"],
+  "similarityThreshold": 0.75
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "更新成功",
+  "body": {
+    "id": "kb_001",
+    "name": "技术规范库v2",
+    "description": "包含最新的技术规范文档",
+    "tags": ["技术", "规范"],
+    "similarityThreshold": 0.75,
+    "updatedAt": "2025-10-03T14:30:00Z"
+  }
+}
+```
+
+**失败响应示例**:
+```json
+{
+  "error": 400,
+  "message": "知识库名称已存在",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 更新知识库
+ * - 接口地址: /api/knowledge-base/update
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 需要权限: 对该知识库有管理权限
+ */
+export async function updateKnowledgeBase(params) {
+  return await apiRequest('/api/knowledge-base/update', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 只能更新自己有管理权限的知识库
+- 知识库名称在系统中必须唯一
+- 标签最多可添加5个
+- 相似度阈值范围为0-1，建议值为0.6-0.8
+- 更新操作不会影响已有的文档和索引数据
+- 相似度阈值的更改将在下次检索时生效
+
+---
+
+### 4.11 获取文档预览
+
+**功能描述**: 获取文档的预览URL，用于在线预览PDF文档。
+
+**业务背景**: 用户点击文档名称时需要在线预览文档内容。
+
+**接口地址**: `/api/knowledge-base/document-preview`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 对该文档所属知识库有查看权限
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "documentId": "string, 文档ID"
+}
+```
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "documentId": "string, 文档ID",
+    "name": "string, 文档名称",
+    "previewUrl": "string, 预览URL",
+    "type": "string, 文档类型: pdf"
+  }
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "获取成功",
+  "body": {
+    "documentId": "doc_001",
+    "name": "RESTful API设计规范v2.0.pdf",
+    "previewUrl": "/datas/test.pdf",
+    "type": "pdf"
+  }
+}
+```
 
 ---
 

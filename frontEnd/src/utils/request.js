@@ -33,7 +33,15 @@ import {
   mockDeleteUser,
   mockToggleUserStatus,
   mockResetUserPassword,
-  mockExportUsers
+  mockExportUsers,
+  mockGetKnowledgeBaseDocuments,
+  mockUploadDocument,
+  mockDeleteDocument,
+  mockGetUploadedFiles,
+  mockGetVectorModels,
+  mockCreateKnowledgeBaseFull,
+  mockUpdateKnowledgeBase,
+  mockGetDocumentPreview
 } from '../api/mock'
 
 /**
@@ -189,6 +197,22 @@ async function getMockData(url, body) {
     return mockResetUserPassword(body)
   } else if (url.includes('/admin/users/export')) {
     return mockExportUsers(body)
+  } else if (url.includes('/knowledge-base/documents')) {
+    return mockGetKnowledgeBaseDocuments(body)
+  } else if (url.includes('/knowledge-base/upload-document')) {
+    return mockUploadDocument(body)
+  } else if (url.includes('/knowledge-base/delete-document')) {
+    return mockDeleteDocument(body)
+  } else if (url.includes('/knowledge-base/uploaded-files')) {
+    return mockGetUploadedFiles(body)
+  } else if (url.includes('/knowledge-base/vector-models')) {
+    return mockGetVectorModels()
+  } else if (url.includes('/knowledge-base/create-full')) {
+    return mockCreateKnowledgeBaseFull(body)
+  } else if (url.includes('/knowledge-base/update')) {
+    return mockUpdateKnowledgeBase(body)
+  } else if (url.includes('/knowledge-base/document-preview')) {
+    return mockGetDocumentPreview(body)
   }
 
   // 默认返回成功

@@ -122,7 +122,7 @@ const adminMenuItems = [
     icon: 'icon-user-mgmt'
   },
   {
-    path: '/admin/knowledge',
+    path: '/admin/knowledge-management',
     name: '知识库管理',
     icon: 'icon-kb-mgmt'
   },

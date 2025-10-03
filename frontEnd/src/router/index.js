@@ -98,7 +98,7 @@ const routes = [
     ]
   },
   {
-    path: '/admin/knowledge',
+    path: '/admin/knowledge-management',
     name: 'KnowledgeManagement',
     component: () => import('../layouts/MainLayout.vue'),
     meta: { requiresAuth: true, requiresAdmin: true },
@@ -106,6 +106,14 @@ const routes = [
       {
         path: '',
         component: () => import('../views/admin/KnowledgeManagement.vue')
+      },
+      {
+        path: ':id',
+        component: () => import('../views/admin/KnowledgeBaseDetail.vue')
+      },
+      {
+        path: ':id/document/:documentId',
+        component: () => import('../views/admin/DocumentPreview.vue')
       }
     ]
   },

@@ -1123,12 +1123,294 @@
 
 ---
 
+## 知识库管理页面 (KnowledgeManagement.vue)
+
+### 1. 页面功能图标
+
+#### 1.1 添加图标 (Add Icon)
+- **文件名**: `icon-add-kb.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-add-kb.svg`
+- **尺寸**: 18x18 px
+- **用途**: 创建知识库按钮图标
+- **当前状态**: 使用文本符号 "+" (需要替换)
+- **设计要求**: 加号图标
+- **颜色**: 白色 (#ffffff)，用于紫色渐变按钮
+
+#### 1.2 编辑知识库图标 (Edit KB Icon)
+- **文件名**: `icon-edit-kb.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-edit-kb.svg`
+- **尺寸**: 16x16 px
+- **用途**: 知识库卡片编辑按钮
+- **当前状态**: 使用Emoji占位符 "✏️" (需要替换)
+- **设计要求**: 铅笔/编辑风格图标
+- **颜色**: 深灰色
+
+#### 1.3 删除知识库图标 (Delete KB Icon)
+- **文件名**: `icon-delete-kb.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-delete-kb.svg`
+- **尺寸**: 16x16 px
+- **用途**: 知识库卡片删除按钮
+- **当前状态**: 使用Emoji占位符 "🗑️" (需要替换)
+- **设计要求**: 垃圾桶风格图标
+- **颜色**: 深灰色
+
+### 2. 知识库卡片图标
+
+#### 2.1 知识库主图标 (KB Main Icon)
+- **文件名**: `icon-kb-main.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-kb-main.svg`
+- **尺寸**: 24x24 px
+- **用途**: 知识库卡片主图标
+- **当前状态**: 使用Emoji占位符 "📚" (需要替换)
+- **设计要求**: 书籍/知识库风格图标
+- **颜色**: 白色，用于渐变背景
+
+---
+
+## 创建知识库对话框 (CreateKnowledgeBaseDialog.vue)
+
+### 1. 步骤指示器图标
+
+#### 1.1 关闭对话框图标 (Close Dialog Icon)
+- **文件名**: `icon-close-dialog-kb.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-close-dialog-kb.svg`
+- **尺寸**: 18x18 px
+- **用途**: 对话框关闭按钮
+- **当前状态**: 使用文本符号 "✕" (需要替换)
+- **设计要求**: 叉号风格图标
+- **颜色**: #666666
+
+### 2. 标签输入图标
+
+#### 2.1 标签删除图标 (Tag Remove Icon)
+- **文件名**: `icon-tag-remove.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-tag-remove.svg`
+- **尺寸**: 14x14 px
+- **用途**: 标签删除按钮
+- **当前状态**: 使用文本符号 "✕" (需要替换)
+- **设计要求**: 小叉号图标
+- **颜色**: #9ca3af
+
+### 3. 文件上传图标
+
+#### 3.1 上传区域图标 (Upload Area Icon)
+- **文件名**: `icon-upload-area.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-upload-area.svg`
+- **尺寸**: 48x48 px
+- **用途**: 上传区域占位图标
+- **当前状态**: 使用Emoji占位符 "📤" (需要替换)
+- **设计要求**: 上传/箭头向上风格图标
+- **颜色**: #9ca3af
+
+---
+
+## 知识库详情页面 (KnowledgeBaseDetail.vue)
+
+### 1. 页面导航图标
+
+#### 1.1 返回按钮图标 (Back Icon)
+- **文件名**: `icon-back-arrow.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-back-arrow.svg`
+- **尺寸**: 20x20 px
+- **用途**: 返回按钮
+- **当前状态**: 使用文本符号 "←" (需要替换)
+- **设计要求**: 左箭头风格图标
+- **颜色**: #666666
+
+#### 1.2 上传文档图标 (Upload Doc Icon)
+- **文件名**: `icon-upload-doc-btn.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-upload-doc-btn.svg`
+- **尺寸**: 18x18 px
+- **用途**: 上传文档按钮
+- **当前状态**: 使用Emoji占位符 "📤" (需要替换)
+- **设计要求**: 上传/导入风格图标
+- **颜色**: #333333
+
+### 2. 统计卡片图标
+
+#### 2.1 文档总数图标 (Doc Count Icon)
+- **文件名**: `icon-doc-count.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-doc-count.svg`
+- **尺寸**: 28x28 px
+- **用途**: 文档总数统计卡片
+- **当前状态**: 使用Emoji占位符 "📄" (需要替换)
+- **设计要求**: 文档/文件风格图标
+- **颜色**: 蓝色系
+
+#### 2.2 存储大小图标 (Storage Size Icon)
+- **文件名**: `icon-storage-size.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-storage-size.svg`
+- **尺寸**: 28x28 px
+- **用途**: 存储大小统计卡片
+- **当前状态**: 使用Emoji占位符 "💾" (需要替换)
+- **设计要求**: 磁盘/存储风格图标
+- **颜色**: 绿色系
+
+#### 2.3 查看人数图标 (Viewers Icon)
+- **文件名**: `icon-viewers-count.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-viewers-count.svg`
+- **尺寸**: 28x28 px
+- **用途**: 查看人数统计卡片
+- **当前状态**: 使用Emoji占位符 "👁️" (需要替换)
+- **设计要求**: 眼睛/查看风格图标
+- **颜色**: 黄色系
+
+### 3. 文档表格图标
+
+#### 3.1 文档类型图标 (Doc Type Icon)
+- **文件名**: `icon-doc-type-pdf.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-doc-type-pdf.svg`
+- **尺寸**: 20x20 px
+- **用途**: 文档列表中的PDF文件图标
+- **当前状态**: 使用Emoji占位符 "📄" (需要替换)
+- **设计要求**: PDF文档风格图标
+- **颜色**: #ef4444 (红色)
+
+#### 3.2 查看文档图标 (View Doc Icon)
+- **文件名**: `icon-view-doc.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-view-doc.svg`
+- **尺寸**: 18x18 px
+- **用途**: 文档操作-查看按钮
+- **当前状态**: 使用Emoji占位符 "👁️" (需要替换)
+- **设计要求**: 眼睛风格图标
+- **颜色**: #666666
+
+#### 3.3 删除文档图标 (Delete Doc Icon)
+- **文件名**: `icon-delete-doc.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-delete-doc.svg`
+- **尺寸**: 18x18 px
+- **用途**: 文档操作-删除按钮
+- **当前状态**: 使用Emoji占位符 "🗑️" (需要替换)
+- **设计要求**: 垃圾桶风格图标
+- **颜色**: #666666
+
+---
+
+## 上传文档对话框 (UploadDocumentDialog.vue)
+
+### 1. 上传区域图标
+
+#### 1.1 上传占位图标 (Upload Placeholder Icon)
+- **文件名**: `icon-upload-placeholder.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-upload-placeholder.svg`
+- **尺寸**: 56x56 px
+- **用途**: 上传区域中央占位图标
+- **当前状态**: 使用Emoji占位符 "📤" (需要替换)
+- **设计要求**: 上传/箭头向上风格图标
+- **颜色**: #9ca3af
+
+### 2. 文件列表图标
+
+#### 2.1 文件图标 (File Icon)
+- **文件名**: `icon-file-item.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-file-item.svg`
+- **尺寸**: 24x24 px
+- **用途**: 文件列表项图标
+- **当前状态**: 使用Emoji占位符 "📄" (需要替换)
+- **设计要求**: 文档风格图标
+- **颜色**: #667eea
+
+#### 2.2 移除文件图标 (Remove File Icon)
+- **文件名**: `icon-remove-file.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-remove-file.svg`
+- **尺寸**: 16x16 px
+- **用途**: 移除文件按钮
+- **当前状态**: 使用文本符号 "✕" (需要替换)
+- **设计要求**: 叉号风格图标
+- **颜色**: #666666
+
+---
+
+## 文档预览页面 (DocumentPreview.vue)
+
+### 1. 页面功能图标
+
+#### 1.1 返回图标 (Back Icon)
+- **文件名**: `icon-back-preview.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-back-preview.svg`
+- **尺寸**: 20x20 px
+- **用途**: 返回按钮
+- **当前状态**: 使用文本符号 "←" (需要替换)
+- **设计要求**: 左箭头风格图标
+- **颜色**: #666666
+
+#### 1.2 下载文档图标 (Download Doc Icon)
+- **文件名**: `icon-download-doc.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-download-doc.svg`
+- **尺寸**: 18x18 px
+- **用途**: 下载文档按钮
+- **当前状态**: 使用Emoji占位符 "📥" (需要替换)
+- **设计要求**: 下载/箭头向下风格图标
+- **颜色**: #333333
+
+### 2. 状态提示图标
+
+#### 2.1 警告图标 (Warning Icon)
+- **文件名**: `icon-warning-preview.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-warning-preview.svg`
+- **尺寸**: 64x64 px
+- **用途**: 不支持预览类型的警告提示
+- **当前状态**: 使用Emoji占位符 "⚠️" (需要替换)
+- **设计要求**: 警告/感叹号风格图标
+- **颜色**: #f59e0b
+
+#### 2.2 错误图标 (Error Icon)
+- **文件名**: `icon-error-preview.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-error-preview.svg`
+- **尺寸**: 64x64 px
+- **用途**: 文档加载失败的错误提示
+- **当前状态**: 使用Emoji占位符 "❌" (需要替换)
+- **设计要求**: 错误/叉号风格图标
+- **颜色**: #ef4444
+
+---
+
+## 编辑知识库对话框 (EditKnowledgeBaseDialog.vue)
+
+### 1. 对话框功能图标
+
+#### 1.1 关闭图标 (Close Icon)
+- **文件名**: `icon-close-dialog.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-close-dialog.svg`
+- **尺寸**: 20x20 px
+- **用途**: 对话框关闭按钮
+- **当前状态**: 使用文本符号 "✕" (需要替换)
+- **设计要求**: 叉号/关闭风格图标
+- **颜色**: #666666
+
+#### 1.2 帮助提示图标 (Help Icon)
+- **文件名**: `icon-help-tooltip.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-help-tooltip.svg`
+- **尺寸**: 16x16 px
+- **用途**: 相似度阈值字段的帮助提示图标
+- **当前状态**: 使用文本符号 "?" (需要替换)
+- **设计要求**: 问号/帮助风格图标，圆形背景
+- **颜色**: #666666 (问号), #e5e7eb (背景)
+
+### 2. 标签相关图标
+
+#### 2.1 移除标签图标 (Remove Tag Icon)
+- **文件名**: `icon-remove-tag.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-remove-tag.svg`
+- **尺寸**: 14x14 px
+- **用途**: 标签的删除按钮
+- **当前状态**: 使用文本符号 "✕" (需要替换)
+- **设计要求**: 小叉号风格图标
+- **颜色**: 白色 (#ffffff)，用于紫色渐变标签背景
+
+### 说明
+- **复用图标**: EditKnowledgeBaseDialog 主要复用了现有的图标设计，如关闭按钮和删除标签图标
+- **无新增图标**: 该组件不需要特殊的新图标，所有图标都可以使用已有的通用图标或简单符号
+
+---
+
 ## 待补充的图标
 
 随着项目开发进度，其他页面需要的图标将在此处补充：
 
-- [ ] 知识库详情页面图标
-- [ ] 知识库管理页面图标
+- [x] 知识库详情页面图标
+- [x] 知识库管理页面图标
+- [x] 编辑知识库对话框图标
 - [ ] 文件上传页面图标
 - [ ] 模型管理页面图标
 
@@ -1145,6 +1427,8 @@
 | 2025-10-01 | v1.4 | 添加个人设置页面所需图标(11个) | AI Assistant |
 | 2025-10-02 | v1.5 | 添加仪表板页面所需图标(17个)和管理员菜单图标(5个) | AI Assistant |
 | 2025-10-02 | v1.6 | 添加用户管理页面所需图标(17个，移除数据统计图标) | AI Assistant |
+| 2025-10-03 | v1.7 | 添加知识库管理相关页面图标(20个)：知识库管理主页、创建知识库对话框、知识库详情页、上传文档对话框、文档预览页 | AI Assistant |
+| 2025-10-03 | v1.8 | 添加编辑知识库对话框图标(3个)：关闭按钮、帮助提示、标签移除 | AI Assistant |
 
 ---
 

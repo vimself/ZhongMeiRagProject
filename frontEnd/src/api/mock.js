@@ -85,7 +85,8 @@ export function mockGetKnowledgeBaseList() {
         lastUpdate: '2小时前',
         status: 'active',
         progress: 100,
-        viewers: 1200
+        viewers: 1200,
+        tags: ['API设计', '编程规范', '架构']
       },
       {
         id: 'kb_002',
@@ -99,7 +100,8 @@ export function mockGetKnowledgeBaseList() {
         lastUpdate: '1天前',
         status: 'active',
         progress: 100,
-        viewers: 892
+        viewers: 892,
+        tags: ['产品', '使用手册']
       },
       {
         id: 'kb_003',
@@ -113,7 +115,8 @@ export function mockGetKnowledgeBaseList() {
         lastUpdate: '3天前',
         status: 'processing',
         progress: 85,
-        viewers: 456
+        viewers: 456,
+        tags: ['运维', '部署', '监控', '故障处理']
       }
     ],
     message: '获取成功'
@@ -925,6 +928,212 @@ export function mockExportUsers(params) {
       expiresIn: 3600
     },
     message: '导出成功'
+  }
+}
+
+/**
+ * 模拟获取知识库文档列表
+ * @param {object} params - 查询参数
+ * @returns {object} 模拟响应
+ */
+export function mockGetKnowledgeBaseDocuments(params) {
+  const { knowledgeBaseId } = params
+  return {
+    success: true,
+    data: {
+      list: [
+        {
+          id: 'doc_001',
+          name: 'RESTful API设计规范v2.0.pdf',
+          fileName: 'RESTful API设计规范v2.0.pdf',
+          size: '2.3 MB',
+          uploadTime: '2025-09-28 14:30',
+          tags: ['API', '规范'],
+          status: 'processed'
+        },
+        {
+          id: 'doc_002',
+          name: '数据库设计规范.pdf',
+          fileName: '数据库设计规范.pdf',
+          size: '1.8 MB',
+          uploadTime: '2025-09-25 10:15',
+          tags: ['数据库', '规范'],
+          status: 'processed'
+        },
+        {
+          id: 'doc_003',
+          name: '前端开发规范.pdf',
+          fileName: '前端开发规范.pdf',
+          size: '1.5 MB',
+          uploadTime: '2025-09-20 16:45',
+          tags: ['前端', '规范'],
+          status: 'processed'
+        }
+      ],
+      total: 3,
+      page: params.page || 1,
+      pageSize: params.pageSize || 20
+    },
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟上传文档
+ * @param {FormData} formData - 表单数据
+ * @returns {object} 模拟响应
+ */
+export function mockUploadDocument(formData) {
+  return {
+    success: true,
+    data: {
+      documentId: 'doc_' + Date.now(),
+      status: 'processing'
+    },
+    message: '上传成功，正在处理中'
+  }
+}
+
+/**
+ * 模拟删除文档
+ * @param {object} params - 删除参数
+ * @returns {object} 模拟响应
+ */
+export function mockDeleteDocument(params) {
+  return {
+    success: true,
+    data: {},
+    message: '删除成功'
+  }
+}
+
+/**
+ * 模拟获取已上传文件列表
+ * @param {object} params - 查询参数
+ * @returns {object} 模拟响应
+ */
+export function mockGetUploadedFiles(params) {
+  return {
+    success: true,
+    data: {
+      list: [
+        {
+          id: 'file_001',
+          name: 'Java开发规范.pdf',
+          size: '3.2 MB',
+          uploadTime: '2025-09-15',
+          usedBy: ['技术规范库']
+        },
+        {
+          id: 'file_002',
+          name: 'Python编码规范.pdf',
+          size: '2.1 MB',
+          uploadTime: '2025-09-10',
+          usedBy: ['技术规范库']
+        },
+        {
+          id: 'file_003',
+          name: '产品需求文档模板.pdf',
+          size: '1.8 MB',
+          uploadTime: '2025-09-05',
+          usedBy: ['产品手册']
+        }
+      ],
+      total: 3,
+      page: params.page || 1,
+      pageSize: params.pageSize || 20
+    },
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟获取向量模型列表
+ * @returns {object} 模拟响应
+ */
+export function mockGetVectorModels() {
+  return {
+    success: true,
+    data: [
+      {
+        id: 'bge-base-zh',
+        name: 'BGE-Base-zh',
+        description: '中文向量模型，维度768，适合通用场景',
+        dimension: 768
+      },
+      {
+        id: 'bge-large-zh',
+        name: 'BGE-Large-zh',
+        description: '中文向量模型，维度1024，效果更好',
+        dimension: 1024
+      },
+      {
+        id: 'm3e-base',
+        name: 'M3E-Base',
+        description: '中文向量模型，维度768，速度快',
+        dimension: 768
+      }
+    ],
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟创建知识库（完整流程）
+ * @param {object} params - 创建参数
+ * @returns {object} 模拟响应
+ */
+export function mockCreateKnowledgeBaseFull(params) {
+  return {
+    success: true,
+    data: {
+      id: 'kb_' + Date.now(),
+      name: params.name,
+      description: params.description,
+      tags: params.tags,
+      status: 'processing',
+      progress: 0,
+      createdAt: new Date().toISOString()
+    },
+    message: '知识库创建成功，正在处理文档'
+  }
+}
+
+/**
+ * 模拟获取文档预览
+ * @param {object} params - 请求参数
+ * @returns {object} 模拟响应
+ */
+export function mockGetDocumentPreview(params) {
+  return {
+    success: true,
+    data: {
+      documentId: params.documentId,
+      name: 'RESTful API设计规范v2.0.pdf',
+      previewUrl: '/datas/test.pdf',
+      type: 'pdf'
+    },
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟更新知识库
+ * @param {object} params - 更新参数
+ * @returns {object} 模拟响应
+ */
+export function mockUpdateKnowledgeBase(params) {
+  return {
+    success: true,
+    data: {
+      id: params.id,
+      name: params.name,
+      description: params.description,
+      tags: params.tags || [],
+      similarityThreshold: params.similarityThreshold || 0.7,
+      updatedAt: new Date().toISOString()
+    },
+    message: '更新成功'
   }
 }
 
