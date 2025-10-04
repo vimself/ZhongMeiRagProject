@@ -2381,6 +2381,130 @@ Authorization: Bearer {token}
 
 ---
 
+### 4.12 批量导出文档
+
+**功能描述**: 批量导出指定知识库中的多个文档为ZIP压缩包，支持多选文档后一键打包下载。
+
+**业务背景**: 用户需要批量下载知识库中的多个文档时，可以选中多个文档后批量导出为ZIP文件，方便离线查看或分享。
+
+**接口地址**: `/api/knowledge-base/export-documents`
+
+**请求方法**: POST
+
+**需要登录**: 是
+
+**需要权限**: 对该知识库有查看权限
+
+**请求头 (Headers)**:
+```
+Content-Type: application/json
+Authorization: Bearer {token}
+```
+
+**请求体 (Body)**:
+```json
+{
+  "knowledgeBaseId": "string, 知识库ID",
+  "documentIds": "Array<string>, 文档ID列表"
+}
+```
+
+**参数说明**:
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|--------|------|------|------|--------|
+| knowledgeBaseId | string | 是 | 知识库ID | "kb_001" |
+| documentIds | Array<string> | 是 | 要导出的文档ID列表 | ["doc_001", "doc_002"] |
+
+**响应格式**: 
+```json
+{
+  "error": 0,
+  "message": "导出成功",
+  "body": {
+    "downloadUrl": "string, 下载链接",
+    "fileName": "string, 文件名",
+    "expiresIn": "number, 过期时间（秒）"
+  }
+}
+```
+
+**Body 数据结构说明**:
+| 字段名 | 类型 | 说明 | 示例值 |
+|--------|------|------|--------|
+| downloadUrl | string | ZIP文件下载链接 | "/downloads/kb_001_20251004153020.zip" |
+| fileName | string | ZIP文件名 | "技术规范库_文档导出_20251004.zip" |
+| expiresIn | number | 下载链接过期时间（秒），默认1小时 | 3600 |
+
+**请求示例**:
+```
+POST /api/knowledge-base/export-documents
+Content-Type: application/json
+Authorization: Bearer eyJhbGc...
+
+{
+  "knowledgeBaseId": "kb_001",
+  "documentIds": ["doc_001", "doc_002", "doc_003"]
+}
+```
+
+**成功响应示例**:
+```json
+{
+  "error": 0,
+  "message": "导出成功",
+  "body": {
+    "downloadUrl": "/downloads/kb_001_20251004153020.zip",
+    "fileName": "技术规范库_文档导出_20251004.zip",
+    "expiresIn": 3600
+  }
+}
+```
+
+**失败响应示例**:
+```json
+{
+  "error": 2003,
+  "message": "部分文档不存在或无权访问",
+  "body": {}
+}
+```
+
+```json
+{
+  "error": 2004,
+  "message": "文档列表不能为空",
+  "body": {}
+}
+```
+
+**前端调用示例**:
+```javascript
+/**
+ * 批量导出文档
+ * - 接口地址: /api/knowledge-base/export-documents
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 需要权限: 对该知识库有查看权限
+ */
+export async function exportDocuments(params) {
+  return await apiRequest('/api/knowledge-base/export-documents', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项**:
+- 单次最多支持导出50个文档
+- ZIP文件会包含所有选中的文档，按原始文件名存储
+- 下载链接有效期为1小时（3600秒），过期后需要重新生成
+- 如果文档正在处理中（status为processing），将不包含在导出结果中
+- 前端应使用`window.open(downloadUrl)`触发下载
+- 导出的ZIP文件大小受限于服务器配置，建议单次导出总大小不超过500MB
+
+---
+
 ## 5. 文档管理模块
 
 *待补充:当生成文档管理相关前端界面时,此部分将被填充*
@@ -3977,6 +4101,8 @@ export async function exportUsers(params = {}) {
 | 1004 | 密码格式不符合要求 | 提示密码规则 |
 | 2001 | 知识库不存在 | 提示知识库已删除或不存在 |
 | 2002 | 知识库名称已存在 | 提示修改知识库名称 |
+| 2003 | 部分文档不存在或无权访问 | 提示用户检查选择的文档 |
+| 2004 | 文档列表不能为空 | 提示用户至少选择一个文档 |
 | 3001 | 会话不存在 | 提示会话已删除或不存在 |
 | 3002 | 问题内容为空 | 提示输入问题 |
 | 3003 | 问题长度超限 | 提示问题不能超过1000字符 |
@@ -4022,6 +4148,7 @@ export async function exportUsers(params = {}) {
 | 2025-10-01 | v1.3 | 添加搜索模块接口(搜索文档、热门关键词、文档类型、导出) | AI Assistant |
 | 2025-10-01 | v1.4 | 添加个人中心模块(6个接口): 获取个人信息、更新个人信息、上传头像、获取部门列表、获取登录记录、修改密码 | AI Assistant |
 | 2025-10-02 | v1.5 | 添加仪表板模块(3个接口): 获取仪表板统计数据、获取系统状态、刷新系统状态 | AI Assistant |
+| 2025-10-04 | v1.6 | 添加知识库文档批量导出接口，优化文档上传限制（50个文件，单个100MB） | AI Assistant |
 
 ---
 

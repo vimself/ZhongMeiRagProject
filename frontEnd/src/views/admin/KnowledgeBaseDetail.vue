@@ -49,6 +49,15 @@
       <div class="section-header">
         <h2 class="section-title">文档列表</h2>
         <div class="section-actions">
+          <button 
+            v-if="selectedDocIds.length > 0" 
+            class="btn-export"
+            @click="handleBatchExport"
+            :disabled="exporting"
+          >
+            <span class="icon-export">📦</span>
+            {{ exporting ? 'ZIP打包中...' : `导出为ZIP (${selectedDocIds.length}个文件)` }}
+          </button>
           <input 
             type="text" 
             class="search-input" 
@@ -63,15 +72,30 @@
         <table>
           <thead>
             <tr>
+              <th style="width: 50px;">
+                <input 
+                  type="checkbox" 
+                  class="doc-checkbox"
+                  :checked="isAllSelected"
+                  @change="handleSelectAll"
+                />
+              </th>
               <th>文件名称</th>
               <th>大小</th>
               <th>导入时间</th>
-              <th>标签</th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="doc in filteredDocuments" :key="doc.id">
+              <td>
+                <input 
+                  type="checkbox" 
+                  class="doc-checkbox"
+                  :checked="selectedDocIds.includes(doc.id)"
+                  @change="handleSelectDoc(doc.id)"
+                />
+              </td>
               <td>
                 <div class="doc-name-cell">
                   <span class="doc-icon">📄</span>
@@ -80,11 +104,6 @@
               </td>
               <td>{{ doc.size }}</td>
               <td>{{ doc.uploadTime }}</td>
-              <td>
-                <div class="tags">
-                  <span v-for="tag in doc.tags" :key="tag" class="tag">{{ tag }}</span>
-                </div>
-              </td>
               <td>
                 <div class="table-actions">
                   <button class="btn-action" @click="handlePreview(doc)" title="查看">
@@ -127,7 +146,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { getKnowledgeBaseDetail, getKnowledgeBaseDocuments, deleteDocument } from '@/api/knowledgeApi'
+import { getKnowledgeBaseDetail, getKnowledgeBaseDocuments, deleteDocument, exportDocuments } from '@/api/knowledgeApi'
 import UploadDocumentDialog from './components/UploadDocumentDialog.vue'
 
 const router = useRouter()
@@ -142,6 +161,8 @@ const knowledgeBase = ref({})
 const documents = ref({ list: [], total: 0 })
 const searchKeyword = ref('')
 const showUploadDialog = ref(false)
+const selectedDocIds = ref([])
+const exporting = ref(false)
 
 // 过滤后的文档列表
 const filteredDocuments = computed(() => {
@@ -151,6 +172,12 @@ const filteredDocuments = computed(() => {
   return documents.value.list.filter(doc => 
     doc.name.toLowerCase().includes(searchKeyword.value.toLowerCase())
   )
+})
+
+// 是否全选
+const isAllSelected = computed(() => {
+  return filteredDocuments.value.length > 0 && 
+         selectedDocIds.value.length === filteredDocuments.value.length
 })
 
 // 返回上一页
@@ -218,6 +245,54 @@ const handleDelete = async (doc) => {
 const handleUploaded = () => {
   showUploadDialog.value = false
   fetchDocuments()
+}
+
+// 选择文档
+const handleSelectDoc = (docId) => {
+  const index = selectedDocIds.value.indexOf(docId)
+  if (index > -1) {
+    selectedDocIds.value.splice(index, 1)
+  } else {
+    selectedDocIds.value.push(docId)
+  }
+}
+
+// 全选/取消全选
+const handleSelectAll = () => {
+  if (isAllSelected.value) {
+    selectedDocIds.value = []
+  } else {
+    selectedDocIds.value = filteredDocuments.value.map(doc => doc.id)
+  }
+}
+
+// 批量导出文档
+const handleBatchExport = async () => {
+  if (selectedDocIds.value.length === 0 || exporting.value) {
+    return
+  }
+
+  try {
+    exporting.value = true
+    const res = await exportDocuments({
+      knowledgeBaseId: knowledgeBaseId.value,
+      documentIds: selectedDocIds.value
+    })
+    
+    if (res.success) {
+      // 触发浏览器下载
+      const downloadUrl = res.data.downloadUrl
+      window.open(downloadUrl, '_blank')
+      
+      alert(`已将 ${selectedDocIds.value.length} 个文档打包为ZIP并下载到本地`)
+      selectedDocIds.value = []
+    }
+  } catch (error) {
+    console.error('导出失败:', error)
+    alert(error.message || '导出失败')
+  } finally {
+    exporting.value = false
+  }
 }
 
 // 页面加载时获取数据
@@ -451,18 +526,42 @@ onMounted(() => {
   text-decoration: underline;
 }
 
-.tags {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+.doc-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
 }
 
-.tag {
-  padding: 2px 8px;
-  background: #f3f4f6;
-  border-radius: 10px;
-  font-size: 12px;
-  color: #4b5563;
+.btn-export {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-export:hover:not(:disabled) {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(3, 105, 161, 0.15);
+}
+
+.btn-export:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f0f9ff;
+}
+
+.icon-export {
+  font-size: 16px;
 }
 
 .table-actions {

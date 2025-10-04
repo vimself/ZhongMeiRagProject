@@ -127,11 +127,6 @@ const adminMenuItems = [
     icon: 'icon-kb-mgmt'
   },
   {
-    path: '/admin/upload',
-    name: '文件上传',
-    icon: 'icon-upload-mgmt'
-  },
-  {
     path: '/admin/models',
     name: '模型管理',
     icon: 'icon-model-mgmt'
@@ -426,10 +421,6 @@ async function handleLogout() {
 
 .icon-kb-mgmt::before {
   content: '📁';
-}
-
-.icon-upload-mgmt::before {
-  content: '📤';
 }
 
 .icon-model-mgmt::before {

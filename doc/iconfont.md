@@ -923,15 +923,7 @@
 - **当前状态**: 使用Emoji占位符 "📁" (需要替换)
 - **设计要求**: 文件夹/知识库风格图标
 
-### 4. 文件上传管理图标 (Upload Management Icon)
-- **文件名**: `icon-upload-mgmt.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-upload-mgmt.svg`
-- **尺寸**: 20x20 px
-- **用途**: 导航菜单"文件上传"项（管理员）
-- **当前状态**: 使用Emoji占位符 "📤" (需要替换)
-- **设计要求**: 上传/导入风格图标
-
-### 5. 模型管理图标 (Model Management Icon)
+### 4. 模型管理图标 (Model Management Icon)
 - **文件名**: `icon-model-mgmt.svg`
 - **位置**: `frontEnd/src/assets/icons/icon-model-mgmt.svg`
 - **尺寸**: 20x20 px
@@ -1411,8 +1403,9 @@
 - [x] 知识库详情页面图标
 - [x] 知识库管理页面图标
 - [x] 编辑知识库对话框图标
-- [ ] 文件上传页面图标
 - [ ] 模型管理页面图标
+
+**备注**: 文件上传功能已集成到知识库管理页面中，不再需要独立的文件上传页面和相关图标。
 
 ---
 

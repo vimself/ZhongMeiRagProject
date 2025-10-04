@@ -118,18 +118,6 @@ const routes = [
     ]
   },
   {
-    path: '/admin/upload',
-    name: 'FileUpload',
-    component: () => import('../layouts/MainLayout.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true },
-    children: [
-      {
-        path: '',
-        component: () => import('../views/admin/FileUpload.vue')
-      }
-    ]
-  },
-  {
     path: '/admin/models',
     name: 'ModelManagement',
     component: () => import('../layouts/MainLayout.vue'),

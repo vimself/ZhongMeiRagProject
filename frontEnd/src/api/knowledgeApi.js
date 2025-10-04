@@ -384,3 +384,34 @@ export async function getDocumentPreview(params) {
   })
 }
 
+/**
+ * 批量导出文档
+ * 
+ * 功能描述：批量导出指定的文档为ZIP压缩包
+ * 
+ * 接口地址: /api/knowledge-base/export-documents
+ * 方法: POST
+ * 需要登录: 是
+ * 需要权限: 对该知识库有查看权限
+ * 
+ * 请求参数:
+ * @param {object} params - 请求参数
+ * @param {string} params.knowledgeBaseId - 知识库ID
+ * @param {Array<string>} params.documentIds - 文档ID列表
+ * 
+ * 返回值:
+ * @returns {Promise<object>} 导出结果
+ * {
+ *   downloadUrl: string,  // 下载链接
+ *   fileName: string,     // 文件名
+ *   expiresIn: number     // 过期时间（秒）
+ * }
+ */
+export async function exportDocuments(params) {
+  return await apiRequest('/api/knowledge-base/export-documents', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  })
+}
+

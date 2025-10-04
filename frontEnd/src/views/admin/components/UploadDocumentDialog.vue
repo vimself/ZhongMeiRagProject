@@ -9,6 +9,18 @@
 
       <!-- 对话框内容 -->
       <div class="dialog-body">
+        <!-- 提示信息 -->
+        <div class="upload-notice">
+          <div class="notice-icon">ℹ️</div>
+          <div class="notice-content">
+            <p class="notice-title">上传须知</p>
+            <ul class="notice-list">
+              <li>文件上传前，建议规范命名分段标记</li>
+              <li>每次最多上传 50 个文件，每个文件不超过 100 MB</li>
+            </ul>
+          </div>
+        </div>
+
         <!-- 上传区域 -->
         <div class="upload-area" @click="triggerFileInput">
           <input 
@@ -22,7 +34,7 @@
           <div class="upload-placeholder">
             <span class="icon-upload">📤</span>
             <p>点击或拖拽文件到此处上传</p>
-            <p class="upload-tip">支持PDF格式，单个文件最大200MB</p>
+            <p class="upload-tip">支持PDF格式，单个文件最大100MB</p>
           </div>
         </div>
 
@@ -99,10 +111,17 @@ const triggerFileInput = () => {
 const handleFileSelect = (event) => {
   const files = Array.from(event.target.files)
   
+  // 检查文件数量限制
+  if (selectedFiles.value.length + files.length > 50) {
+    alert('每次最多上传50个文件，请减少文件数量')
+    event.target.value = ''
+    return
+  }
+  
   // 验证文件
   const validFiles = files.filter(file => {
-    if (file.size > 200 * 1024 * 1024) {
-      alert(`文件 ${file.name} 超过200MB，已忽略`)
+    if (file.size > 100 * 1024 * 1024) {
+      alert(`文件 ${file.name} 超过100MB，已忽略`)
       return false
     }
     if (!file.name.toLowerCase().endsWith('.pdf')) {
@@ -241,6 +260,49 @@ const handleUpload = async () => {
   flex: 1;
   overflow-y: auto;
   padding: 32px;
+}
+
+/* 提示信息 */
+.upload-notice {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.notice-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.notice-content {
+  flex: 1;
+}
+
+.notice-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e40af;
+  margin: 0 0 8px 0;
+}
+
+.notice-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #1e40af;
+  line-height: 1.6;
+}
+
+.notice-list li {
+  margin-bottom: 4px;
+}
+
+.notice-list li:last-child {
+  margin-bottom: 0;
 }
 
 /* 上传区域 */
