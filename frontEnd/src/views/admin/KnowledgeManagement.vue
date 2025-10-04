@@ -251,7 +251,7 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #3b82f6;
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -262,8 +262,9 @@ onMounted(() => {
 }
 
 .btn-primary:hover {
+  background: #2563eb;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .icon-add {

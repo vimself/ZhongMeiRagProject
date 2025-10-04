@@ -1396,6 +1396,196 @@
 
 ---
 
+## 模型管理页面 (ModelManagement.vue)
+
+### 1. 页面标题区域图标
+
+#### 1.1 时间图标 (Time Icon)
+- **文件名**: `icon-time-model.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-time-model.svg`
+- **尺寸**: 16x16 px
+- **用途**: 页面右上角当前时间显示
+- **当前状态**: 使用Emoji占位符 "🕐" (需要替换)
+- **设计要求**: 时钟风格图标
+- **颜色**: #6b7280
+
+### 2. 统计卡片图标
+
+#### 2.1 LLM模型图标 (LLM Model Icon)
+- **文件名**: `icon-llm-stat.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-llm-stat.svg`
+- **尺寸**: 28x28 px
+- **用途**: LLM模型统计卡片
+- **当前状态**: 使用Emoji占位符 "🔥" (需要替换)
+- **设计要求**: 火焰/AI风格图标
+- **颜色**: 蓝色系，卡片背景 #dbeafe
+
+#### 2.2 向量模型图标 (Embedding Model Icon)
+- **文件名**: `icon-embedding-stat.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-embedding-stat.svg`
+- **尺寸**: 28x28 px
+- **用途**: 向量模型统计卡片
+- **当前状态**: 使用Emoji占位符 "📊" (需要替换)
+- **设计要求**: 图表/向量风格图标
+- **颜色**: 绿色系，卡片背景 #d1fae5
+
+#### 2.3 在线服务图标 (Online Service Icon)
+- **文件名**: `icon-online-service.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-online-service.svg`
+- **尺寸**: 28x28 px
+- **用途**: 在线服务统计卡片
+- **当前状态**: 使用Emoji占位符 "✅" (需要替换)
+- **设计要求**: 勾选/在线风格图标
+- **颜色**: 黄色系，卡片背景 #fef3c7
+
+#### 2.4 离线服务图标 (Offline Service Icon)
+- **文件名**: `icon-offline-service.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-offline-service.svg`
+- **尺寸**: 28x28 px
+- **用途**: 离线服务统计卡片
+- **当前状态**: 使用Emoji占位符 "🚫" (需要替换)
+- **设计要求**: 禁止/离线风格图标
+- **颜色**: 红色系，卡片背景 #fee2e2
+
+### 3. 操作按钮图标
+
+#### 3.1 添加模型图标 (Add Model Icon)
+- **文件名**: `icon-add-model.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-add-model.svg`
+- **尺寸**: 18x18 px
+- **用途**: 添加模型按钮
+- **当前状态**: 使用文本符号 "+" (需要替换)
+- **设计要求**: 加号图标
+- **颜色**: 白色 (#ffffff)，用于紫色渐变按钮
+
+#### 3.2 健康检查图标 (Health Check Icon)
+- **文件名**: `icon-health-check.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-health-check.svg`
+- **尺寸**: 18x18 px
+- **用途**: 健康检查按钮
+- **当前状态**: 使用Emoji占位符 "🔄" (需要替换)
+- **设计要求**: 循环/刷新风格图标，支持旋转动画
+- **颜色**: #667eea
+
+### 4. 模型卡片图标
+
+#### 4.1 模型状态在线图标 (Model Online Icon)
+- **文件名**: `icon-model-online.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-model-online.svg`
+- **尺寸**: 8x8 px
+- **用途**: 模型在线状态指示点
+- **当前状态**: 使用CSS绘制的圆点 (可保留或替换)
+- **设计要求**: 实心圆点
+- **颜色**: #10b981（绿色）
+
+#### 4.2 模型状态离线图标 (Model Offline Icon)
+- **文件名**: `icon-model-offline.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-model-offline.svg`
+- **尺寸**: 8x8 px
+- **用途**: 模型离线状态指示点
+- **当前状态**: 使用CSS绘制的圆点 (可保留或替换)
+- **设计要求**: 实心圆点
+- **颜色**: #ef4444（红色）
+
+#### 4.3 默认标记图标 (Default Badge Icon)
+- **文件名**: `icon-default-badge.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-default-badge.svg`
+- **尺寸**: 12x12 px
+- **用途**: 默认模型标记
+- **当前状态**: 使用Emoji占位符 "⭐" (需要替换)
+- **设计要求**: 星星风格图标
+- **颜色**: 白色，用于黄色渐变背景
+
+#### 4.4 LLM模型主图标 (LLM Model Main Icon)
+- **文件名**: `icon-model-llm-main.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-model-llm-main.svg`
+- **尺寸**: 24x24 px
+- **用途**: LLM模型卡片主图标
+- **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
+- **设计要求**: 机器人/AI风格图标
+- **颜色**: 白色，用于紫色渐变背景
+
+#### 4.5 向量模型主图标 (Embedding Model Main Icon)
+- **文件名**: `icon-model-embedding-main.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-model-embedding-main.svg`
+- **尺寸**: 24x24 px
+- **用途**: 向量模型卡片主图标
+- **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
+- **设计要求**: 机器人/向量风格图标
+- **颜色**: 白色，用于绿色渐变背景
+
+### 5. 模型操作图标
+
+#### 5.1 测试模型图标 (Test Model Icon)
+- **文件名**: `icon-test-model.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-test-model.svg`
+- **尺寸**: 16x16 px
+- **用途**: 测试模型连接按钮
+- **当前状态**: 使用Emoji占位符 "🔬" (需要替换)
+- **设计要求**: 实验/测试风格图标
+- **颜色**: #6b7280
+
+#### 5.2 配置模型图标 (Config Model Icon)
+- **文件名**: `icon-config-model.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-config-model.svg`
+- **尺寸**: 16x16 px
+- **用途**: 配置/编辑模型按钮
+- **当前状态**: 使用Emoji占位符 "⚙️" (需要替换)
+- **设计要求**: 齿轮/设置风格图标
+- **颜色**: #6b7280
+
+#### 5.3 设为默认图标 (Set Default Icon)
+- **文件名**: `icon-set-default.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-set-default.svg`
+- **尺寸**: 16x16 px
+- **用途**: 设为默认模型按钮
+- **当前状态**: 使用Emoji占位符 "⭐" (需要替换)
+- **设计要求**: 星星风格图标
+- **颜色**: #6b7280
+
+#### 5.4 删除模型图标 (Delete Model Icon)
+- **文件名**: `icon-delete-model.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-delete-model.svg`
+- **尺寸**: 16x16 px
+- **用途**: 删除模型按钮
+- **当前状态**: 使用Emoji占位符 "🗑️" (需要替换)
+- **设计要求**: 垃圾桶风格图标
+- **颜色**: #6b7280
+
+---
+
+## 模型对话框 (ModelDialog.vue)
+
+### 1. 对话框控制图标
+
+#### 1.1 关闭对话框图标 (Close Dialog Icon)
+- **文件名**: `icon-close-model-dialog.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-close-model-dialog.svg`
+- **尺寸**: 18x18 px
+- **用途**: 模型对话框关闭按钮
+- **当前状态**: 使用文本符号 "✕" (需要替换)
+- **设计要求**: 叉号风格图标
+- **颜色**: #6b7280
+
+### 2. 表单辅助图标
+
+#### 2.1 必填标记图标 (Required Icon)
+- **当前状态**: 使用CSS星号 "*" (可保留)
+- **设计要求**: 简单的星号标记
+- **颜色**: #ef4444（红色）
+
+#### 2.2 加载图标 (Loading Icon)
+- **文件名**: `icon-loading-model.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-loading-model.svg`
+- **尺寸**: 14x14 px
+- **用途**: 对话框提交按钮加载状态
+- **当前状态**: 使用CSS动画实现的旋转圆圈 (可保留或替换)
+- **设计要求**: 圆形旋转动画
+- **颜色**: 白色，用于紫色渐变按钮
+- **动画**: 顺时针旋转，0.6s循环
+
+---
+
 ## 待补充的图标
 
 随着项目开发进度，其他页面需要的图标将在此处补充：
@@ -1403,7 +1593,7 @@
 - [x] 知识库详情页面图标
 - [x] 知识库管理页面图标
 - [x] 编辑知识库对话框图标
-- [ ] 模型管理页面图标
+- [x] 模型管理页面图标
 
 **备注**: 文件上传功能已集成到知识库管理页面中，不再需要独立的文件上传页面和相关图标。
 
@@ -1422,6 +1612,7 @@
 | 2025-10-02 | v1.6 | 添加用户管理页面所需图标(17个，移除数据统计图标) | AI Assistant |
 | 2025-10-03 | v1.7 | 添加知识库管理相关页面图标(20个)：知识库管理主页、创建知识库对话框、知识库详情页、上传文档对话框、文档预览页 | AI Assistant |
 | 2025-10-03 | v1.8 | 添加编辑知识库对话框图标(3个)：关闭按钮、帮助提示、标签移除 | AI Assistant |
+| 2025-10-04 | v1.9 | 添加模型管理页面所需图标(17个)：统计卡片图标、模型卡片图标、操作按钮图标、状态指示图标、模型对话框图标 | AI Assistant |
 
 ---
 

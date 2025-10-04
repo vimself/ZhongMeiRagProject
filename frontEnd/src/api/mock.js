@@ -139,33 +139,6 @@ export function mockGetChatKnowledgeBaseList() {
   }
 }
 
-/**
- * 模拟获取模型列表
- * @returns {object} 模拟响应
- */
-export function mockGetModelList() {
-  return {
-    success: true,
-    data: [
-      {
-        id: 'qwen2-7b',
-        name: 'Qwen2-7B',
-        description: '通义千问2 7B版本，适合日常问答'
-      },
-      {
-        id: 'qwen2-14b',
-        name: 'Qwen2-14B',
-        description: '通义千问2 14B版本，性能更强'
-      },
-      {
-        id: 'llama3-8b',
-        name: 'Llama3-8B',
-        description: 'Meta Llama3 8B版本'
-      }
-    ],
-    message: '获取成功'
-  }
-}
 
 /**
  * 模拟获取会话历史
@@ -1134,6 +1107,363 @@ export function mockUpdateKnowledgeBase(params) {
       updatedAt: new Date().toISOString()
     },
     message: '更新成功'
+  }
+}
+
+/**
+ * 模拟获取模型统计数据
+ * @returns {object} 模拟响应
+ */
+export function mockGetModelStats() {
+  return {
+    success: true,
+    data: {
+      llmCount: 3,
+      embeddingCount: 2,
+      onlineCount: 4,
+      offlineCount: 1
+    },
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟获取模型列表
+ * @param {object} params - 请求参数
+ * @returns {object} 模拟响应
+ */
+export function mockGetModelList(params = {}) {
+  const { type = 'all', status = 'all' } = params
+
+  const allModels = [
+    {
+      id: 'model_001',
+      name: 'Qwen2-7B-Instruct',
+      type: 'llm',
+      description: '阿里云开源文本 7B 指令微调版',
+      provider: '本地部署',
+      status: 'online',
+      isDefault: true,
+      modelSize: '7B 参数',
+      contextLength: 32000,
+      latency: '1.2s',
+      gpuMemory: '14GB',
+      endpoint: 'http://localhost:8000/v1',
+      config: {
+        temperature: 0.7,
+        topP: 0.9,
+        topK: 50,
+        maxTokens: 2048,
+        frequencyPenalty: 0.0,
+        presencePenalty: 0.0
+      },
+      healthCheck: {
+        lastCheckTime: '2025-10-04T12:05:00Z',
+        responseTime: 1200,
+        status: 'online',
+        message: '服务正常'
+      },
+      createdAt: '2025-09-20T10:00:00Z',
+      updatedAt: '2025-10-04T12:05:00Z'
+    },
+    {
+      id: 'model_002',
+      name: 'Llama3-8B-Instruct',
+      type: 'llm',
+      description: 'Meta开源Llama 8B 指令版',
+      provider: '本地部署',
+      status: 'online',
+      isDefault: false,
+      modelSize: '8B 参数',
+      contextLength: 8000,
+      latency: '1.5s',
+      gpuMemory: '16GB',
+      endpoint: 'http://localhost:8001/v1',
+      config: {
+        temperature: 0.7,
+        topP: 0.9,
+        topK: 40,
+        maxTokens: 2048,
+        frequencyPenalty: 0.0,
+        presencePenalty: 0.0
+      },
+      healthCheck: {
+        lastCheckTime: '2025-10-04T12:05:00Z',
+        responseTime: 1500,
+        status: 'online',
+        message: '服务正常'
+      },
+      createdAt: '2025-09-20T11:00:00Z',
+      updatedAt: '2025-10-04T12:05:00Z'
+    },
+    {
+      id: 'model_003',
+      name: 'ChatGLM3-6B',
+      type: 'llm',
+      description: '智谱AI ChatGLM3 6B版本',
+      provider: '本地部署',
+      status: 'offline',
+      isDefault: false,
+      modelSize: '6B 参数',
+      contextLength: 8000,
+      latency: '-',
+      gpuMemory: '12GB',
+      endpoint: 'http://localhost:8002/v1',
+      config: {
+        temperature: 0.7,
+        topP: 0.9,
+        topK: 50,
+        maxTokens: 2048,
+        frequencyPenalty: 0.0,
+        presencePenalty: 0.0
+      },
+      healthCheck: {
+        lastCheckTime: '2025-10-04T11:00:00Z',
+        responseTime: 0,
+        status: 'offline',
+        message: '连接失败'
+      },
+      createdAt: '2025-09-20T12:00:00Z',
+      updatedAt: '2025-10-04T11:00:00Z'
+    },
+    {
+      id: 'model_004',
+      name: 'bge-large-zh-v1.5',
+      type: 'embedding',
+      description: 'BGE中文向量模型 Large版本',
+      provider: '本地部署',
+      status: 'online',
+      isDefault: true,
+      modelSize: '326M',
+      contextLength: 512,
+      latency: '0.3s',
+      gpuMemory: '2GB',
+      endpoint: 'http://localhost:8100/v1',
+      config: {
+        dimension: 1024,
+        normalize: true
+      },
+      healthCheck: {
+        lastCheckTime: '2025-10-04T12:05:00Z',
+        responseTime: 300,
+        status: 'online',
+        message: '服务正常'
+      },
+      createdAt: '2025-09-20T10:30:00Z',
+      updatedAt: '2025-10-04T12:05:00Z'
+    },
+    {
+      id: 'model_005',
+      name: 'm3e-base',
+      type: 'embedding',
+      description: 'M3E中文向量模型 Base版本',
+      provider: '本地部署',
+      status: 'online',
+      isDefault: false,
+      modelSize: '400M',
+      contextLength: 512,
+      latency: '0.4s',
+      gpuMemory: '2GB',
+      endpoint: 'http://localhost:8101/v1',
+      config: {
+        dimension: 768,
+        normalize: true
+      },
+      healthCheck: {
+        lastCheckTime: '2025-10-04T12:05:00Z',
+        responseTime: 400,
+        status: 'online',
+        message: '服务正常'
+      },
+      createdAt: '2025-09-20T10:45:00Z',
+      updatedAt: '2025-10-04T12:05:00Z'
+    }
+  ]
+
+  // 按类型筛选
+  let filteredModels = allModels
+  if (type !== 'all') {
+    filteredModels = filteredModels.filter(m => m.type === type)
+  }
+
+  // 按状态筛选
+  if (status !== 'all') {
+    filteredModels = filteredModels.filter(m => m.status === status)
+  }
+
+  return {
+    success: true,
+    data: {
+      total: filteredModels.length,
+      list: filteredModels
+    },
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟获取模型详情
+ * @param {object} params - 请求参数
+ * @returns {object} 模拟响应
+ */
+export function mockGetModelDetail(params) {
+  const { id } = params
+  const mockData = mockGetModelList()
+  const model = mockData.data.list.find(m => m.id === id)
+
+  if (!model) {
+    throw new Error('模型不存在')
+  }
+
+  return {
+    success: true,
+    data: model,
+    message: '获取成功'
+  }
+}
+
+/**
+ * 模拟创建模型
+ * @param {object} params - 创建参数
+ * @returns {object} 模拟响应
+ */
+export function mockCreateModel(params) {
+  return {
+    success: true,
+    data: {
+      id: 'model_' + Date.now(),
+      name: params.name
+    },
+    message: '创建成功'
+  }
+}
+
+/**
+ * 模拟更新模型
+ * @param {object} params - 更新参数
+ * @returns {object} 模拟响应
+ */
+export function mockUpdateModel(params) {
+  return {
+    success: true,
+    data: {
+      id: params.id,
+      name: params.name
+    },
+    message: '更新成功'
+  }
+}
+
+/**
+ * 模拟删除模型
+ * @param {object} params - 请求参数
+ * @returns {object} 模拟响应
+ */
+export function mockDeleteModel(params) {
+  return {
+    success: true,
+    data: {},
+    message: '删除成功'
+  }
+}
+
+/**
+ * 模拟设置默认模型
+ * @param {object} params - 请求参数
+ * @returns {object} 模拟响应
+ */
+export function mockSetDefaultModel(params) {
+  return {
+    success: true,
+    data: {},
+    message: '设置成功'
+  }
+}
+
+/**
+ * 模拟测试模型连接
+ * @param {object} params - 请求参数
+ * @returns {object} 模拟响应
+ */
+export function mockTestModel(params) {
+  // 模拟随机成功或失败
+  const isSuccess = Math.random() > 0.3
+
+  return {
+    success: true,
+    data: {
+      status: isSuccess ? 'online' : 'offline',
+      responseTime: isSuccess ? Math.floor(Math.random() * 2000) + 500 : 0,
+      message: isSuccess ? '连接正常' : '连接失败',
+      timestamp: new Date().toISOString()
+    },
+    message: '测试完成'
+  }
+}
+
+/**
+ * 模拟批量健康检查
+ * @returns {object} 模拟响应
+ */
+export function mockHealthCheckModels() {
+  return {
+    success: true,
+    data: {
+      total: 5,
+      success: 4,
+      failed: 1,
+      results: [
+        {
+          id: 'model_001',
+          name: 'Qwen2-7B-Instruct',
+          status: 'online',
+          responseTime: 1200,
+          message: '服务正常'
+        },
+        {
+          id: 'model_002',
+          name: 'Llama3-8B-Instruct',
+          status: 'online',
+          responseTime: 1500,
+          message: '服务正常'
+        },
+        {
+          id: 'model_003',
+          name: 'ChatGLM3-6B',
+          status: 'offline',
+          responseTime: 0,
+          message: '连接失败'
+        },
+        {
+          id: 'model_004',
+          name: 'bge-large-zh-v1.5',
+          status: 'online',
+          responseTime: 300,
+          message: '服务正常'
+        },
+        {
+          id: 'model_005',
+          name: 'm3e-base',
+          status: 'online',
+          responseTime: 400,
+          message: '服务正常'
+        }
+      ]
+    },
+    message: '健康检查完成'
+  }
+}
+
+/**
+ * 模拟更新模型状态
+ * @param {object} params - 请求参数
+ * @returns {object} 模拟响应
+ */
+export function mockUpdateModelStatus(params) {
+  return {
+    success: true,
+    data: {},
+    message: '状态更新成功'
   }
 }
 

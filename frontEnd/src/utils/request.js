@@ -41,7 +41,16 @@ import {
   mockGetVectorModels,
   mockCreateKnowledgeBaseFull,
   mockUpdateKnowledgeBase,
-  mockGetDocumentPreview
+  mockGetDocumentPreview,
+  mockGetModelStats,
+  mockGetModelDetail,
+  mockCreateModel,
+  mockUpdateModel,
+  mockDeleteModel,
+  mockSetDefaultModel,
+  mockTestModel,
+  mockHealthCheckModels,
+  mockUpdateModelStatus
 } from '../api/mock'
 
 /**
@@ -213,6 +222,26 @@ async function getMockData(url, body) {
     return mockUpdateKnowledgeBase(body)
   } else if (url.includes('/knowledge-base/document-preview')) {
     return mockGetDocumentPreview(body)
+  } else if (url.includes('/models/stats')) {
+    return mockGetModelStats()
+  } else if (url.includes('/models/detail')) {
+    return mockGetModelDetail(body)
+  } else if (url.includes('/models/create')) {
+    return mockCreateModel(body)
+  } else if (url.includes('/models/update') && !url.includes('update-status')) {
+    return mockUpdateModel(body)
+  } else if (url.includes('/models/delete')) {
+    return mockDeleteModel(body)
+  } else if (url.includes('/models/set-default')) {
+    return mockSetDefaultModel(body)
+  } else if (url.includes('/models/test')) {
+    return mockTestModel(body)
+  } else if (url.includes('/models/health-check')) {
+    return mockHealthCheckModels()
+  } else if (url.includes('/models/update-status')) {
+    return mockUpdateModelStatus(body)
+  } else if (url.includes('/models/list')) {
+    return mockGetModelList(body)
   }
 
   // 默认返回成功
