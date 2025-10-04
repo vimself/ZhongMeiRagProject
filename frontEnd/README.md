@@ -1,355 +1,177 @@
-# RAG知识问答系统 - 前端项目
+# RAG知识问答系统 - 前端
 
-基于 Vue 3 + Vite 开发的企业级知识问答系统前端应用。
+基于 Vue 3 + Vite 的企业级知识问答系统前端。
 
 ## 技术栈
 
-- **框架**: Vue 3.5
-- **构建工具**: Vite 7.1
-- **路由**: Vue Router 4
-- **开发工具**: Vite DevTools
-- **样式**: CSS3 (Scoped Style)
-- **包管理**: npm
+- Vue 3.5 + Composition API
+- Vue Router 4
+- Vite 7.1
+- 原生 CSS3（无UI框架）
 
 ## 项目结构
 
 ```
 frontEnd/
 ├── src/
-│   ├── api/              # API接口定义
-│   │   ├── authApi.js    # 用户认证接口
-│   │   ├── knowledgeApi.js # 知识库管理接口
-│   │   ├── userApi.js    # 用户个人信息接口
-│   │   └── mock.js       # 模拟数据
-│   ├── assets/           # 静态资源
-│   │   ├── icons/        # 图标资源 (待添加)
-│   │   └── images/       # 图片资源 (待添加)
-│   ├── layouts/          # 布局组件
-│   │   └── MainLayout.vue # 主布局(左侧导航+右侧内容)
-│   ├── router/           # 路由配置
-│   │   └── index.js      # 路由定义和守卫
-│   ├── utils/            # 工具函数
-│   │   ├── env.js        # 环境配置
-│   │   ├── request.js    # API请求封装
-│   │   └── storage.js    # 本地存储工具
-│   ├── views/            # 页面组件
-│   │   ├── Login.vue     # 登录页面
-│   │   ├── Knowledge.vue # 我的知识库页面
-│   │   ├── Chat.vue      # 智能问答页面
-│   │   ├── Search.vue    # 文档搜索页面(开发中)
-│   │   ├── Profile.vue   # 个人设置页面(基本信息+安全设置)
-│   │   └── DashboardAdmin.vue # 管理员首页（仪表盘）
-│   ├── App.vue           # 根组件
-│   └── main.js           # 入口文件
-├── public/               # 公共资源
-├── index.html            # HTML模板
-├── vite.config.js        # Vite配置
-├── jsconfig.json         # JS配置
-└── package.json          # 依赖配置
+│   ├── api/                    # API接口
+│   │   ├── authApi.js          # 认证
+│   │   ├── chatApi.js          # 智能问答
+│   │   ├── knowledgeApi.js     # 知识库
+│   │   ├── userApi.js          # 个人中心
+│   │   ├── userManagementApi.js # 用户管理
+│   │   ├── dashboardApi.js     # 仪表盘
+│   │   ├── modelApi.js         # 模型管理
+│   │   ├── searchApi.js        # 文档搜索
+│   │   └── mock.js             # Mock数据
+│   ├── views/                  # 页面
+│   │   ├── Login.vue           # 登录
+│   │   ├── Knowledge.vue       # 我的知识库
+│   │   ├── Chat.vue            # 智能问答
+│   │   ├── Search.vue          # 文档搜索
+│   │   ├── Profile.vue         # 个人中心
+│   │   ├── DashboardAdmin.vue  # 管理员仪表盘
+│   │   └── admin/              # 管理员页面
+│   │       ├── UserManagement.vue          # 用户管理
+│   │       ├── KnowledgeManagement.vue     # 知识库管理
+│   │       ├── KnowledgeBaseDetail.vue     # 知识库详情
+│   │       ├── DocumentPreview.vue         # 文档预览
+│   │       ├── ModelManagement.vue         # 模型管理
+│   │       └── components/                 # 管理页面组件
+│   ├── layouts/                # 布局
+│   │   └── MainLayout.vue      # 主布局
+│   ├── router/                 # 路由
+│   ├── utils/                  # 工具
+│   │   ├── env.js              # 环境配置
+│   │   ├── request.js          # 请求封装
+│   │   └── storage.js          # 本地存储
+│   └── assets/                 # 静态资源
+├── vite.config.js              # Vite配置
+└── package.json
 ```
-
-## 环境要求
-
-- Node.js: `^20.19.0 || >=22.12.0`
-- npm: 最新版本
 
 ## 快速开始
 
-### 1. 安装依赖
-
+### 安装依赖
 ```bash
-cd frontEnd
 npm install
 ```
 
-### 2. 启动开发服务器
-
+### 开发模式（使用Mock数据）
 ```bash
 npm run dev
 ```
+访问 `http://localhost:5173`
 
-开发服务器将在 `http://localhost:5173` 启动
-
-### 3. 构建生产版本
-
+### 生产构建
 ```bash
 npm run build
 ```
 
-构建产物将输出到 `dist/` 目录
+## 测试账号
 
-### 4. 预览生产版本
+| 用户名 | 密码 | 角色 |
+|--------|------|------|
+| admin | admin123 | 管理员 |
+| user | user123 | 普通用户 |
 
-```bash
-npm run preview
+## 后端联调
+
+### 1. 修改配置
+编辑 `src/utils/env.js` 第19行：
+```javascript
+export const USE_MOCK = false  // 改为 false
 ```
 
-## 开发环境配置
+### 2. 配置后端地址（可选）
+如后端端口不是8000，编辑 `vite.config.js` 第25行：
+```javascript
+target: 'http://localhost:8000'  // 改为实际地址
+```
 
-### 当前环境
-- **开发环境**: 自动使用模拟数据，无需后端服务
-- **生产环境**: 需要配置实际的后端API地址
+### 3. 启动
+```bash
+npm run dev
+```
 
-### 模拟数据测试账号
-
-开发环境下可以使用以下测试账号登录：
-
-**管理员账号**:
-- 用户名: `admin`
-- 密码: `admin123`
-
-**普通用户账号**:
-- 用户名: `user`
-- 密码: `user123`
+详细说明：`../doc/api/backEndDev.md`
 
 ## 已完成功能
 
-### ✅ 登录页面
-- 用户名/密码登录
-- 密码显示/隐藏切换
-- 记住我功能
-- 忘记密码提示
-- 表单验证
-- 加载状态
-- 错误提示
-- 响应式设计
+### 普通用户功能
+- ✅ 登录/登出
+- ✅ 我的知识库（查看列表、统计数据）
+- ✅ 智能问答（对话、引用来源、推荐问题）
+- ✅ 文档搜索（关键词搜索、高级筛选）
+- ✅ 个人中心（信息编辑、修改密码、登录记录）
 
-### ✅ 主布局
-- 左侧固定导航栏
-- 顶部Logo和系统名称
-- 导航菜单(我的知识库、智能问答、文档搜索)
-- 底部用户信息区
-- 用户菜单(个人中心、退出登录)
-- 右侧内容区域
-- 响应式设计
+### 管理员功能
+- ✅ 仪表盘（统计数据、系统状态）
+- ✅ 用户管理（增删改查、状态管理、密码重置）
+- ✅ 知识库管理（创建、编辑、文档管理、批量导出）
+- ✅ 模型管理（LLM/向量模型配置、健康检查）
 
-### ✅ 我的知识库页面
-- 页面头部(标题、实时时间)
-- 统计卡片(可访问知识库、可查阅文档、今日问答)
-- 知识库列表(卡片展示)
-- 知识库信息(图标、名称、描述、统计)
-- 知识库状态(活跃、处理中、未激活)
-- 处理进度显示
-- 查看人数统计
-- 空状态提示
-- 加载状态
-- 响应式布局
+### 技术实现
+- ✅ 路由守卫（登录验证、权限控制）
+- ✅ API封装（统一请求、错误处理、Mock数据）
+- ✅ Token认证
+- ✅ 响应式布局
 
-### ✅ 路由配置
-- 路由守卫(登录验证)
-- 嵌套路由(布局+页面)
-- 页面跳转
-- 已登录自动跳转
+## 待完善功能
 
-### ✅ API接口封装
-- 统一请求处理
-- 错误处理
-- Token认证
-- 开发环境模拟数据
-- 知识库统计接口
-- 知识库列表接口
-
-### ✅ 工具函数
-- 环境配置
-- 本地存储管理
-- Token管理
-
-### ✅ 智能问答页面
-- 页面头部(标题、实时时间)
-- 左侧面板(知识库选择、模型选择、会话历史)
-- 新建对话功能
-- 空状态展示(机器人头像、推荐问题)
-- 推荐问题卡片(4个)
-- 消息列表(用户消息、AI回答、引用来源)
-- 打字动画指示器
-- 输入框(支持Enter发送、Shift+Enter换行)
-- 字符计数(0/1000)
-- 响应式布局
-
-### ✅ 个人设置页面
-- 标签页切换(基本信息、安全设置)
-- 个人信息展示和编辑
-- 头像上传功能
-- 部门选择(下拉框)
-- 修改密码表单
-- 密码强度验证
-- 登录记录展示(分页)
-- 响应式布局
-
-### ✅ 文档完善
-- API接口文档更新(知识库模块、智能问答模块、个人中心模块)
-- 图标资源文档更新(新增26个图标)
-- 数据字典补充
-- 错误码定义
-
-## 待开发功能
-
-### 知识库模块
-- [x] 知识库详情页面
-- [x] 文档列表展示
-- [x] 文档上传功能(在知识库详情页面)
-- [x] 文档批量导出(ZIP格式)
-- [ ] 文档预览功能
-- [ ] 知识库创建/编辑(管理员)
-- [ ] 知识库授权管理(管理员)
-
-### 智能问答模块
-- [x] 会话列表
-- [x] 对话界面
-- [x] 知识库选择
-- [x] 模型选择
-- [x] 答案引用展示
-- [x] 推荐问题
+- [ ] 流式回答显示（智能问答）
+- [ ] 文档在线预览（PDF/Word）
 - [ ] 历史会话加载
-- [ ] 会话重命名
-- [ ] 会话删除
-- [ ] 流式回答显示
-- [ ] 引用文档预览
+- [ ] 使用统计图表
 
-### 搜索模块
-- [ ] 搜索框和过滤器
-- [ ] 搜索结果列表
-- [ ] 结果高亮显示
-- [ ] 文档预览定位
-- [ ] 导出搜索结果
+## 生产部署
 
-### 用户管理(管理员)
-- [ ] 用户列表
-- [ ] 创建/编辑用户
-- [ ] 角色分配
-- [ ] 禁用/启用用户
-- [ ] 重置密码
+### 前端打包
+```bash
+npm run build
+```
+构建产物在 `dist/` 目录
 
-### 模型管理(管理员)
-- [ ] 模型列表
-- [ ] 模型配置
-- [ ] 模型测试
-- [ ] 健康检查
+### 后端集成
 
-### 个人中心
-- [x] 个人信息查看
-- [x] 个人信息编辑
-- [x] 头像上传
-- [x] 修改密码
-- [x] 登录记录查看
-- [ ] 使用统计
+**Python Flask**
+```python
+from flask import Flask, send_from_directory
+app = Flask(__name__, static_folder='dist')
 
-## 图标资源
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory(app.static_folder, 'index.html')
+```
 
-当前页面使用Emoji作为图标占位符，需要替换为专业图标。
+**Node.js Express**
+```javascript
+const express = require('express');
+const path = require('path');
+const app = express();
 
-详细的图标需求请查看: [图标资源文档](../doc/iconfont.md)
-
-推荐使用以下图标库:
-- Iconfont (阿里巴巴矢量图标库)
-- Font Awesome
-- Element Plus Icons
-
-## API接口文档
-
-完整的前后端接口文档请查看: [API文档](../doc/api/api-front-back.md)
+app.use(express.static('dist'));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+```
 
 ## 开发规范
 
-### 命名规范
-- 组件文件: PascalCase (如 `UserProfile.vue`)
-- 变量/函数: camelCase (如 `userName`, `getUserInfo`)
-- 常量: UPPER_CASE (如 `API_BASE_URL`)
-- CSS类名: kebab-case (如 `login-container`)
-
-### 代码风格
-- 使用 ES6+ 语法
-- 使用 Composition API
-- 组件使用 `<script setup>`
-- 样式使用 scoped
-- 保持代码简洁和可读性
-
-### Git提交规范
-- feat: 新功能
-- fix: 修复bug
-- docs: 文档更新
-- style: 代码格式调整
-- refactor: 重构
-- test: 测试相关
-- chore: 构建/工具链相关
-
-## 浏览器支持
-
-- Chrome (推荐)
-- Edge
-- Firefox
-- Safari
+- 组件文件: PascalCase (`UserProfile.vue`)
+- 变量/函数: camelCase (`getUserInfo`)
+- 常量: UPPER_CASE (`API_BASE_URL`)
+- CSS类名: kebab-case (`login-container`)
 
 ## 相关文档
 
-- [需求文档](../doc/Rag-MVP.md)
-- [Vue3开发规范](../.cursor/rules/vue3.mdc)
-- [API开发规范](../.cursor/rules/api-js.mdc)
-- [API接口文档](../doc/api/api-front-back.md)
-- [图标资源文档](../doc/iconfont.md)
-
-## 许可证
-
-内部项目，仅供公司内部使用。
-
-## 更新日志
-
-### v0.5.0 (2025-10-04)
-- ✅ 完成知识库详情页面
-- ✅ 实现文档列表展示(支持搜索)
-- ✅ 实现文档上传功能(带上传提示，最多50个文件，单个100MB)
-- ✅ 实现文档多选和批量导出ZIP功能
-- ✅ 优化导出按钮样式(浅色设计)
-- ✅ 移除独立的"文件上传"页面(功能已集成到知识库管理)
-- ✅ 创建知识库文档管理API接口
-- ✅ 更新API文档(批量导出接口)
-
-### v0.4.0 (2025-10-01)
-- ✅ 完成个人设置页面UI和功能
-- ✅ 实现基本信息和安全设置两个标签页
-- ✅ 实现个人信息查看和编辑
-- ✅ 实现头像上传功能
-- ✅ 实现部门选择下拉框
-- ✅ 实现修改密码功能(密码强度验证)
-- ✅ 实现登录记录展示(分页)
-- ✅ 创建用户个人信息API接口(6个)
-- ✅ 添加个人中心模拟数据
-- ✅ 更新API文档(个人中心模块)
-- ✅ 更新图标资源文档(新增11个图标)
-
-### v0.3.0 (2025-10-01)
-- ✅ 完成智能问答页面UI和功能
-- ✅ 实现会话管理(创建、列表、消息)
-- ✅ 实现知识库和模型选择
-- ✅ 实现消息发送和AI回答展示
-- ✅ 实现引用来源展示
-- ✅ 实现推荐问题卡片
-- ✅ 添加打字动画效果
-- ✅ 创建聊天相关API接口
-- ✅ 添加智能问答模拟数据(包含4个预设回答)
-- ✅ 更新API文档(智能问答模块)
-- ✅ 更新图标资源文档(新增15个图标)
-
-### v0.2.0 (2025-10-01)
-- ✅ 创建主布局组件(左侧导航+右侧内容)
-- ✅ 完成"我的知识库"页面UI和功能
-- ✅ 实现知识库统计和列表接口
-- ✅ 添加知识库模拟数据
-- ✅ 更新路由配置(嵌套路由)
-- ✅ 创建占位页面(文档搜索、个人中心)
-- ✅ 更新API文档(知识库管理模块)
-- ✅ 更新图标资源文档
-
-### v0.1.0 (2025-10-01)
-- ✅ 初始化项目
-- ✅ 完成登录页面UI和功能
-- ✅ 配置路由和路由守卫
-- ✅ 封装API请求工具
-- ✅ 实现开发环境模拟数据
-- ✅ 完成API文档(用户认证模块)
-- ✅ 完成图标资源需求文档
+- [后端开发指南](../doc/api/backEndDev.md) - 后端联调必读
+- [接口文档](../doc/api/api-front-back.md) - 完整API规范
+- [需求文档](../doc/Rag-MVP.md) - 产品需求
 
 ---
 
-**维护团队**: 前端开发组  
-**最后更新**: 2025-10-01
+**维护**: 前端开发组 | **更新**: 2025-10-04

@@ -11,9 +11,10 @@ export const isDev = ENV === 'development'
 
 // API基础路径
 export const API_BASE_URL = isDev 
-  ? 'http://localhost:3000/api'  // 开发环境API地址
+  ? 'http://localhost:3000/api'  // 开发环境API地址（Mock数据时使用）
   : '/api'  // 生产环境API地址
 
 // 是否使用模拟数据
-export const USE_MOCK = isDev
+// 开发时修改此处：true=使用Mock数据，false=连接真实后端API
+export const USE_MOCK = isDev  // 默认开发环境使用Mock，联调时改为false
 
