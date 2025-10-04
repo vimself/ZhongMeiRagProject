@@ -60,7 +60,7 @@ npm run dev
 ## 技术栈
 
 **前端**：Vue 3.5 + Vite 7.1 + Vue Router 4  
-**后端**：Python/Node.js + LLM + 向量数据库 + MySQL/PostgreSQL
+**后端**：Python + LLM + 向量数据库 + MySQL
 
 ## 已完成功能
 
