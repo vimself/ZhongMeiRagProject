@@ -2,7 +2,7 @@
 
 > **项目**: RAG知识问答系统  
 > **协作模式**: 前后端分离开发 + 接口文档驱动  
-> **更新日期**: 2025-10-04
+> **更新日期**: 2025-10-08
 
 ---
 
@@ -14,7 +14,6 @@
 4. [接口开发规范](#4-接口开发规范)
 5. [联调测试](#5-联调测试)
 6. [生产部署](#6-生产部署)
-7. [常见问题](#7-常见问题)
 
 ---
 
@@ -23,9 +22,9 @@
 ### 1.1 环境要求
 
 **后端开发环境**：
-- Python 3.8+ / Node.js 18+ / Java 11+ （根据实际技术栈）
-- 数据库：MySQL/PostgreSQL/MongoDB
-- 向量数据库：Milvus/Qdrant/Weaviate
+- Python 3.8
+- 数据库：MySQL/PostgreSQL
+- 向量数据库：Chroma
 - Redis（可选，用于缓存）
 
 **前端开发环境**（用于联调）：
@@ -57,11 +56,12 @@ ZhongMeiRagProject/
 ### 1.3 获取前端代码和文档
 
 **必读文档**：
-1. **`doc/api/api-front-back.md`** - 前后端接口规范（最重要）
-2. **`doc/Rag-MVP.md`** - 产品需求和业务逻辑
-3. **`frontEnd/README.md`** - 前端项目说明
+1. **`api-front-back.pdf`** - 前后端接口规范（最重要）
+2. **`Rag-MVP.pdf`** - 产品需求和业务逻辑
+3. **`backEndDev.pdf`** - 后端开发说明
 
 **获取前端项目**：
+
 ```bash
 # 如果使用Git
 git clone <repository-url>
@@ -323,7 +323,7 @@ def login():
         }), 500
 ```
 
-#### 步骤3：使用Postman/curl测试
+#### 步骤3：使用Postman测试
 
 ```bash
 curl -X POST http://localhost:8000/api/auth/login \
@@ -569,32 +569,6 @@ npm run dev
    - 检查响应格式是否符合文档规范
    - 检查CORS配置是否正确
 
-### 5.4 常见联调问题
-
-**问题1：前端请求404**
-- 检查后端路由是否正确
-- 检查是否启用了API前缀 `/api`
-- 查看后端日志确认是否收到请求
-
-**问题2：CORS错误**
-```
-Access to fetch at 'http://localhost:8000/api/auth/login' from origin 'http://localhost:5173' has been blocked by CORS policy
-```
-- 解决：配置后端CORS允许 `http://localhost:5173`
-
-**问题3：响应格式错误**
-```javascript
-// 错误：直接返回数据
-{ "token": "xxx", "user": {...} }
-
-// 正确：按文档格式返回
-{ "error": 0, "message": "登录成功", "body": { "token": "xxx", "user": {...} } }
-```
-
-**问题4：前端仍使用Mock数据**
-- 检查 `frontEnd/src/utils/env.js` 中 `USE_MOCK` 是否改为 `false`
-- 重启前端开发服务器
-
 ---
 
 ## 6. 生产部署
@@ -680,15 +654,6 @@ server {
 - [ ] LLM模型服务可访问
 - [ ] 环境变量配置正确
 - [ ] 日志系统配置完成
-
----
-
-## 📚 相关文档
-
-- **接口文档**: `doc/api/api-front-back.md` - 所有API接口规范（必读）
-- **需求文档**: `doc/Rag-MVP.md` - 产品需求和业务逻辑
-- **前端文档**: `frontEnd/README.md` - 前端项目说明
-- **前端Mock**: `frontEnd/src/api/mock.js` - 接口Mock实现参考
 
 
 

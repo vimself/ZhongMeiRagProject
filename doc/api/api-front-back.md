@@ -1,6 +1,6 @@
 # 前后端接口文档
 
-> **版本**: v2.0 | **更新**: 2025-10-04 | **维护**: jiangqin
+> **版本**: v2.1 | **更新**: 2025-10-17 | **维护**: jiangqin
 
 ---
 
@@ -305,12 +305,21 @@
 - **接口**: `POST /api/knowledge-base/detail`
 - **权限**: 对该知识库有查看权限
 
+**功能描述**: 获取指定知识库的详细信息，包括基本信息、权限等。用户端和管理端都可调用此接口。
+
+**业务背景**: 用户点击知识库卡片进入详情页时调用，用于展示知识库的完整信息。
+
 **请求参数:**
 ```json
 {
   "id": "string, 知识库ID"
 }
 ```
+
+**参数说明:**
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|-----|---|---|---|-----|
+| id | string | 是 | 知识库ID | "kb_123456" |
 
 **响应数据:**
 ```json
@@ -322,9 +331,54 @@
   "visible": "string, all|authorized|private",
   "createdAt": "string",
   "createdBy": "string",
-  "permission": "string, view|manage"
+  "permission": "string, view|manage",
+  "storageSize": "string",
+  "viewers": "number"
 }
 ```
+
+**字段说明:**
+| 字段名 | 类型 | 说明 | 示例值 |
+|-----|---|---|-----|
+| id | string | 知识库ID | "kb_123456" |
+| name | string | 知识库名称 | "技术规范知识库" |
+| code | string | 知识库编码 | "TECH_SPEC" |
+| description | string | 知识库描述 | "公司技术规范文档集合" |
+| visible | string | 可见范围 | "all" |
+| createdAt | string | 创建时间 | "2025-10-01T10:30:00Z" |
+| createdBy | string | 创建人 | "admin" |
+| permission | string | 当前用户权限：view-查看，manage-管理 | "view" |
+| storageSize | string | 存储大小 | "120 MB" |
+| viewers | number | 查看人数 | 28 |
+
+**响应码说明:**
+- `error = 0`: 请求成功
+- `error = 403`: 无权限访问该知识库
+- `error = 404`: 知识库不存在
+- `error = 500`: 系统异常
+
+**前端调用示例:**
+```javascript
+/**
+ * 获取知识库详情
+ * - 接口地址: /api/knowledge-base/detail
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 需要权限: 对该知识库有查看权限
+ */
+export async function getKnowledgeBaseDetail(params) {
+  return await apiRequest('/api/knowledge-base/detail', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项:**
+- 如果用户没有该知识库的查看权限，返回 403 错误
+- permission 字段表示当前用户对该知识库的权限级别
+- 普通用户只能看到有权限的知识库，管理员可以看到所有知识库
 
 ### 4.4 创建知识库(简化版)
 - **接口**: `POST /api/knowledge-base/create`
@@ -453,12 +507,21 @@
 - **接口**: `POST /api/knowledge-base/document-preview`
 - **权限**: 对该文档所属知识库有查看权限
 
+**功能描述**: 获取文档的预览URL，用于在浏览器中查看文档内容。支持 PDF 等常见格式。
+
+**业务背景**: 用户在知识库详情页点击文档名称时调用，用于在线预览文档内容。
+
 **请求参数:**
 ```json
 {
   "documentId": "string"
 }
 ```
+
+**参数说明:**
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|-----|---|---|---|-----|
+| documentId | string | 是 | 文档ID | "doc_123456" |
 
 **响应数据:**
 ```json
@@ -470,28 +533,123 @@
 }
 ```
 
+**字段说明:**
+| 字段名 | 类型 | 说明 | 示例值 |
+|-----|---|---|-----|
+| documentId | string | 文档ID | "doc_123456" |
+| name | string | 文档名称 | "技术规范V1.0.pdf" |
+| previewUrl | string | 预览URL | "https://example.com/preview/doc_123456" |
+| type | string | 文档类型 | "pdf" |
+
+**响应码说明:**
+- `error = 0`: 请求成功
+- `error = 403`: 无权限查看该文档
+- `error = 404`: 文档不存在
+- `error = 500`: 系统异常
+
+**前端调用示例:**
+```javascript
+/**
+ * 获取文档预览URL
+ * - 接口地址: /api/knowledge-base/document-preview
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 需要权限: 对该文档所属知识库有查看权限
+ */
+export async function getDocumentPreview(params) {
+  return await apiRequest('/api/knowledge-base/document-preview', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+```
+
+**注意事项:**
+- previewUrl 可能包含临时访问令牌，有效期建议为1小时
+- 如果用户没有该文档所属知识库的查看权限，返回 403 错误
+- 用户端和管理端均可调用此接口
+
 ### 4.12 批量导出文档
 - **接口**: `POST /api/knowledge-base/export-documents`
 - **权限**: 对该知识库有查看权限
+
+**功能描述**: 批量导出选中的文档为ZIP压缩包，支持一次性下载多个文档。
+
+**业务背景**: 用户在知识库详情页勾选多个文档后，点击"导出为ZIP"按钮时调用。
 
 **请求参数:**
 ```json
 {
   "knowledgeBaseId": "string",
-  "documentIds": ["string"], 
+  "documentIds": ["string"]
 }
 ```
+
+**参数说明:**
+| 参数名 | 类型 | 必填 | 说明 | 示例值 |
+|-----|---|---|---|-----|
+| knowledgeBaseId | string | 是 | 知识库ID | "kb_123456" |
+| documentIds | array | 是 | 文档ID列表 | ["doc_001", "doc_002"] |
 
 **响应数据:**
 ```json
 {
   "downloadUrl": "string",
   "fileName": "string",
-  "expiresIn": "number, 秒,默认3600"
+  "expiresIn": "number"
 }
 ```
 
-**注意**: 单次最多50个文档,总大小≤500MB
+**字段说明:**
+| 字段名 | 类型 | 说明 | 示例值 |
+|-----|---|---|-----|
+| downloadUrl | string | 下载链接，带临时令牌 | "https://example.com/download/..." |
+| fileName | string | 文件名 | "知识库文档_20251017.zip" |
+| expiresIn | number | 链接有效期（秒） | 3600 |
+
+**响应码说明:**
+- `error = 0`: 请求成功
+- `error = 403`: 无权限导出该知识库的文档
+- `error = 413`: 文件总大小超过限制
+- `error = 500`: 系统异常
+
+**前端调用示例:**
+```javascript
+/**
+ * 批量导出文档
+ * - 接口地址: /api/knowledge-base/export-documents
+ * - 方法: POST
+ * - 需要登录: 是
+ * - 需要权限: 对该知识库有查看权限
+ */
+export async function exportDocuments(params) {
+  return await apiRequest('/api/knowledge-base/export-documents', {
+    method: 'POST',
+    body: params,
+    needAuth: true
+  });
+}
+
+// 使用示例
+const handleBatchExport = async () => {
+  const res = await exportDocuments({
+    knowledgeBaseId: 'kb_123',
+    documentIds: ['doc_001', 'doc_002']
+  });
+  
+  if (res.success) {
+    window.open(res.data.downloadUrl, '_blank');
+  }
+};
+```
+
+**注意事项:**
+- 单次最多导出50个文档
+- 文档总大小不能超过500MB
+- downloadUrl 包含临时访问令牌，默认有效期1小时
+- 建议前端显示导出进度，避免用户重复点击
+- 用户端和管理端均可调用此接口
 
 ### 4.13 获取已上传文件列表
 - **接口**: `POST /api/knowledge-base/uploaded-files`
@@ -1200,6 +1358,7 @@
 
 | 日期 | 版本 | 更新内容 |
 |------|------|---------|
+| 2025-10-17 | v2.1 | 完善知识库详情、文档预览和批量导出接口文档，新增用户端权限说明 |
 | 2025-10-04 | v2.0 | 精简文档,优化格式 |
 | 2025-10-01 | v1.0 | 初始版本 |
 

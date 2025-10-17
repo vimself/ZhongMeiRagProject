@@ -45,6 +45,14 @@ const routes = [
       {
         path: '',
         component: () => import('../views/Knowledge.vue')
+      },
+      {
+        path: ':id',
+        component: () => import('../views/KnowledgeDetail.vue')
+      },
+      {
+        path: ':id/document/:documentId',
+        component: () => import('../views/DocumentPreview.vue')
       }
     ]
   },
