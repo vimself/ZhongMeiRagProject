@@ -713,11 +713,14 @@ function toggleSidebar() {
 
 <style scoped>
 .chat-page {
-  padding: 32px 48px;
+  padding: 20px 32px;
   max-width: 1800px;
   margin: 0 auto;
   background: #f5f7fa;
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* 页面头部 */
@@ -725,20 +728,20 @@ function toggleSidebar() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 88px;
-  margin-bottom: 20px;
+  height: 72px;
+  margin-bottom: 16px;
   flex-shrink: 0;
 }
 
 .page-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
   color: #1a1a1a;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
 }
 
 .page-subtitle {
-  font-size: 14px;
+  font-size: 13px;
   color: #666666;
   margin: 0;
 }
@@ -754,29 +757,35 @@ function toggleSidebar() {
   border-radius: 8px;
 }
 
-.icon-time::before {
-  content: '🕐';
-  font-size: 16px;
+.icon-time {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-time.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 聊天容器 */
 .chat-container {
+  flex: 1;
   display: flex;
-  gap: 28px;
-  align-items: flex-start;
+  gap: 20px;
+  align-items: stretch;
+  overflow: hidden;
+  min-height: 0;
 }
 
 /* 左侧面板 */
 .chat-sidebar {
-  width: 300px;
+  width: 280px;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  padding: 28px 20px;
+  padding: 24px 18px;
   flex-shrink: 0;
-  height: calc(100vh - 152px);
   transition: all 0.3s ease;
   overflow: hidden;
 }
@@ -784,16 +793,16 @@ function toggleSidebar() {
 .chat-sidebar.collapsed {
   width: 0;
   padding: 0;
-  margin-right: -28px;
+  margin-right: -20px;
 }
 
 .selection-group {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .selection-label {
   display: block;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #374151;
   margin-bottom: 8px;
@@ -827,22 +836,23 @@ function toggleSidebar() {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   overflow: hidden;
-  min-height: 200px;
+  min-height: 0;
 }
 
 .section-label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #374151;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
 }
 
 .history-list {
   flex: 1;
   overflow-y: auto;
-  min-height: 180px;
+  min-height: 0;
 }
 
 .history-item {
@@ -899,7 +909,7 @@ function toggleSidebar() {
 /* 新建对话按钮 */
 .new-chat-btn {
   width: 100%;
-  height: 44px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -912,7 +922,6 @@ function toggleSidebar() {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
-  margin-top: auto;
   flex-shrink: 0;
 }
 
@@ -920,10 +929,13 @@ function toggleSidebar() {
   background: #5568d3;
 }
 
-.icon-plus::before {
-  content: '+';
-  font-size: 18px;
-  font-weight: 600;
+.icon-plus {
+  width: 18px;
+  height: 18px;
+  background-image: url('@/assets/icons/icon-plus.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 右侧对话区 */
@@ -934,12 +946,13 @@ function toggleSidebar() {
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  height: calc(100vh - 152px);
   transition: all 0.3s ease;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .chat-main.sidebar-collapsed {
-  width: calc(100% + 328px);
+  width: calc(100% + 300px);
 }
 
 /* 对话区头部 */
@@ -947,7 +960,7 @@ function toggleSidebar() {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 16px 28px;
+  padding: 12px 24px;
   border-bottom: 1px solid #f0f0f0;
   flex-shrink: 0;
 }
@@ -975,16 +988,23 @@ function toggleSidebar() {
   border-color: #667eea;
 }
 
-.icon-sidebar-collapse::before {
-  content: '◀';
-  font-size: 14px;
-  color: #667eea;
+.icon-sidebar-collapse {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-sidebar.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: rotate(180deg);
 }
 
-.icon-sidebar-expand::before {
-  content: '▶';
-  font-size: 14px;
-  color: #667eea;
+.icon-sidebar-expand {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-sidebar.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 对话内容区 */
@@ -1001,53 +1021,53 @@ function toggleSidebar() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px 40px 40px 40px;
+  padding: 40px 40px 20px 40px;
   height: 100%;
-  min-height: 500px;
 }
 
 .assistant-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: #667eea;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  margin-bottom: 16px;
 }
 
-.icon-robot::before {
-  content: '🤖';
-  font-size: 36px;
+.icon-robot {
+  width: 64px;
+  height: 64px;
+  background-image: url('@/assets/icons/icon-model.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .assistant-title {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
   color: #1a1a1a;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
 }
 
 .assistant-desc {
-  font-size: 14px;
+  font-size: 13px;
   color: #6b7280;
-  margin: 0 0 48px 0;
+  margin: 0 0 32px 0;
   text-align: center;
 }
 
 /* 推荐问题 */
 .suggestions-section {
   width: 100%;
-  max-width: 900px;
+  max-width: 800px;
 }
 
 .suggestions-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: #374151;
-  margin: 0 0 20px 0;
+  margin: 0 0 14px 0;
   text-align: left;
   align-self: flex-start;
 }
@@ -1055,21 +1075,21 @@ function toggleSidebar() {
 .suggestions-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 12px;
   width: 100%;
 }
 
 .suggestion-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 18px 20px;
+  gap: 10px;
+  padding: 14px 16px;
   background: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
-  min-height: 60px;
+  min-height: 54px;
 }
 
 .suggestion-card:hover {
@@ -1080,23 +1100,28 @@ function toggleSidebar() {
 }
 
 .suggestion-card i {
-  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
 }
 
-.icon-code-suggest::before {
-  content: '⚡';
+.icon-code-suggest {
+  background-image: url('@/assets/icons/icon-code-suggest.svg');
 }
 
-.icon-database-suggest::before {
-  content: '🗄️';
+.icon-database-suggest {
+  background-image: url('@/assets/icons/icon-database-suggest.svg');
 }
 
-.icon-redis-suggest::before {
-  content: '🔴';
+.icon-redis-suggest {
+  background-image: url('@/assets/icons/icon-redis-suggest.svg');
 }
 
-.icon-microservice-suggest::before {
-  content: '🎯';
+.icon-microservice-suggest {
+  background-image: url('@/assets/icons/icon-microservice-suggest.svg');
 }
 
 .suggestion-card span {
@@ -1109,8 +1134,8 @@ function toggleSidebar() {
 .messages-list {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 28px;
+  gap: 20px;
+  padding: 20px 24px;
 }
 
 .message-item {
@@ -1121,29 +1146,28 @@ function toggleSidebar() {
 .message-avatar {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.message-item.user .message-avatar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.icon-user-msg {
+  width: 36px;
+  height: 36px;
+  background-image: url('@/assets/icons/icon-user-msg.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.message-item.assistant .message-avatar {
-  background: #dbeafe;
-}
-
-.icon-user-msg::before {
-  content: '👤';
-  font-size: 18px;
-}
-
-.icon-assistant-msg::before {
-  content: '🤖';
-  font-size: 18px;
+.icon-assistant-msg {
+  width: 36px;
+  height: 36px;
+  background-image: url('@/assets/icons/icon-model.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .message-content {
@@ -1190,9 +1214,14 @@ function toggleSidebar() {
   color: #374151;
 }
 
-.icon-document-ref::before {
-  content: '📄';
-  font-size: 14px;
+.icon-document-ref {
+  width: 14px;
+  height: 14px;
+  background-image: url('@/assets/icons/icon-document-ref.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
 }
 
 .ref-title {
@@ -1250,7 +1279,7 @@ function toggleSidebar() {
 
 /* 输入区域 */
 .chat-input-area {
-  padding: 24px 28px;
+  padding: 18px 24px;
   border-top: 1px solid #f0f0f0;
   background: #ffffff;
   flex-shrink: 0;
@@ -1264,9 +1293,9 @@ function toggleSidebar() {
 
 .chat-textarea {
   flex: 1;
-  min-height: 48px;
-  max-height: 120px;
-  padding: 12px 16px;
+  min-height: 44px;
+  max-height: 100px;
+  padding: 11px 14px;
   font-size: 14px;
   line-height: 1.5;
   color: #1f2937;
@@ -1290,14 +1319,14 @@ function toggleSidebar() {
 }
 
 .send-btn {
-  height: 48px;
-  padding: 0 28px;
+  height: 44px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   gap: 8px;
   background: #667eea;
   color: #ffffff;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   border: none;
   border-radius: 8px;
@@ -1316,16 +1345,20 @@ function toggleSidebar() {
   cursor: not-allowed;
 }
 
-.icon-send::before {
-  content: '✈️';
-  font-size: 16px;
+.icon-send {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-send.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .input-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .input-tips {
@@ -1337,7 +1370,12 @@ function toggleSidebar() {
 }
 
 .input-tips i {
-  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
 }
 
 .input-tips span {
@@ -1346,12 +1384,12 @@ function toggleSidebar() {
   gap: 4px;
 }
 
-.icon-keyboard::before {
-  content: '⌨️';
+.icon-keyboard {
+  background-image: url('@/assets/icons/icon-keyboard.svg');
 }
 
-.icon-command::before {
-  content: '⌘';
+.icon-command {
+  background-image: url('@/assets/icons/icon-command.svg');
 }
 
 .char-count {

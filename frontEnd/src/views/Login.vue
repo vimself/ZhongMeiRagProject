@@ -7,7 +7,7 @@
       </div>
 
       <!-- 标题 -->
-      <h1 class="title">RAG知识问答系统</h1>
+      <h1 class="title">HFUT-RAG</h1>
       <p class="subtitle">智能答案 · 精准问答 · 知识管理</p>
 
       <!-- 登录表单 -->
@@ -82,7 +82,7 @@
 
       <!-- 版权信息 -->
       <div class="copyright">
-        © 2025 公司内部RAG知识问答系统 v1.0-MVP
+        © 2025 公司内部RAG知识问答系统 V1.0
       </div>
     </div>
   </div>
@@ -159,7 +159,8 @@ function handleForgotPassword() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: url('@/assets/images/login-bg.jpg') no-repeat center center;
+  background-size: cover;
   padding: 20px;
 }
 
@@ -181,9 +182,11 @@ function handleForgotPassword() {
   display: inline-block;
   width: 64px;
   height: 64px;
-  background: #667eea;
+  background-image: url('@/assets/images/logo.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   border-radius: 12px;
-  /* 这里应该使用实际的logo图片 */
 }
 
 .title {
@@ -223,12 +226,22 @@ function handleForgotPassword() {
   font-size: 16px;
 }
 
-.icon-user::before {
-  content: '👤';
+.icon-user {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-user.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-lock::before {
-  content: '🔒';
+.icon-lock {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-lock.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .form-input {
@@ -266,22 +279,24 @@ function handleForgotPassword() {
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  font-size: 20px;
-  color: #999999;
-  transition: color 0.3s;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: opacity 0.3s;
 }
 
 .icon-eye:hover {
-  color: #667eea;
+  opacity: 0.7;
 }
 
-.icon-eye-close::before {
-  content: '👁️';
+.icon-eye-close {
+  background-image: url('@/assets/icons/icon-eye-close.svg');
 }
 
-.icon-eye-open::before {
-  content: '👁️';
-  opacity: 0.6;
+.icon-eye-open {
+  background-image: url('@/assets/icons/icon-eye-open.svg');
 }
 
 .form-footer {
@@ -352,9 +367,10 @@ function handleForgotPassword() {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid #ffffff;
-  border-top-color: transparent;
-  border-radius: 50%;
+  background-image: url('@/assets/icons/icon-loading.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   animation: spin 0.6s linear infinite;
 }
 
@@ -375,9 +391,13 @@ function handleForgotPassword() {
   margin-bottom: 20px;
 }
 
-.icon-info::before {
-  content: 'ℹ️';
-  font-size: 16px;
+.icon-info {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-info.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .info-tip span {

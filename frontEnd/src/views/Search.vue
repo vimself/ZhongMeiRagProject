@@ -439,9 +439,13 @@ async function handleExport() {
   border-radius: 8px;
 }
 
-.icon-time::before {
-  content: '🕐';
-  font-size: 16px;
+.icon-time {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-time.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 搜索区域 */
@@ -489,8 +493,8 @@ async function handleExport() {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #667eea;
-  color: #ffffff;
+  background: #dbeafe;
+  color: #1e40af;
   font-size: 15px;
   font-weight: 500;
   border: none;
@@ -501,12 +505,18 @@ async function handleExport() {
 }
 
 .search-btn:hover {
-  background: #5568d3;
+  background: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.icon-search-btn::before {
-  content: '🔍';
-  font-size: 18px;
+.icon-search-btn {
+  width: 18px;
+  height: 18px;
+  background-image: url('@/assets/icons/icon-search-btn.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 筛选器 */
@@ -583,9 +593,13 @@ async function handleExport() {
   cursor: not-allowed;
 }
 
-.icon-download::before {
-  content: '📥';
-  font-size: 16px;
+.icon-download {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-download.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 热门搜索 */
@@ -633,11 +647,15 @@ async function handleExport() {
   padding: 100px 20px;
 }
 
-.icon-search-empty::before {
-  content: '🔍';
-  font-size: 80px;
+.icon-search-empty {
+  width: 80px;
+  height: 80px;
+  background-image: url('@/assets/icons/icon-search-empty.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   display: block;
-  margin-bottom: 24px;
+  margin: 0 auto 24px;
   opacity: 0.5;
 }
 
@@ -669,9 +687,10 @@ async function handleExport() {
   display: inline-block;
   width: 40px;
   height: 40px;
-  border: 3px solid #e5e7eb;
-  border-top-color: #667eea;
-  border-radius: 50%;
+  background-image: url('@/assets/icons/icon-loading-search.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   animation: spin 0.8s linear infinite;
   margin-bottom: 16px;
 }
@@ -794,27 +813,32 @@ async function handleExport() {
 }
 
 .meta-item i {
-  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
 }
 
-.icon-kb-small::before {
-  content: '📚';
+.icon-kb-small {
+  background-image: url('@/assets/icons/icon-knowledge.svg');
 }
 
-.icon-file-type::before {
-  content: '📄';
+.icon-file-type {
+  background-image: url('@/assets/icons/icon-file-type.svg');
 }
 
-.icon-page::before {
-  content: '📃';
+.icon-page {
+  background-image: url('@/assets/icons/icon-page.svg');
 }
 
-.icon-time-small::before {
-  content: '🕐';
+.icon-time-small {
+  background-image: url('@/assets/icons/icon-time-small.svg');
 }
 
-.icon-size::before {
-  content: '💾';
+.icon-size {
+  background-image: url('@/assets/icons/icon-storage-size.svg');
 }
 
 /* 分页 */
@@ -861,11 +885,15 @@ async function handleExport() {
   padding: 100px 20px;
 }
 
-.icon-no-results::before {
-  content: '📭';
-  font-size: 80px;
+.icon-no-results {
+  width: 80px;
+  height: 80px;
+  background-image: url('@/assets/icons/icon-no-results.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   display: block;
-  margin-bottom: 24px;
+  margin: 0 auto 24px;
   opacity: 0.5;
 }
 

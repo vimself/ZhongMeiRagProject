@@ -72,7 +72,7 @@
       >
         <!-- 卡片头部 -->
         <div class="card-header">
-          <div class="kb-icon" :style="{ background: kb.iconColor }">
+          <div class="kb-icon">
             <i :class="kb.icon"></i>
           </div>
           <div class="kb-info">
@@ -282,9 +282,13 @@ function goToKnowledgeDetail(id) {
   border-radius: 8px;
 }
 
-.icon-time::before {
-  content: '🕐';
-  font-size: 16px;
+.icon-time {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-time.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 统计卡片 */
@@ -318,8 +322,15 @@ function goToKnowledgeDetail(id) {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
   flex-shrink: 0;
+}
+
+.stat-icon i {
+  width: 28px;
+  height: 28px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .stat-card-blue .stat-icon {
@@ -334,16 +345,16 @@ function goToKnowledgeDetail(id) {
   background: #e9d5ff;
 }
 
-.icon-database::before {
-  content: '📚';
+.icon-database {
+  background-image: url('@/assets/icons/icon-database.svg');
 }
 
-.icon-document::before {
-  content: '📄';
+.icon-document {
+  background-image: url('@/assets/icons/icon-document.svg');
 }
 
-.icon-message::before {
-  content: '💬';
+.icon-message {
+  background-image: url('@/assets/icons/icon-message.svg');
 }
 
 .stat-content {
@@ -386,9 +397,13 @@ function goToKnowledgeDetail(id) {
   color: #999999;
 }
 
-.icon-info-tip::before {
-  content: 'ℹ️';
-  font-size: 14px;
+.icon-info-tip {
+  width: 14px;
+  height: 14px;
+  background-image: url('@/assets/icons/icon-info-tip.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 加载中 */
@@ -406,9 +421,10 @@ function goToKnowledgeDetail(id) {
   display: inline-block;
   width: 32px;
   height: 32px;
-  border: 3px solid #e5e7eb;
-  border-top-color: #667eea;
-  border-radius: 50%;
+  background-image: url('@/assets/icons/icon-loading.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   animation: spin 0.8s linear infinite;
   margin-bottom: 16px;
 }
@@ -451,12 +467,24 @@ function goToKnowledgeDetail(id) {
 .kb-icon {
   width: 48px;
   height: 48px;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
   flex-shrink: 0;
+}
+
+.kb-icon i {
+  width: 48px;
+  height: 48px;
+  background-image: url('@/assets/icons/icon-code.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* 知识库图标类型 */
+.icon-code {
+  background-image: url('@/assets/icons/icon-code.svg');
 }
 
 .kb-info {
@@ -492,9 +520,13 @@ function goToKnowledgeDetail(id) {
   color: #667eea;
 }
 
-.icon-more-dot::before {
-  content: '⋮';
-  font-size: 18px;
+.icon-more-dot {
+  width: 18px;
+  height: 18px;
+  background-image: url('@/assets/icons/icon-more-dot.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 知识库描述 */
@@ -629,9 +661,13 @@ function goToKnowledgeDetail(id) {
   color: #666666;
 }
 
-.icon-eye::before {
-  content: '👁️';
-  font-size: 14px;
+.icon-eye {
+  width: 14px;
+  height: 14px;
+  background-image: url('@/assets/icons/icon-eye-view.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 空状态 */

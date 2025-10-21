@@ -288,8 +288,8 @@
 - **颜色**: 紫色渐变背景
 
 #### 4.2 产品手册图标 (Book Icon)
-- **文件名**: `icon-book.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-book.svg`
+- **文件名**: `icon-code.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-code.svg`
 - **尺寸**: 24x24 px
 - **用途**: 产品手册卡片图标
 - **当前状态**: 需要创建(使用CSS渐变背景)
@@ -297,8 +297,8 @@
 - **颜色**: 绿色渐变背景
 
 #### 4.3 运维文档图标 (Gear Icon)
-- **文件名**: `icon-gear.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-gear.svg`
+- **文件名**: `icon-code.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-code.svg`
 - **尺寸**: 24x24 px
 - **用途**: 运维文档卡片图标
 - **当前状态**: 需要创建(使用CSS渐变背景)
@@ -324,30 +324,12 @@
 ### 5. 状态指示图标
 
 #### 5.1 加载动画图标 (Loading Spinner)
-- **文件名**: `icon-loading-spinner.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-loading-spinner.svg`
+- **文件名**: `icon-loading.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-loading.svg`
 - **尺寸**: 32x32 px
 - **用途**: 页面加载中状态
 - **当前状态**: 使用CSS动画实现的旋转圆圈 (可保留或替换)
 - **设计要求**: 圆形旋转动画
-
-#### 5.2 空状态图标 (Empty Icon)
-- **文件名**: `icon-empty.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-empty.svg`
-- **尺寸**: 64x64 px
-- **用途**: 知识库列表为空时的占位图标
-- **当前状态**: 使用Emoji占位符 "📭" (需要替换)
-- **设计要求**: 空文件夹/空盒子风格
-
-### 6. 开发中占位图标
-
-#### 6.1 施工图标 (Construction Icon)
-- **文件名**: `icon-construction.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-construction.svg`
-- **尺寸**: 80x80 px
-- **用途**: 功能开发中页面占位
-- **当前状态**: 使用Emoji占位符 "🚧" (需要替换)
-- **设计要求**: 施工/建设中风格图标
 
 ---
 
@@ -356,8 +338,8 @@
 ### 1. 页面功能图标
 
 #### 1.1 时间图标 (Time Icon)
-- **文件名**: `icon-time-chat.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-time-chat.svg`
+- **文件名**: `icon-time.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-time.svg`
 - **尺寸**: 16x16 px
 - **用途**: 页面右上角当前时间显示
 - **当前状态**: 使用Emoji占位符 "🕐" (需要替换)
@@ -376,15 +358,7 @@
 
 ### 3. 对话区头部图标
 
-#### 3.1 知识库图标 (KB Icon)
-- **文件名**: `icon-kb.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-kb.svg`
-- **尺寸**: 14x14 px
-- **用途**: 对话区显示当前知识库
-- **当前状态**: 使用Emoji占位符 "📚" (需要替换)
-- **设计要求**: 书本/数据库风格图标
-
-#### 3.2 模型图标 (Model Icon)
+#### 3.1 模型图标 (Model Icon)
 - **文件名**: `icon-model.svg`
 - **位置**: `frontEnd/src/assets/icons/icon-model.svg`
 - **尺寸**: 14x14 px
@@ -400,19 +374,11 @@
 - **当前状态**: 使用Emoji占位符 "📌" (需要替换)
 - **设计要求**: 侧边栏/固定图标
 
-#### 3.4 分享图标 (Share Icon)
-- **文件名**: `icon-share.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-share.svg`
-- **尺寸**: 16x16 px
-- **用途**: 分享对话按钮
-- **当前状态**: 使用Emoji占位符 "📤" (需要替换)
-- **设计要求**: 分享/导出风格图标
-
 ### 4. 空状态图标
 
 #### 4.1 机器人头像图标 (Robot Icon)
-- **文件名**: `icon-robot.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-robot.svg`
+- **文件名**: `icon-model.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-model.svg`
 - **尺寸**: 40x40 px
 - **用途**: 空状态中央的RAG智能助手图标
 - **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
@@ -465,8 +431,8 @@
 - **颜色**: 深色系（用于浅蓝色背景）
 
 #### 6.2 助手消息头像 (Assistant Message Icon)
-- **文件名**: `icon-assistant-msg.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-assistant-msg.svg`
+- **文件名**: `icon-model.svg.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-model.svg.svg`
 - **尺寸**: 18x18 px
 - **用途**: AI助手消息的头像图标
 - **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
@@ -515,8 +481,8 @@
 ### 1. 页面功能图标
 
 #### 1.1 时间图标 (Time Icon)
-- **文件名**: `icon-time-search.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-time-search.svg`
+- **文件名**: `icon-time.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-time.svg`
 - **尺寸**: 16x16 px
 - **用途**: 页面右上角当前时间显示
 - **当前状态**: 使用Emoji占位符 "🕐" (需要替换)
@@ -574,8 +540,8 @@
 ### 4. 搜索结果元数据图标
 
 #### 4.1 知识库小图标 (KB Small Icon)
-- **文件名**: `icon-kb-small.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-kb-small.svg`
+- **文件名**: `icon-code.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-code.svg`
 - **尺寸**: 14x14 px
 - **用途**: 搜索结果中显示所属知识库
 - **当前状态**: 使用Emoji占位符 "📚" (需要替换)
@@ -610,8 +576,8 @@
 - **颜色**: 灰色 (#6b7280)
 
 #### 4.5 文件大小图标 (Size Icon)
-- **文件名**: `icon-size.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-size.svg`
+- **文件名**: `icon-storage-size.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-storage-size.svg`
 - **尺寸**: 14x14 px
 - **用途**: 搜索结果中显示文件大小
 - **当前状态**: 使用Emoji占位符 "💾" (需要替换)
@@ -665,8 +631,8 @@
 ### 3. 密码显示/隐藏图标
 
 #### 3.1 眼睛图标 - 关闭状态 (Eye Close Icon)
-- **文件名**: `icon-eye-close-profile.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-eye-close-profile.svg`
+- **文件名**: `icon-eye-close.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-eye-close.svg`
 - **尺寸**: 18x18 px
 - **用途**: 密码输入框隐藏密码状态
 - **当前状态**: 使用Emoji占位符 "👁️‍🗨️" (需要替换)
@@ -674,8 +640,8 @@
 - **颜色**: #9ca3af，Hover时 #667eea
 
 #### 3.2 眼睛图标 - 打开状态 (Eye Open Icon)
-- **文件名**: `icon-eye-open-profile.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-eye-open-profile.svg`
+- **文件名**: `icon-eye-open.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-eye-open.svg`
 - **尺寸**: 18x18 px
 - **用途**: 密码输入框显示密码状态
 - **当前状态**: 使用Emoji占位符 "👁️" (需要替换)
@@ -732,8 +698,8 @@
 ### 5. 加载动画图标
 
 #### 5.1 加载图标 (Loading Icon)
-- **文件名**: `icon-loading-profile.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-loading-profile.svg`
+- **文件名**: `icon-loading.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-loading.svg`
 - **尺寸**: 16x16 px
 - **用途**: 保存个人信息和修改密码时的加载状态
 - **当前状态**: 使用CSS动画实现的旋转圆圈 (可保留或替换)
@@ -1259,8 +1225,8 @@
 - **颜色**: #ef4444 (红色)
 
 #### 3.2 查看文档图标 (View Doc Icon)
-- **文件名**: `icon-view-doc.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-view-doc.svg`
+- **文件名**: `icon-eye-open.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-eye-open.svg`
 - **尺寸**: 18x18 px
 - **用途**: 文档操作-查看按钮
 - **当前状态**: 使用Emoji占位符 "👁️" (需要替换)

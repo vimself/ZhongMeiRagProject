@@ -1,0 +1,60 @@
+# Flask核心框架
+Flask==2.3.3
+Flask-CORS==4.0.0
+Flask-SQLAlchemy==3.0.5
+
+# 数据库驱动
+PyMySQL==1.1.0
+pymysql[rsa]==1.1.0
+
+# 数据库迁移工具
+Flask-Migrate==4.0.5
+
+# JWT认证
+PyJWT==2.8.0
+
+# 密码加密
+bcrypt==4.0.1
+
+# 向量数据库
+chromadb==0.4.15
+
+# PDF处理
+PyPDF2==3.0.1
+pdfplumber==0.10.3
+
+# 文本处理
+pypinyin==0.49.0
+
+# HTTP请求
+requests==2.31.0
+
+# 环境变量管理
+python-dotenv==1.0.0
+
+# 日期时间处理
+python-dateutil==2.8.2
+
+# 工具库
+Werkzeug==2.3.7
+
+# WSGI服务器（生产环境）
+gunicorn==21.2.0
+
+# 开发工具
+ipython==8.15.0
+
+# Embedding模型支持
+sentence-transformers==2.2.2
+torch==2.0.1
+transformers==4.33.0
+
+# OpenAI API支持（可选，用于LLM调用）
+openai==0.28.0
+
+# 数据验证
+pydantic==2.3.0
+
+# 文件上传处理
+python-multipart==0.0.6
+

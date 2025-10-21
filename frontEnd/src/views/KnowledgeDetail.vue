@@ -4,7 +4,7 @@
     <div class="page-header">
       <div class="header-left">
         <button class="btn-back" @click="goBack">
-          <span class="icon-back">←</span>
+          <i class="icon-back"></i>
         </button>
         <div class="header-info">
           <h1 class="page-title">{{ knowledgeBase.name || '知识库详情' }}</h1>
@@ -22,21 +22,27 @@
     <!-- 统计信息 -->
     <div class="stats-cards" v-if="!loading">
       <div class="stat-card">
-        <div class="stat-icon" style="background: #dbeafe;">📄</div>
+        <div class="stat-icon stat-icon-blue">
+          <i class="icon-doc-count"></i>
+        </div>
         <div class="stat-content">
           <div class="stat-value">{{ documents.total || 0 }}</div>
           <div class="stat-label">文档总数</div>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon" style="background: #d1fae5;">💾</div>
+        <div class="stat-icon stat-icon-green">
+          <i class="icon-storage-size"></i>
+        </div>
         <div class="stat-content">
           <div class="stat-value">{{ knowledgeBase.storageSize || '0 MB' }}</div>
           <div class="stat-label">存储大小</div>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon" style="background: #fef3c7;">👁️</div>
+        <div class="stat-icon stat-icon-yellow">
+          <i class="icon-viewers-count"></i>
+        </div>
         <div class="stat-content">
           <div class="stat-value">{{ knowledgeBase.viewers || 0 }}</div>
           <div class="stat-label">查看人数</div>
@@ -98,7 +104,7 @@
               </td>
               <td>
                 <div class="doc-name-cell">
-                  <span class="doc-icon">📄</span>
+                  <i class="doc-icon icon-doc-type-pdf"></i>
                   <span class="doc-name" @click="handlePreview(doc)">{{ doc.name }}</span>
                 </div>
               </td>
@@ -107,7 +113,7 @@
               <td>
                 <div class="table-actions">
                   <button class="btn-action" @click="handlePreview(doc)" title="查看">
-                    <span>👁️</span>
+                    <i class="icon-eye-view"></i>
                   </button>
                 </div>
               </td>
@@ -314,7 +320,12 @@ onMounted(() => {
 }
 
 .icon-back {
-  display: block;
+  width: 20px;
+  height: 20px;
+  background-image: url('@/assets/icons/icon-back-arrow.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .header-info {
@@ -381,7 +392,38 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+}
+
+.stat-icon i {
+  width: 28px;
+  height: 28px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.stat-icon-blue {
+  background: #dbeafe;
+}
+
+.stat-icon-green {
+  background: #d1fae5;
+}
+
+.stat-icon-yellow {
+  background: #fef3c7;
+}
+
+.icon-doc-count {
+  background-image: url('@/assets/icons/icon-doc-count.svg');
+}
+
+.icon-storage-size {
+  background-image: url('@/assets/icons/icon-storage-size.svg');
+}
+
+.icon-viewers-count {
+  background-image: url('@/assets/icons/icon-viewers-count.svg');
 }
 
 .stat-content {
@@ -478,7 +520,16 @@ onMounted(() => {
 }
 
 .doc-icon {
-  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.icon-doc-type-pdf {
+  background-image: url('@/assets/icons/icon-doc-type-pdf.svg');
 }
 
 .doc-name {
@@ -550,6 +601,18 @@ onMounted(() => {
 
 .btn-action:hover {
   background: #e5e7eb;
+}
+
+.btn-action i {
+  width: 18px;
+  height: 18px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.icon-eye-view {
+  background-image: url('@/assets/icons/icon-eye-view.svg');
 }
 
 /* 加载状态 */

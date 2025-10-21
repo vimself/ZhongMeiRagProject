@@ -483,7 +483,7 @@ export function mockGetUserProfile() {
       phone: '138****1234',
       department: 'tech',
       position: '高级工程师',
-      avatar: '/avatars/default-avatar.png',
+      avatar: '', // 默认为空，未上传头像
       bio: '专注于后端开发和系统架构设计，有多年互联网开发经验。',
       role: 'user',
       createdAt: '2024-01-15T08:30:00Z',

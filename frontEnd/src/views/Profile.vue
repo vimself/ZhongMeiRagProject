@@ -38,7 +38,7 @@
           <div class="avatar-section">
             <div class="avatar-container">
               <div class="user-avatar-large">
-                <img v-if="userProfile.avatar" :src="userProfile.avatar" :alt="userProfile.name" />
+                <img v-if="userProfile.avatar && userProfile.avatar.trim()" :src="userProfile.avatar" :alt="userProfile.name" />
                 <i v-else class="icon-user-avatar-default"></i>
               </div>
               <div class="avatar-upload">
@@ -659,12 +659,12 @@ function formatLoginTime(timeStr) {
   height: 120px;
   border-radius: 50%;
   overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .user-avatar-large img {
@@ -673,10 +673,14 @@ function formatLoginTime(timeStr) {
   object-fit: cover;
 }
 
-.user-avatar-large .icon-user-avatar-default::before {
-  content: '👤';
-  font-size: 48px;
-  color: white;
+.icon-user-avatar-default {
+  width: 120px;
+  height: 120px;
+  background-image: url('@/assets/icons/icon-user-avatar-default.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
 }
 
 .avatar-upload {
@@ -704,9 +708,13 @@ function formatLoginTime(timeStr) {
   border-color: #dee2e6;
 }
 
-.icon-camera::before {
-  content: '📷';
-  font-size: 16px;
+.icon-camera {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-camera.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .upload-hint {
@@ -860,8 +868,14 @@ function formatLoginTime(timeStr) {
 }
 
 .password-section .section-title::before {
-  content: '🔐';
-  font-size: 20px;
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url('@/assets/icons/icon-change-password.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .records-section {
@@ -878,8 +892,14 @@ function formatLoginTime(timeStr) {
 }
 
 .records-section .section-title::before {
-  content: '📋';
-  font-size: 20px;
+  content: '';
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url('@/assets/icons/icon-login-resently.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .section-title {
@@ -917,21 +937,24 @@ function formatLoginTime(timeStr) {
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  font-size: 18px;
-  color: #9ca3af;
-  transition: color 0.3s;
+  width: 18px;
+  height: 18px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: opacity 0.3s;
 }
 
 .icon-eye:hover {
-  color: #667eea;
+  opacity: 0.7;
 }
 
-.icon-eye-close::before {
-  content: '👁️‍🗨️';
+.icon-eye-close {
+  background-image: url('@/assets/icons/icon-eye-close.svg');
 }
 
-.icon-eye-open::before {
-  content: '👁️';
+.icon-eye-open {
+  background-image: url('@/assets/icons/icon-eye-open.svg');
 }
 
 .update-btn {
@@ -997,27 +1020,32 @@ function formatLoginTime(timeStr) {
 }
 
 .icon-device {
-  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
 }
 
-.icon-device-windows::before {
-  content: '💻';
+.icon-device-windows {
+  background-image: url('@/assets/icons/icon-device-windows.svg');
 }
 
-.icon-device-iphone::before {
-  content: '📱';
+.icon-device-iphone {
+  background-image: url('@/assets/icons/icon-device-iphone.svg');
 }
 
-.icon-device-mac::before {
-  content: '🖥️';
+.icon-device-mac {
+  background-image: url('@/assets/icons/icon-device-mac.svg');
 }
 
-.icon-device-android::before {
-  content: '📱';
+.icon-device-android {
+  background-image: url('@/assets/icons/icon-device-android.svg');
 }
 
-.icon-device-computer::before {
-  content: '💻';
+.icon-device-computer {
+  background-image: url('@/assets/icons/icon-device-computer.svg');
 }
 
 .device-name {
@@ -1074,9 +1102,10 @@ function formatLoginTime(timeStr) {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid #e5e7eb;
-  border-top-color: #667eea;
-  border-radius: 50%;
+  background-image: url('@/assets/icons/icon-loading.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   animation: spin 0.8s linear infinite;
 }
 
@@ -1087,12 +1116,22 @@ function formatLoginTime(timeStr) {
 }
 
 /* 图标占位符 */
-.icon-user-info::before {
-  content: '👤';
+.icon-user-info {
+  width: 26px;
+  height: 26px;
+  background-image: url('@/assets/icons/icon-user-info.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-security::before {
-  content: '🔒';
+.icon-security {
+  width: 20px;
+  height: 20px;
+  background-image: url('@/assets/icons/icon-security.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 响应式设计 */

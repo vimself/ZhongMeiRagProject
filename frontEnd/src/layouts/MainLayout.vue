@@ -6,8 +6,8 @@
       <div class="sidebar-logo">
         <i class="logo-icon"></i>
         <div class="logo-text">
-          <div class="system-name">RAG系统</div>
-          <div class="system-desc">知识问答</div>
+          <div class="system-name">HFUT-RAG</div>
+          <div class="system-desc">知识库问答系统</div>
         </div>
       </div>
 
@@ -216,7 +216,10 @@ async function handleLogout() {
   display: block;
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-image: url('@/assets/images/logo-main.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   border-radius: 8px;
   flex-shrink: 0;
 }
@@ -261,9 +264,12 @@ async function handleLogout() {
 }
 
 .nav-item i {
-  font-size: 20px;
   width: 20px;
-  text-align: center;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
 }
 
 .nav-item:hover {
@@ -302,16 +308,19 @@ async function handleLogout() {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.icon-user-avatar::before {
-  content: '👤';
-  font-size: 20px;
+.icon-user-avatar {
+  width: 36px;
+  height: 36px;
+  background-image: url('@/assets/icons/icon-user-avatar-default.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .user-details {
@@ -336,10 +345,13 @@ async function handleLogout() {
   margin-top: 2px;
 }
 
-.icon-more::before {
-  content: '⋮';
-  font-size: 18px;
-  color: #999999;
+.icon-more {
+  width: 18px;
+  height: 18px;
+  background-image: url('@/assets/icons/icon-more.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 用户菜单 */
@@ -372,9 +384,12 @@ async function handleLogout() {
 }
 
 .menu-item i {
-  font-size: 18px;
   width: 18px;
-  text-align: center;
+  height: 18px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
 }
 
 /* 右侧内容区 */
@@ -398,41 +413,47 @@ async function handleLogout() {
   letter-spacing: 0.5px;
 }
 
-/* 图标占位符 */
+/* 导航图标 */
+.icon-knowledge {
+  background-image: url('@/assets/icons/icon-knowledge.svg');
+}
+
+.icon-chat {
+  background-image: url('@/assets/icons/icon-chat.svg');
+}
+
+.icon-search {
+  background-image: url('@/assets/icons/icon-search.svg');
+}
+
+/* 管理员菜单图标（暂时使用 Emoji 占位符） */
 .icon-dashboard::before {
   content: '📊';
-}
-
-.icon-knowledge::before {
-  content: '📚';
-}
-
-.icon-chat::before {
-  content: '💬';
-}
-
-.icon-search::before {
-  content: '🔍';
+  font-size: 20px;
 }
 
 .icon-user-mgmt::before {
   content: '👥';
+  font-size: 20px;
 }
 
 .icon-kb-mgmt::before {
   content: '📁';
+  font-size: 20px;
 }
 
 .icon-model-mgmt::before {
   content: '🤖';
+  font-size: 20px;
 }
 
-.icon-profile::before {
-  content: '👤';
+/* 用户菜单图标 */
+.icon-profile {
+  background-image: url('@/assets/icons/icon-profile.svg');
 }
 
-.icon-logout::before {
-  content: '🚪';
+.icon-logout {
+  background-image: url('@/assets/icons/icon-logout.svg');
 }
 </style>
 
