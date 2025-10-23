@@ -4,7 +4,7 @@
     <div class="page-header">
       <div class="header-left">
         <button class="btn-back" @click="goBack">
-          <span class="icon-back">←</span>
+          <span class="icon-back"></span>
         </button>
         <div class="header-info">
           <h1 class="page-title">{{ document.name || '文档预览' }}</h1>
@@ -13,7 +13,7 @@
       </div>
       <div class="header-right">
         <button class="btn-secondary" @click="downloadDocument" v-if="document.previewUrl">
-          <span class="icon-download">📥</span>
+          <span class="icon-download"></span>
           下载文档
         </button>
       </div>
@@ -32,7 +32,7 @@
         
         <!-- 其他类型文档暂不支持 -->
         <div v-else class="unsupported-type">
-          <span class="icon-warning">⚠️</span>
+          <span class="icon-warning"></span>
           <h3>暂不支持此类型文档的在线预览</h3>
           <p>请下载文档后使用本地应用查看</p>
         </div>
@@ -46,7 +46,7 @@
 
       <!-- 错误状态 -->
       <div class="error-state" v-if="!loading && !document.previewUrl">
-        <span class="icon-error">❌</span>
+        <span class="icon-error"></span>
         <h3>文档加载失败</h3>
         <p>无法找到文档或文档已被删除</p>
       </div>
@@ -151,6 +151,12 @@ onMounted(() => {
 
 .icon-back {
   display: block;
+  width: 20px;
+  height: 20px;
+  background-image: url('@/assets/icons/icon-back-arrow.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .header-info {
@@ -194,6 +200,15 @@ onMounted(() => {
   background: #f9fafb;
 }
 
+.icon-download {
+  width: 18px;
+  height: 18px;
+  background-image: url('@/assets/icons/icon-download.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 /* 预览容器 */
 .preview-container {
   flex: 1;
@@ -230,9 +245,15 @@ onMounted(() => {
 }
 
 .icon-warning {
-  font-size: 64px;
+  width: 64px;
+  height: 64px;
   display: block;
   margin-bottom: 24px;
+  background-image: url('@/assets/icons/icon-info.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.6;
 }
 
 .unsupported-type h3 {
@@ -289,9 +310,16 @@ onMounted(() => {
 }
 
 .icon-error {
-  font-size: 64px;
+  width: 64px;
+  height: 64px;
   display: block;
   margin-bottom: 24px;
+  background-image: url('@/assets/icons/icon-info.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.6;
+  filter: hue-rotate(320deg);
 }
 
 .error-state h3 {

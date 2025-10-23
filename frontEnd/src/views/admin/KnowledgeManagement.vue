@@ -8,7 +8,7 @@
       </div>
       <div class="header-right">
         <button class="btn-primary" @click="showCreateDialog = true">
-          <span class="icon-add">+</span>
+          <span class="icon-add"></span>
           创建知识库
         </button>
       </div>
@@ -23,8 +23,8 @@
         @click="navigateToDetail(kb.id)"
       >
         <div class="card-header">
-          <div class="kb-icon" :style="{ background: kb.iconColor }">
-            <span class="icon-kb">📚</span>
+          <div class="kb-icon">
+            <span class="icon-kb"></span>
           </div>
           <div class="kb-info">
             <h3 class="kb-name">{{ kb.name }}</h3>
@@ -32,10 +32,10 @@
           </div>
           <div class="kb-actions" @click.stop>
             <button class="btn-icon" @click="handleEdit(kb)">
-              <span class="icon-edit">✏️</span>
+              <span class="icon-edit"></span>
             </button>
             <button class="btn-icon" @click="handleDelete(kb)">
-              <span class="icon-delete">🗑️</span>
+              <span class="icon-delete"></span>
             </button>
           </div>
         </div>
@@ -268,8 +268,14 @@ onMounted(() => {
 }
 
 .icon-add {
-  font-size: 18px;
-  font-weight: 600;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-plus.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: brightness(0) invert(1);
 }
 
 /* 知识库列表 */
@@ -307,8 +313,16 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
   flex-shrink: 0;
+}
+
+.icon-kb {
+  width: 48px;
+  height: 48px;
+  background-image: url('@/assets/icons/icon-code.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .kb-info {
@@ -358,6 +372,24 @@ onMounted(() => {
 
 .btn-icon:hover {
   background: #e5e7eb;
+}
+
+.icon-edit {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-edit-user.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.icon-delete {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-delete-doc.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .card-body {

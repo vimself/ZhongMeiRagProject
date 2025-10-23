@@ -32,7 +32,7 @@
             @change="handleFileSelect"
           />
           <div class="upload-placeholder">
-            <span class="icon-upload">📤</span>
+            <span class="icon-upload"></span>
             <p>点击或拖拽文件到此处上传</p>
             <p class="upload-tip">支持PDF格式，单个文件最大100MB</p>
           </div>
@@ -322,9 +322,14 @@ const handleUpload = async () => {
 }
 
 .icon-upload {
-  font-size: 56px;
   display: block;
-  margin-bottom: 16px;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  background-image: url('@/assets/icons/icon-shangchuan.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .upload-placeholder p {

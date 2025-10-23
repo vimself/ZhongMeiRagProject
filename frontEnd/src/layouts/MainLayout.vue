@@ -426,25 +426,21 @@ async function handleLogout() {
   background-image: url('@/assets/icons/icon-search.svg');
 }
 
-/* 管理员菜单图标（暂时使用 Emoji 占位符） */
-.icon-dashboard::before {
-  content: '📊';
-  font-size: 20px;
+/* 管理员菜单图标 */
+.icon-dashboard {
+  background-image: url('@/assets/icons/icon-yibiaopan.svg');
 }
 
-.icon-user-mgmt::before {
-  content: '👥';
-  font-size: 20px;
+.icon-user-mgmt {
+  background-image: url('@/assets/icons/icon-user-mgmt.svg');
 }
 
-.icon-kb-mgmt::before {
-  content: '📁';
-  font-size: 20px;
+.icon-kb-mgmt {
+  background-image: url('@/assets/icons/icon-kb-mgmt.svg');
 }
 
-.icon-model-mgmt::before {
-  content: '🤖';
-  font-size: 20px;
+.icon-model-mgmt {
+  background-image: url('@/assets/icons/icon-model-mgmt.svg');
 }
 
 /* 用户菜单图标 */

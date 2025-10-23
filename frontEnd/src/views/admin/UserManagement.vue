@@ -116,8 +116,8 @@
             </td>
             <td class="col-user">
               <div class="user-info">
-                <div class="user-avatar" :style="{ background: user.avatarColor }">
-                  <span>{{ user.name.charAt(0) }}</span>
+                <div class="user-avatar">
+                  <i class="icon-user-avatar"></i>
                 </div>
                 <div class="user-details">
                   <div class="user-name">{{ user.name }}</div>
@@ -596,9 +596,13 @@ function closeDialog() {
   font-size: 14px;
 }
 
-.icon-time::before {
-  content: '🕐';
-  font-size: 16px;
+.icon-time {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-time.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 统计卡片 */
@@ -691,8 +695,13 @@ function closeDialog() {
   font-size: 18px;
 }
 
-.icon-search-input::before {
-  content: '🔍';
+.icon-search-input {
+  width: 18px;
+  height: 18px;
+  background-image: url('@/assets/icons/icon-search-btn.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .search-input {
@@ -747,9 +756,13 @@ function closeDialog() {
   color: #ffffff;
 }
 
-.icon-export::before {
-  content: '📥';
-  font-size: 16px;
+.icon-export {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-download.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .btn-add {
@@ -772,10 +785,13 @@ function closeDialog() {
   background: #5568d3;
 }
 
-.icon-add::before {
-  content: '+';
-  font-size: 20px;
-  font-weight: 600;
+.icon-add {
+  width: 20px;
+  height: 20px;
+  background-image: url('@/assets/icons/icon-plus.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 表格 */
@@ -858,14 +874,19 @@ function closeDialog() {
 .user-avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 600;
   flex-shrink: 0;
+}
+
+.icon-user-avatar {
+  width: 40px;
+  height: 40px;
+  background-image: url('@/assets/icons/icon-user-avatar-default.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .user-details {
@@ -912,14 +933,22 @@ function closeDialog() {
   color: #2563eb;
 }
 
-.icon-role-admin::before {
-  content: '👑';
-  font-size: 14px;
+.icon-role-admin {
+  width: 14px;
+  height: 14px;
+  background-image: url('@/assets/icons/icon-users-admin.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-role-user::before {
-  content: '👤';
-  font-size: 14px;
+.icon-role-user {
+  width: 14px;
+  height: 14px;
+  background-image: url('@/assets/icons/icon-role-user.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 状态标签 */
@@ -965,13 +994,11 @@ function closeDialog() {
   height: 32px;
   border: none;
   background: #f3f4f6;
-  color: #6b7280;
   border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
   transition: all 0.3s;
 }
 
@@ -990,24 +1017,49 @@ function closeDialog() {
   color: #ffffff;
 }
 
-.icon-edit::before {
-  content: '✏️';
+.icon-edit {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-edit-user.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-reset-pwd::before {
-  content: '🔑';
+.icon-reset-pwd {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-reset-password.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-enable::before {
-  content: '▶️';
+.icon-enable {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-enable-user.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-disable::before {
-  content: '⏸️';
+.icon-disable {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-disable-user.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-delete::before {
-  content: '🗑️';
+.icon-delete {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-delete-user.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 分页 */
@@ -1130,10 +1182,14 @@ function closeDialog() {
   background: #e5e7eb;
 }
 
-.icon-close::before {
-  content: '✕';
-  font-size: 18px;
-  color: #6b7280;
+.icon-close {
+  width: 18px;
+  height: 18px;
+  background-image: url('@/assets/icons/icon-plus.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: rotate(45deg);
 }
 
 .dialog-body {
@@ -1237,9 +1293,10 @@ function closeDialog() {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid #ffffff;
-  border-top-color: transparent;
-  border-radius: 50%;
+  background-image: url('@/assets/icons/icon-loading.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   animation: spin 0.6s linear infinite;
 }
 
@@ -1249,25 +1306,41 @@ function closeDialog() {
   }
 }
 
-/* 图标占位符 */
-.icon-users-total::before {
-  content: '👥';
-  color: #2563eb;
+/* 统计卡片图标 */
+.icon-users-total {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-users-total.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-users-active::before {
-  content: '✅';
-  color: #10b981;
+.icon-users-active {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-users-active.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-users-admin::before {
-  content: '👑';
-  color: #f59e0b;
+.icon-users-admin {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-users-admin.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-users-disabled::before {
-  content: '🚫';
-  color: #ef4444;
+.icon-users-disabled {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-users-disabled.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 </style>
 

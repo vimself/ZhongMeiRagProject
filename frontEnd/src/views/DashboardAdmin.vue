@@ -427,9 +427,13 @@ function goToDoc(type) {
   border-radius: 8px;
 }
 
-.icon-time::before {
-  content: '🕐';
-  font-size: 16px;
+.icon-time {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-time.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 统计卡片 */
@@ -483,20 +487,40 @@ function goToDoc(type) {
   background: #e9d5ff;
 }
 
-.icon-chat-stat::before {
-  content: '💬';
+.icon-chat-stat {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-chat-stat.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-search-stat::before {
-  content: '🔍';
+.icon-search-stat {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-search-btn.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-kb-stat::before {
-  content: '💾';
+.icon-kb-stat {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-database.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-doc-stat::before {
-  content: '📄';
+.icon-doc-stat {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-doc-type-pdf.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .stat-content {
@@ -586,58 +610,64 @@ function goToDoc(type) {
 }
 
 .doc-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
   flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(147, 197, 253, 0.25) 0%, rgba(96, 165, 250, 0.35) 100%);
+  backdrop-filter: blur(10px);
 }
 
 .doc-icon-orange {
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  background: linear-gradient(135deg, rgba(147, 197, 253, 0.25) 0%, rgba(96, 165, 250, 0.35) 100%);
 }
 
 .doc-icon-blue {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, rgba(147, 197, 253, 0.25) 0%, rgba(96, 165, 250, 0.35) 100%);
 }
 
 .doc-icon-green {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, rgba(147, 197, 253, 0.25) 0%, rgba(96, 165, 250, 0.35) 100%);
 }
 
 .doc-icon-brown {
-  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  background: linear-gradient(135deg, rgba(147, 197, 253, 0.25) 0%, rgba(96, 165, 250, 0.35) 100%);
 }
 
 .doc-icon-purple {
-  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  background: linear-gradient(135deg, rgba(147, 197, 253, 0.25) 0%, rgba(96, 165, 250, 0.35) 100%);
 }
 
-.doc-icon i::before {
-  color: #ffffff;
+.doc-icon i {
+  width: 26px;
+  height: 26px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: brightness(0) saturate(100%) invert(25%) sepia(8%) saturate(820%) hue-rotate(182deg) brightness(95%) contrast(90%);
 }
 
-.icon-rag::before {
-  content: '📚';
+.icon-rag {
+  background-image: url('@/assets/icons/icon-rag.svg');
 }
 
-.icon-knowledge-doc::before {
-  content: '📂';
+.icon-knowledge-doc {
+  background-image: url('@/assets/icons/icon-rag.svg');
 }
 
-.icon-upload-doc::before {
-  content: '📤';
+.icon-upload-doc {
+  background-image: url('@/assets/icons/icon-upload-doc-btn.svg');
 }
 
-.icon-model-doc::before {
-  content: '🤖';
+.icon-model-doc {
+  background-image: url('@/assets/icons/icon-model.svg');
 }
 
-.icon-user-doc::before {
-  content: '👥';
+.icon-user-doc {
+  background-image: url('@/assets/icons/icon-user.svg');
 }
 
 .doc-content {
@@ -670,8 +700,13 @@ function goToDoc(type) {
   transform: translateX(4px);
 }
 
-.icon-arrow-right::before {
-  content: '→';
+.icon-arrow-right {
+  width: 18px;
+  height: 18px;
+  background-image: url('@/assets/icons/icon-arrow-right.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 右侧：系统状态 */
@@ -710,10 +745,13 @@ function goToDoc(type) {
   cursor: not-allowed;
 }
 
-.icon-refresh::before {
-  content: '↻';
-  font-size: 18px;
-  color: #6b7280;
+.icon-refresh {
+  width: 18px;
+  height: 18px;
+  background-image: url('@/assets/icons/icon-refresh.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .icon-refresh.spinning {
@@ -771,20 +809,40 @@ function goToDoc(type) {
   flex-shrink: 0;
 }
 
-.icon-llm::before {
-  content: '🔥';
+.icon-llm {
+  width: 22px;
+  height: 22px;
+  background-image: url('@/assets/icons/icon-llm.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-vector::before {
-  content: '📊';
+.icon-vector {
+  width: 22px;
+  height: 22px;
+  background-image: url('@/assets/icons/icon-vector.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-vector-db::before {
-  content: '💾';
+.icon-vector-db {
+  width: 22px;
+  height: 22px;
+  background-image: url('@/assets/icons/icon-vector-db.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-relation-db::before {
-  content: '🗄️';
+.icon-relation-db {
+  width: 22px;
+  height: 22px;
+  background-image: url('@/assets/icons/icon-relation-db.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .status-content {
@@ -870,10 +928,12 @@ function goToDoc(type) {
   gap: 12px;
 }
 
-.icon-check-circle::before {
-  content: '●';
-  font-size: 12px;
-  color: #10b981;
+.icon-check-circle {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #10b981;
 }
 
 .last-update {

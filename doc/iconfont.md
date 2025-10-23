@@ -723,8 +723,8 @@
 - **颜色**: 蓝色系 (#dbeafe背景)
 
 #### 1.2 搜索统计图标 (Search Stat Icon)
-- **文件名**: `icon-search-stat.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-search-stat.svg`
+- **文件名**: `icon-search-btn.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-search-btn.svg`
 - **尺寸**: 28x28 px
 - **用途**: 搜索次数统计卡片
 - **当前状态**: 使用Emoji占位符 "🔍" (需要替换)
@@ -732,8 +732,8 @@
 - **颜色**: 绿色系 (#d1fae5背景)
 
 #### 1.3 知识库统计图标 (KB Stat Icon)
-- **文件名**: `icon-kb-stat.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-kb-stat.svg`
+- **文件名**: `icon-code.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-code.svg`
 - **尺寸**: 28x28 px
 - **用途**: 知识库数量统计卡片
 - **当前状态**: 使用Emoji占位符 "💾" (需要替换)
@@ -741,8 +741,8 @@
 - **颜色**: 黄色系 (#fef3c7背景)
 
 #### 1.4 文档统计图标 (Doc Stat Icon)
-- **文件名**: `icon-doc-stat.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-doc-stat.svg`
+- **文件名**: `icon-doc-type-pdf.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-doc-type-pdf.svg`
 - **尺寸**: 28x28 px
 - **用途**: 文档总数统计卡片
 - **当前状态**: 使用Emoji占位符 "📄" (需要替换)
@@ -761,8 +761,8 @@
 - **颜色**: 白色，用于橙色渐变背景
 
 #### 2.2 知识库管理文档图标 (Knowledge Doc Icon)
-- **文件名**: `icon-knowledge-doc.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-knowledge-doc.svg`
+- **文件名**: `icon-rag.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-rag.svg`
 - **尺寸**: 24x24 px
 - **用途**: 知识库管理说明文档卡片
 - **当前状态**: 使用Emoji占位符 "📂" (需要替换)
@@ -770,8 +770,8 @@
 - **颜色**: 白色，用于蓝色渐变背景
 
 #### 2.3 文件上传文档图标 (Upload Doc Icon)
-- **文件名**: `icon-upload-doc.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-upload-doc.svg`
+- **文件名**: `icon-rag.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-rag.svg`
 - **尺寸**: 24x24 px
 - **用途**: 文件上传说明文档卡片
 - **当前状态**: 使用Emoji占位符 "📤" (需要替换)
@@ -779,8 +779,8 @@
 - **颜色**: 白色，用于绿色渐变背景
 
 #### 2.4 模型管理文档图标 (Model Doc Icon)
-- **文件名**: `icon-model-doc.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-model-doc.svg`
+- **文件名**: `icon-rag.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-rag.svg`
 - **尺寸**: 24x24 px
 - **用途**: 模型管理说明文档卡片
 - **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
@@ -788,8 +788,8 @@
 - **颜色**: 白色，用于棕色渐变背景
 
 #### 2.5 用户管理文档图标 (User Doc Icon)
-- **文件名**: `icon-user-doc.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-user-doc.svg`
+- **文件名**: `icon-rag.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-rag.svg`
 - **尺寸**: 24x24 px
 - **用途**: 用户管理说明文档卡片
 - **当前状态**: 使用Emoji占位符 "👥" (需要替换)
@@ -906,8 +906,8 @@
 ### 1. 页面标题区域图标
 
 #### 1.1 时间图标 (Time Icon)
-- **文件名**: `icon-time-usermgmt.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-time-usermgmt.svg`
+- **文件名**: `icon-time.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-time.svg`
 - **尺寸**: 16x16 px
 - **用途**: 页面右上角当前时间显示
 - **当前状态**: 使用Emoji占位符 "🕐" (需要替换)
@@ -955,8 +955,8 @@
 ### 3. 搜索和操作区图标
 
 #### 3.1 搜索输入框图标 (Search Input Icon)
-- **文件名**: `icon-search-input-user.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-search-input-user.svg`
+- **文件名**: `icon-search-btn.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-search-btn.svg`
 - **尺寸**: 18x18 px
 - **用途**: 搜索输入框前的图标
 - **当前状态**: 使用Emoji占位符 "🔍" (需要替换)
@@ -964,8 +964,8 @@
 - **颜色**: #6b7280
 
 #### 3.2 导出图标 (Export Icon)
-- **文件名**: `icon-export-users.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-export-users.svg`
+- **文件名**: `icon-download.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-download.svg`
 - **尺寸**: 16x16 px
 - **用途**: 导出用户列表按钮
 - **当前状态**: 使用Emoji占位符 "📥" (需要替换)
@@ -973,8 +973,8 @@
 - **颜色**: #10b981 (按钮文字色)
 
 #### 3.3 添加用户图标 (Add User Icon)
-- **文件名**: `icon-add-user.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-add-user.svg`
+- **文件名**: `icon-plus.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-pkus.svg`
 - **尺寸**: 20x20 px
 - **用途**: 添加用户按钮
 - **当前状态**: 使用文本符号 "+" (需要替换)
@@ -984,8 +984,8 @@
 ### 4. 用户表格角色和状态图标
 
 #### 4.1 管理员角色图标 (Role Admin Icon)
-- **文件名**: `icon-role-admin.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-role-admin.svg`
+- **文件名**: `icon-users-admin.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-users-admin.svg`
 - **尺寸**: 14x14 px
 - **用途**: 角色标签中的管理员图标
 - **当前状态**: 使用Emoji占位符 "👑" (需要替换)
@@ -1048,37 +1048,6 @@
 - **设计要求**: 垃圾桶风格图标
 - **颜色**: #6b7280，Hover时 #ffffff (红色按钮背景 #ef4444)
 
-### 6. 对话框图标
-
-#### 6.1 关闭图标 (Close Icon)
-- **文件名**: `icon-close-dialog.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-close-dialog.svg`
-- **尺寸**: 18x18 px
-- **用途**: 对话框关闭按钮
-- **当前状态**: 使用文本符号 "✕" (需要替换)
-- **设计要求**: 叉号风格图标
-- **颜色**: #6b7280
-
-#### 6.2 加载图标 (Loading Icon)
-- **文件名**: `icon-loading-dialog.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-loading-dialog.svg`
-- **尺寸**: 16x16 px
-- **用途**: 对话框提交按钮加载状态
-- **当前状态**: 使用CSS动画实现的旋转圆圈 (可保留或替换)
-- **设计要求**: 圆形旋转动画
-- **颜色**: #ffffff，用于蓝色按钮
-
-### 7. 空状态图标
-
-#### 7.1 空状态图标 (Empty State Icon)
-- **文件名**: `icon-empty-users.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-empty-users.svg`
-- **尺寸**: 64x64 px
-- **用途**: 用户列表为空时的占位图标
-- **当前状态**: 使用Emoji占位符 "📭" (需要替换)
-- **设计要求**: 空文件夹/空盒子风格
-- **颜色**: 灰色系 (#9ca3af)
-
 ---
 
 ## 知识库管理页面 (KnowledgeManagement.vue)
@@ -1086,8 +1055,8 @@
 ### 1. 页面功能图标
 
 #### 1.1 添加图标 (Add Icon)
-- **文件名**: `icon-add-kb.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-add-kb.svg`
+- **文件名**: `icon-plus.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-plus.svg`
 - **尺寸**: 18x18 px
 - **用途**: 创建知识库按钮图标
 - **当前状态**: 使用文本符号 "+" (需要替换)
@@ -1095,8 +1064,8 @@
 - **颜色**: 白色 (#ffffff)，用于紫色渐变按钮
 
 #### 1.2 编辑知识库图标 (Edit KB Icon)
-- **文件名**: `icon-edit-kb.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-edit-kb.svg`
+- **文件名**: `icon-edit-user.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-edit-user.svg`
 - **尺寸**: 16x16 px
 - **用途**: 知识库卡片编辑按钮
 - **当前状态**: 使用Emoji占位符 "✏️" (需要替换)
@@ -1104,8 +1073,8 @@
 - **颜色**: 深灰色
 
 #### 1.3 删除知识库图标 (Delete KB Icon)
-- **文件名**: `icon-delete-kb.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-delete-kb.svg`
+- **文件名**: `icon-delete-doc.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-delete-doc.svg`
 - **尺寸**: 16x16 px
 - **用途**: 知识库卡片删除按钮
 - **当前状态**: 使用Emoji占位符 "🗑️" (需要替换)
@@ -1115,13 +1084,13 @@
 ### 2. 知识库卡片图标
 
 #### 2.1 知识库主图标 (KB Main Icon)
-- **文件名**: `icon-kb-main.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-kb-main.svg`
+- **文件名**: `icon-code.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-code.svg`
 - **尺寸**: 24x24 px
 - **用途**: 知识库卡片主图标
 - **当前状态**: 使用Emoji占位符 "📚" (需要替换)
 - **设计要求**: 书籍/知识库风格图标
-- **颜色**: 白色，用于渐变背景
+- **颜色**: 不需要背景色
 
 ---
 
@@ -1284,8 +1253,8 @@
 ### 1. 页面功能图标
 
 #### 1.1 返回图标 (Back Icon)
-- **文件名**: `icon-back-preview.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-back-preview.svg`
+- **文件名**: `icon-back-arrow.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-back-arrow.svg`
 - **尺寸**: 20x20 px
 - **用途**: 返回按钮
 - **当前状态**: 使用文本符号 "←" (需要替换)
@@ -1293,8 +1262,8 @@
 - **颜色**: #666666
 
 #### 1.2 下载文档图标 (Download Doc Icon)
-- **文件名**: `icon-download-doc.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-download-doc.svg`
+- **文件名**: `icon-download.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-download.svg`
 - **尺寸**: 18x18 px
 - **用途**: 下载文档按钮
 - **当前状态**: 使用Emoji占位符 "📥" (需要替换)
@@ -1367,8 +1336,8 @@
 ### 1. 页面标题区域图标
 
 #### 1.1 时间图标 (Time Icon)
-- **文件名**: `icon-time-model.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-time-model.svg`
+- **文件名**: `icon-time.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-time.svg`
 - **尺寸**: 16x16 px
 - **用途**: 页面右上角当前时间显示
 - **当前状态**: 使用Emoji占位符 "🕐" (需要替换)
@@ -1378,7 +1347,7 @@
 ### 2. 统计卡片图标
 
 #### 2.1 LLM模型图标 (LLM Model Icon)
-- **文件名**: `icon-llm-stat.svg`
+- **文件名**: `icon-llm.svg`
 - **位置**: `frontEnd/src/assets/icons/icon-llm-stat.svg`
 - **尺寸**: 28x28 px
 - **用途**: LLM模型统计卡片
@@ -1387,7 +1356,7 @@
 - **颜色**: 蓝色系，卡片背景 #dbeafe
 
 #### 2.2 向量模型图标 (Embedding Model Icon)
-- **文件名**: `icon-embedding-stat.svg`
+- **文件名**: `icon-vector.svg`
 - **位置**: `frontEnd/src/assets/icons/icon-embedding-stat.svg`
 - **尺寸**: 28x28 px
 - **用途**: 向量模型统计卡片
@@ -1416,8 +1385,8 @@
 ### 3. 操作按钮图标
 
 #### 3.1 添加模型图标 (Add Model Icon)
-- **文件名**: `icon-add-model.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-add-model.svg`
+- **文件名**: `icon-plus.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-plus.svg`
 - **尺寸**: 18x18 px
 - **用途**: 添加模型按钮
 - **当前状态**: 使用文本符号 "+" (需要替换)
@@ -1454,8 +1423,8 @@
 - **颜色**: #ef4444（红色）
 
 #### 4.3 默认标记图标 (Default Badge Icon)
-- **文件名**: `icon-default-badge.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-default-badge.svg`
+- **文件名**: `icon-microservice-suggest.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-microservice-suggest.svg`
 - **尺寸**: 12x12 px
 - **用途**: 默认模型标记
 - **当前状态**: 使用Emoji占位符 "⭐" (需要替换)
@@ -1463,8 +1432,8 @@
 - **颜色**: 白色，用于黄色渐变背景
 
 #### 4.4 LLM模型主图标 (LLM Model Main Icon)
-- **文件名**: `icon-model-llm-main.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-model-llm-main.svg`
+- **文件名**: `icon-llm.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-llm.svg`
 - **尺寸**: 24x24 px
 - **用途**: LLM模型卡片主图标
 - **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
@@ -1472,8 +1441,8 @@
 - **颜色**: 白色，用于紫色渐变背景
 
 #### 4.5 向量模型主图标 (Embedding Model Main Icon)
-- **文件名**: `icon-model-embedding-main.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-model-embedding-main.svg`
+- **文件名**: `icon-vector.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-vector.svg`
 - **尺寸**: 24x24 px
 - **用途**: 向量模型卡片主图标
 - **当前状态**: 使用Emoji占位符 "🤖" (需要替换)
@@ -1501,8 +1470,8 @@
 - **颜色**: #6b7280
 
 #### 5.3 设为默认图标 (Set Default Icon)
-- **文件名**: `icon-set-default.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-set-default.svg`
+- **文件名**: `icon-microservice-suggest.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-microservice-suggest.svg`
 - **尺寸**: 16x16 px
 - **用途**: 设为默认模型按钮
 - **当前状态**: 使用Emoji占位符 "⭐" (需要替换)
@@ -1510,8 +1479,8 @@
 - **颜色**: #6b7280
 
 #### 5.4 删除模型图标 (Delete Model Icon)
-- **文件名**: `icon-delete-model.svg`
-- **位置**: `frontEnd/src/assets/icons/icon-delete-model.svg`
+- **文件名**: `icon-delete-doc.svg`
+- **位置**: `frontEnd/src/assets/icons/icon-delete-doc.svg`
 - **尺寸**: 16x16 px
 - **用途**: 删除模型按钮
 - **当前状态**: 使用Emoji占位符 "🗑️" (需要替换)

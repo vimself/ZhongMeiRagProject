@@ -493,9 +493,13 @@ onUnmounted(() => {
   color: #6b7280;
 }
 
-.icon-time::before {
-  content: '🕐';
-  font-size: 16px;
+.icon-time {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-time.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 统计卡片区 */
@@ -549,20 +553,40 @@ onUnmounted(() => {
   background: #fee2e2;
 }
 
-.icon-llm::before {
-  content: '🔥';
+.icon-llm {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-llm.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-embedding::before {
-  content: '📊';
+.icon-embedding {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-vector.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-online::before {
-  content: '✅';
+.icon-online {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-users-active.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.icon-offline::before {
-  content: '🚫';
+.icon-offline {
+  width: 28px;
+  height: 28px;
+  background-image: url('@/assets/icons/icon-users-disabled.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .stat-content {
@@ -644,13 +668,24 @@ onUnmounted(() => {
   transform: none !important;
 }
 
-.icon-plus::before {
-  content: '+';
-  font-size: 18px;
+.icon-plus {
+  width: 16px;
+  height: 16px;
+  background-image: url('@/assets/icons/icon-plus.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: brightness(0) invert(1);
 }
 
-.icon-health::before {
-  content: '🔄';
+.icon-health {
+  width: 18px;
+  height: 18px;
+  background-image: url('@/assets/icons/icon-refresh.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: brightness(0) invert(1);
 }
 
 .icon-health.rotating {
@@ -753,14 +788,21 @@ onUnmounted(() => {
   padding: 6px 12px;
   border-radius: 20px;
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  color: #ffffff;
+  color: #f4f80e;
   font-size: 12px;
   font-weight: 500;
 }
 
-.icon-star::before {
-  content: '⭐';
-  font-size: 12px;
+.icon-star {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+  background-image: url('@/assets/icons/icon-microservice-suggest.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
 }
 
 /* 模型信息 */
@@ -779,7 +821,6 @@ onUnmounted(() => {
   width: 48px;
   height: 48px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -787,13 +828,25 @@ onUnmounted(() => {
 }
 
 .model-icon-embedding {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: transparent;
 }
 
-.icon-model-llm::before,
-.icon-model-embedding::before {
-  content: '🤖';
-  font-size: 24px;
+.icon-model-llm {
+  width: 40px;
+  height: 40px;
+  background-image: url('@/assets/icons/icon-llm.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.icon-model-embedding {
+  width: 40px;
+  height: 40px;
+  background-image: url('@/assets/icons/icon-vector.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .model-title-area {
@@ -895,12 +948,22 @@ onUnmounted(() => {
   cursor: not-allowed;
 }
 
-.action-btn-test .icon-test::before {
-  content: '🔬';
+.icon-test {
+  width: 14px;
+  height: 14px;
+  background-image: url('@/assets/icons/icon-search-btn.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-.action-btn-config .icon-config::before {
-  content: '⚙️';
+.icon-config {
+  width: 14px;
+  height: 14px;
+  background-image: url('@/assets/icons/icon-edit-user.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .action-btn-default:hover {
@@ -915,8 +978,13 @@ onUnmounted(() => {
   background: #fef2f2;
 }
 
-.icon-delete::before {
-  content: '🗑️';
+.icon-delete {
+  width: 14px;
+  height: 14px;
+  background-image: url('@/assets/icons/icon-delete-doc.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 响应式 */
@@ -936,3 +1004,4 @@ onUnmounted(() => {
   }
 }
 </style>
+
