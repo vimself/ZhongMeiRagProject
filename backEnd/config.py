@@ -121,6 +121,7 @@ class TestingConfig(Config):
     ENV = 'testing'
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    SQLALCHEMY_ENGINE_OPTIONS = {}  # SQLite不支持连接池参数
     WTF_CSRF_ENABLED = False
 
 

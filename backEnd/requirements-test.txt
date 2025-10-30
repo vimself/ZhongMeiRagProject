@@ -1,0 +1,20 @@
+# 测试依赖
+
+# 基础测试框架
+pytest==7.4.2
+pytest-cov==4.1.0
+pytest-mock==3.11.1
+
+# Flask测试支持
+pytest-flask==1.2.0
+
+# 代码风格检查
+flake8==6.1.0
+flake8-pytest-style==1.7.2
+
+# 代码格式化
+black==23.9.1
+
+# 包含所有运行时依赖
+-r requirements.txt
+
