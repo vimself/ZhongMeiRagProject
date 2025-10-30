@@ -17,6 +17,7 @@ class Config:
     # Flask配置
     SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'dev-secret-key-change-in-production')
     JSON_AS_ASCII = False  # 支持中文JSON
+    ENV = 'development'  # 环境标识
     
     # 数据库配置
     DB_HOST = os.getenv('DB_HOST', 'localhost')
@@ -92,6 +93,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     """开发环境配置"""
+    ENV = 'development'
     DEBUG = True
     SQLALCHEMY_ECHO = True
     LOG_LEVEL = 'DEBUG'
@@ -99,6 +101,7 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     """生产环境配置"""
+    ENV = 'production'
     DEBUG = False
     SQLALCHEMY_ECHO = False
     LOG_LEVEL = 'WARNING'
@@ -115,6 +118,7 @@ class ProductionConfig(Config):
 
 class TestingConfig(Config):
     """测试环境配置"""
+    ENV = 'testing'
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
     WTF_CSRF_ENABLED = False
