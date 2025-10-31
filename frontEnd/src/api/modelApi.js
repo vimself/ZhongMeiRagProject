@@ -27,7 +27,8 @@ import { apiRequest } from '@/utils/request'
  */
 export async function getModelStats() {
   return await apiRequest('/api/models/stats', {
-    method: 'GET'
+    method: 'GET',
+    needAuth: true
   })
 }
 
@@ -70,7 +71,8 @@ export async function getModelStats() {
 export async function getModelList(params = {}) {
   return await apiRequest('/api/models/list', {
     method: 'POST',
-    body: params
+    body: params,
+    needAuth: true
   })
 }
 
@@ -120,7 +122,8 @@ export async function getModelList(params = {}) {
 export async function getModelDetail(params) {
   return await apiRequest('/api/models/detail', {
     method: 'POST',
-    body: params
+    body: params,
+    needAuth: true
   })
 }
 
@@ -159,7 +162,8 @@ export async function getModelDetail(params) {
 export async function createModel(params) {
   return await apiRequest('/api/models/create', {
     method: 'POST',
-    body: params
+    body: params,
+    needAuth: true
   })
 }
 
@@ -187,7 +191,8 @@ export async function createModel(params) {
 export async function updateModel(params) {
   return await apiRequest('/api/models/update', {
     method: 'POST',
-    body: params
+    body: params,
+    needAuth: true
   })
 }
 
@@ -208,7 +213,8 @@ export async function updateModel(params) {
 export async function deleteModel(params) {
   return await apiRequest('/api/models/delete', {
     method: 'POST',
-    body: params
+    body: params,
+    needAuth: true
   })
 }
 
@@ -230,7 +236,8 @@ export async function deleteModel(params) {
 export async function setDefaultModel(params) {
   return await apiRequest('/api/models/set-default', {
     method: 'POST',
-    body: params
+    body: params,
+    needAuth: true
   })
 }
 
@@ -256,7 +263,8 @@ export async function setDefaultModel(params) {
 export async function testModel(params) {
   return await apiRequest('/api/models/test', {
     method: 'POST',
-    body: params
+    body: params,
+    needAuth: true
   })
 }
 
@@ -286,7 +294,8 @@ export async function testModel(params) {
 export async function healthCheckModels(params = {}) {
   return await apiRequest('/api/models/health-check', {
     method: 'POST',
-    body: params
+    body: params,
+    needAuth: true
   })
 }
 
@@ -308,7 +317,8 @@ export async function healthCheckModels(params = {}) {
 export async function updateModelStatus(params) {
   return await apiRequest('/api/models/update-status', {
     method: 'POST',
-    body: params
+    body: params,
+    needAuth: true
   })
 }
 

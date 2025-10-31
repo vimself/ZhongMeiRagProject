@@ -10,11 +10,11 @@ export const ENV = import.meta.env.MODE || 'development'
 export const isDev = ENV === 'development'
 
 // API基础路径
-export const API_BASE_URL = isDev 
-  ? 'http://localhost:3000/api'  // 开发环境API地址（Mock数据时使用）
-  : '/api'  // 生产环境API地址
+// 注意：前端API文件中已经包含了 /api 前缀，这里应该为空字符串
+// Vite配置中会自动将 /api 开头的请求代理到后端 http://localhost:8000
+export const API_BASE_URL = ''
 
 // 是否使用模拟数据
 // 开发时修改此处：true=使用Mock数据，false=连接真实后端API
-export const USE_MOCK = isDev  // 默认开发环境使用Mock，联调时改为false
+export const USE_MOCK = false  // 联调模式：连接真实后端API
 

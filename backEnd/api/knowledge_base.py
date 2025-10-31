@@ -7,8 +7,8 @@ from models.knowledge_base import KnowledgeBase, Document, KnowledgeBasePermissi
 from models.model import Model
 from utils.auth import require_auth, require_admin
 from utils.response import success_response, error_response
-from utils.helpers import generate_id, paginate
-from app import db
+from utils.helpers import generate_id, paginate, get_beijing_now
+from extensions import db
 from datetime import datetime
 import os
 
@@ -212,7 +212,7 @@ def create():
             visible=visible,
             status='active',
             created_by=g.user_id,
-            created_at=datetime.utcnow()
+            created_at=get_beijing_now()
         )
         
         db.session.add(kb)
@@ -265,7 +265,7 @@ def update():
         if 'similarityThreshold' in data:
             kb.similarity_threshold = float(data['similarityThreshold'])
         
-        kb.updated_at = datetime.utcnow()
+        kb.updated_at = get_beijing_now()
         
         db.session.commit()
         
@@ -484,13 +484,13 @@ def upload_document():
             status='completed',
             chunk_count=len(chunks),
             uploaded_by=g.user_id,
-            uploaded_at=datetime.utcnow()
+            uploaded_at=get_beijing_now()
         )
         
         db.session.add(document)
         
         # 更新知识库的更新时间
-        kb.updated_at = datetime.utcnow()
+        kb.updated_at = get_beijing_now()
         
         db.session.commit()
         
@@ -578,7 +578,7 @@ def delete_document():
         db.session.delete(document)
         
         # 更新知识库的更新时间
-        kb.updated_at = datetime.utcnow()
+        kb.updated_at = get_beijing_now()
         
         db.session.commit()
         
@@ -665,7 +665,7 @@ def format_relative_time(dt):
     if not dt:
         return ''
     
-    now = datetime.utcnow()
+    now = get_beijing_now()
     diff = now - dt
     
     if diff.days > 30:

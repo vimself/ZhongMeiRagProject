@@ -6,11 +6,15 @@ from datetime import datetime, timedelta
 from functools import wraps
 from flask import request, current_app, g
 from utils.response import error_response
+from utils.helpers import get_beijing_now
 
 
 def generate_token(user_id, expiration_hours=None):
     """
     生成JWT token
+    
+    注意：JWT token的时间必须使用UTC时间（JWT标准要求）
+    业务时间（如登录时间）使用北京时间，但JWT token时间必须用UTC
     
     Args:
         user_id: 用户ID
@@ -22,10 +26,13 @@ def generate_token(user_id, expiration_hours=None):
     if expiration_hours is None:
         expiration_hours = current_app.config['JWT_EXPIRATION_HOURS']
     
+    # JWT标准要求使用UTC时间，不能使用本地时区
+    utc_now = datetime.utcnow()
+    
     payload = {
         'user_id': user_id,
-        'exp': datetime.utcnow() + timedelta(hours=expiration_hours),
-        'iat': datetime.utcnow()
+        'exp': utc_now + timedelta(hours=expiration_hours),
+        'iat': utc_now
     }
     
     token = jwt.encode(

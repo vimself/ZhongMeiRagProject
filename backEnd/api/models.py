@@ -6,8 +6,8 @@ from flask import Blueprint, request, current_app
 from models.model import Model
 from utils.auth import require_admin
 from utils.response import success_response, error_response
-from utils.helpers import generate_id, paginate
-from app import db
+from utils.helpers import generate_id, paginate, get_beijing_now
+from extensions import db
 from datetime import datetime
 import requests
 
@@ -155,7 +155,7 @@ def create_model():
             config=data.get('config', {}),
             status='offline',
             is_default=False,
-            created_at=datetime.utcnow()
+            created_at=get_beijing_now()
         )
         
         db.session.add(model)
@@ -210,7 +210,7 @@ def update_model():
             else:
                 model.config = data['config']
         
-        model.updated_at = datetime.utcnow()
+        model.updated_at = get_beijing_now()
         
         db.session.commit()
         
@@ -299,7 +299,7 @@ def set_default():
         
         # 设置新的默认模型
         model.is_default = True
-        model.updated_at = datetime.utcnow()
+        model.updated_at = get_beijing_now()
         
         db.session.commit()
         
@@ -406,7 +406,7 @@ def update_status():
             return error_response(5002, '模型不存在')
         
         model.status = status
-        model.updated_at = datetime.utcnow()
+        model.updated_at = get_beijing_now()
         
         db.session.commit()
         
@@ -427,7 +427,7 @@ def check_model_health(model):
         if not model.endpoint or model.endpoint == 'local':
             # 本地模型，暂时无法检查
             model.status = 'offline'
-            model.last_check_time = datetime.utcnow()
+            model.last_check_time = get_beijing_now()
             model.health_message = '本地模型，无法自动检查'
             db.session.commit()
             
@@ -435,7 +435,7 @@ def check_model_health(model):
                 'status': 'offline',
                 'responseTime': None,
                 'message': '本地模型，无法自动检查',
-                'timestamp': datetime.utcnow().isoformat()
+                'timestamp': get_beijing_now().isoformat()
             }
         
         # TODO: 实现真实的健康检查

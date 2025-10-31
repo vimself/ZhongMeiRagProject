@@ -2,7 +2,7 @@
 用户模型
 """
 from datetime import datetime
-from app import db
+from extensions import db
 
 
 class User(db.Model):

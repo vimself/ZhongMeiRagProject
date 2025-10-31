@@ -6,7 +6,7 @@ from flask import Blueprint, request, current_app
 from models.knowledge_base import KnowledgeBase, Document, KnowledgeBasePermission
 from utils.auth import require_auth
 from utils.response import success_response, error_response
-from app import db
+from extensions import db
 
 search_bp = Blueprint('search', __name__)
 

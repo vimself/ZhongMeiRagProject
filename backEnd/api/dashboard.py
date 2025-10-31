@@ -9,6 +9,7 @@ from models.chat import ChatSession, ChatMessage
 from models.model import Model
 from utils.auth import require_admin
 from utils.response import success_response, error_response
+from utils.helpers import get_beijing_now
 from datetime import datetime, timedelta
 from sqlalchemy import func
 
@@ -24,7 +25,7 @@ def get_stats():
     """
     try:
         # 计算今天和昨天的时间范围
-        today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_start = get_beijing_now().replace(hour=0, minute=0, second=0, microsecond=0)
         yesterday_start = today_start - timedelta(days=1)
         
         # 今日提问数
@@ -159,7 +160,7 @@ def get_system_status():
                 'status': 'normal'
             },
             'systemStatus': system_status,
-            'lastUpdate': datetime.utcnow().isoformat()
+            'lastUpdate': get_beijing_now().isoformat()
         }
         
         return success_response(status)

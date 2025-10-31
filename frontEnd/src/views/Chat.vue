@@ -193,12 +193,14 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { USE_MOCK } from '../utils/env'
 import { 
   getKnowledgeBaseList, 
   getModelList, 
   getSessionHistory,
   createSession,
-  sendChatMessage
+  sendChatMessage,
+  getSessionMessages
 } from '../api/chatApi'
 
 // 当前时间
@@ -291,10 +293,11 @@ function updateTime() {
  */
 async function loadInitialData() {
   try {
-    // 开发阶段使用模拟数据
-    if (import.meta.env.MODE === 'development') {
+    // 根据 USE_MOCK 配置决定是否使用模拟数据
+    if (USE_MOCK) {
       loadMockData()
     } else {
+      // 请求真实后端数据
       const [kbRes, modelRes, historyRes] = await Promise.all([
         getKnowledgeBaseList(),
         getModelList(),
@@ -304,11 +307,15 @@ async function loadInitialData() {
       knowledgeBaseList.value = kbRes.data
       modelList.value = modelRes.data
       sessionHistory.value = historyRes.data
+      
+      // 设置默认选中的模型（选择第一个可用模型）
+      if (modelList.value && modelList.value.length > 0) {
+        selectedModel.value = modelList.value[0].id
+      }
     }
   } catch (error) {
     console.error('加载数据失败:', error)
-    // 失败时也使用模拟数据
-    loadMockData()
+    alert('加载数据失败: ' + error.message)
   }
 }
 
@@ -452,8 +459,8 @@ function loadMockData() {
  */
 async function createNewChat() {
   try {
-    // 开发阶段使用模拟数据
-    if (import.meta.env.MODE === 'development') {
+    // 根据 USE_MOCK 配置决定是否使用模拟数据
+    if (USE_MOCK) {
       createMockSession()
     } else {
       const res = await createSession({
@@ -470,8 +477,7 @@ async function createNewChat() {
     }
   } catch (error) {
     console.error('创建会话失败:', error)
-    // 失败时使用模拟数据
-    createMockSession()
+    alert('创建会话失败: ' + error.message)
   }
 }
 
@@ -506,22 +512,37 @@ function createMockSession() {
 /**
  * 加载会话
  */
-function loadSession(sessionId) {
+async function loadSession(sessionId) {
   console.log('切换到会话:', sessionId)
   
   // 设置当前会话ID
   currentSessionId.value = sessionId
   
-  // 加载对应的消息
-  const sessionMessages = allSessionMessages.value.get(sessionId) || []
-  messages.value = [...sessionMessages]
-  
-  // 滚动到底部
-  nextTick(() => {
-    scrollToBottom()
-  })
-  
-  console.log('加载会话消息:', messages.value.length, '条')
+  try {
+    if (USE_MOCK) {
+      // 使用模拟数据
+      const sessionMessages = allSessionMessages.value.get(sessionId) || []
+      messages.value = [...sessionMessages]
+    } else {
+      // 从后端加载会话消息
+      const res = await getSessionMessages({ sessionId })
+      messages.value = res.data || []
+      
+      // 缓存到本地
+      allSessionMessages.value.set(sessionId, messages.value)
+    }
+    
+    // 滚动到底部
+    nextTick(() => {
+      scrollToBottom()
+    })
+    
+    console.log('加载会话消息:', messages.value.length, '条')
+  } catch (error) {
+    console.error('加载会话消息失败:', error)
+    messages.value = []
+    alert('加载会话消息失败: ' + error.message)
+  }
 }
 
 /**
@@ -568,8 +589,8 @@ async function sendMessage() {
   try {
     let assistantMessage
     
-    // 开发阶段使用模拟响应
-    if (import.meta.env.MODE === 'development') {
+    // 根据 USE_MOCK 配置决定是否使用模拟数据
+    if (USE_MOCK) {
       assistantMessage = await getMockResponse(question)
     } else {
       const res = await sendChatMessage({
@@ -583,7 +604,7 @@ async function sendMessage() {
         id: Date.now() + 1,
         role: 'assistant',
         content: res.data.answer,
-        references: res.data.references,
+        references: res.data.references || [],
         time: formatTime(new Date())
       }
     }
@@ -601,18 +622,7 @@ async function sendMessage() {
     scrollToBottom()
   } catch (error) {
     console.error('发送消息失败:', error)
-    
-    // 失败时使用模拟响应
-    try {
-      const assistantMessage = await getMockResponse(question)
-      messages.value.push(assistantMessage)
-      allSessionMessages.value.set(currentSessionId.value, [...messages.value])
-      updateSessionTitle(currentSessionId.value, question)
-      await nextTick()
-      scrollToBottom()
-    } catch (mockError) {
-      alert(error.message || '发送失败，请重试')
-    }
+    alert('发送消息失败: ' + error.message)
   } finally {
     isLoading.value = false
   }

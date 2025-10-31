@@ -198,7 +198,8 @@ async function loadData() {
     ])
     
     stats.value = statsRes.data
-    knowledgeBaseList.value = listRes.data
+    // 后端返回的是分页格式，需要取list字段
+    knowledgeBaseList.value = listRes.data.list || []
   } catch (error) {
     console.error('加载数据失败:', error)
     alert(error.message || '加载失败，请重试')

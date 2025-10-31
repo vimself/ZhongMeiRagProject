@@ -7,9 +7,9 @@ from models.user import User
 from models.login_record import LoginRecord
 from utils.auth import require_auth
 from utils.response import success_response, error_response
-from utils.helpers import hash_password, verify_password
+from utils.helpers import hash_password, verify_password, get_beijing_now
 from utils.validators import validate_email, validate_phone, validate_password
-from app import db
+from extensions import db
 from datetime import datetime
 
 user_bp = Blueprint('user', __name__)
@@ -84,7 +84,7 @@ def update_profile():
         user.department = department
         user.position = position
         user.bio = bio
-        user.updated_at = datetime.utcnow()
+        user.updated_at = get_beijing_now()
         
         db.session.commit()
         
@@ -161,6 +161,7 @@ def get_login_records():
     """
     获取登录记录
     POST /api/user/login-records
+    注意：相同设备和IP的记录会合并为一条，显示最后登录时间
     """
     try:
         from flask import g
@@ -169,9 +170,10 @@ def get_login_records():
         limit = int(data.get('limit', 10))
         limit = min(max(1, limit), 50)  # 限制在1-50之间
         
-        # 查询登录记录
+        # 查询登录记录，按最后登录时间倒序
+        # 由于已经按设备+IP去重（在登录时处理），这里直接查询即可
         records = LoginRecord.query.filter_by(user_id=g.user_id)\
-            .order_by(LoginRecord.login_time.desc())\
+            .order_by(LoginRecord.last_login_time.desc())\
             .limit(limit)\
             .all()
         
@@ -223,7 +225,7 @@ def change_password():
         
         # 更新密码
         user.password_hash = hash_password(new_password)
-        user.updated_at = datetime.utcnow()
+        user.updated_at = get_beijing_now()
         
         db.session.commit()
         

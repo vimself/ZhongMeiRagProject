@@ -2,7 +2,8 @@
 知识库相关模型
 """
 from datetime import datetime
-from app import db
+from extensions import db
+from utils.helpers import get_beijing_now
 
 
 class KnowledgeBase(db.Model):
@@ -147,7 +148,7 @@ def format_relative_time(dt):
     if dt is None:
         return ''
     
-    now = datetime.utcnow()
+    now = get_beijing_now()
     diff = now - dt
     
     if diff.days > 365:

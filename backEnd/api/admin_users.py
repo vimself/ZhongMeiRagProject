@@ -6,9 +6,9 @@ from flask import Blueprint, request, current_app
 from models.user import User
 from utils.auth import require_admin
 from utils.response import success_response, error_response
-from utils.helpers import generate_id, hash_password, paginate
+from utils.helpers import generate_id, hash_password, paginate, get_beijing_now
 from utils.validators import validate_email, validate_phone, validate_username, validate_password
-from app import db
+from extensions import db
 from datetime import datetime
 import random
 import string
@@ -152,7 +152,7 @@ def create_user():
             phone=phone,
             role=role,
             status='active',
-            created_at=datetime.utcnow()
+            created_at=get_beijing_now()
         )
         
         db.session.add(user)
@@ -202,7 +202,7 @@ def update_user():
         if 'role' in data:
             user.role = data['role']
         
-        user.updated_at = datetime.utcnow()
+        user.updated_at = get_beijing_now()
         
         db.session.commit()
         
@@ -279,7 +279,7 @@ def toggle_status():
             return error_response(1004, '用户不存在')
         
         user.status = status
-        user.updated_at = datetime.utcnow()
+        user.updated_at = get_beijing_now()
         
         db.session.commit()
         
@@ -316,7 +316,7 @@ def reset_password():
         
         # 更新密码
         user.password_hash = hash_password(new_password)
-        user.updated_at = datetime.utcnow()
+        user.updated_at = get_beijing_now()
         
         db.session.commit()
         

@@ -8,8 +8,8 @@ from models.model import Model
 from models.chat import ChatSession, ChatMessage
 from utils.auth import require_auth
 from utils.response import success_response, error_response
-from utils.helpers import generate_id
-from app import db
+from utils.helpers import generate_id, get_beijing_now
+from extensions import db
 from datetime import datetime
 
 chat_bp = Blueprint('chat', __name__)
@@ -140,7 +140,7 @@ def create_session():
             title='新对话',
             knowledge_base_id=knowledge_base_id if knowledge_base_id != 'all' else None,
             model_id=model_id,
-            created_at=datetime.utcnow()
+            created_at=get_beijing_now()
         )
         
         db.session.add(session)
@@ -192,7 +192,7 @@ def send_message():
             session_id=session_id,
             role='user',
             content=question,
-            created_at=datetime.utcnow()
+            created_at=get_beijing_now()
         )
         db.session.add(user_message)
         
@@ -245,12 +245,12 @@ def send_message():
             role='assistant',
             content=answer,
             references=references,
-            created_at=datetime.utcnow()
+            created_at=get_beijing_now()
         )
         db.session.add(assistant_message)
         
         # 更新会话时间
-        session.updated_at = datetime.utcnow()
+        session.updated_at = get_beijing_now()
         
         # 自动生成会话标题（第一条消息）
         if session.messages.count() == 0:
@@ -375,7 +375,7 @@ def rename_session():
         
         # 更新标题
         session.title = title
-        session.updated_at = datetime.utcnow()
+        session.updated_at = get_beijing_now()
         
         db.session.commit()
         

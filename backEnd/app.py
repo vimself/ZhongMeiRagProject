@@ -5,14 +5,9 @@ import os
 import logging
 from flask import Flask, jsonify
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 
 from config import get_config
-
-# 初始化扩展
-db = SQLAlchemy()
-migrate = Migrate()
+from extensions import db, migrate
 
 
 def create_app(config_name=None):

@@ -3,14 +3,15 @@
 包含登录、登出、修改密码、重置密码等接口
 """
 from flask import Blueprint, request, current_app
+from datetime import datetime
+
+from extensions import db
 from models.user import User
 from models.login_record import LoginRecord
 from utils.auth import generate_token, require_auth
 from utils.response import success_response, error_response
-from utils.helpers import hash_password, verify_password, generate_id, get_client_ip, parse_device_info
+from utils.helpers import hash_password, verify_password, generate_id, get_client_ip, parse_device_info, get_beijing_now
 from utils.validators import validate_password
-from app import db
-from datetime import datetime
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -53,19 +54,42 @@ def login():
         token = generate_token(user.id)
         
         # 更新最后登录时间
-        user.last_login_at = datetime.utcnow()
+        user.last_login_at = get_beijing_now()
         
-        # 记录登录记录
-        login_record = LoginRecord(
-            id=generate_id('login'),
+        # 获取登录信息
+        client_ip = get_client_ip(request)
+        device = parse_device_info(request.headers.get('User-Agent'))
+        user_agent = request.headers.get('User-Agent')
+        
+        # 查找相同设备和IP的登录记录
+        existing_record = LoginRecord.query.filter_by(
             user_id=user.id,
-            ip=get_client_ip(request),
-            device=parse_device_info(request.headers.get('User-Agent')),
-            user_agent=request.headers.get('User-Agent'),
-            status='current',
-            login_time=datetime.utcnow()
-        )
-        db.session.add(login_record)
+            ip=client_ip,
+            device=device
+        ).first()
+        
+        if existing_record:
+            # 更新现有记录
+            existing_record.last_login_time = get_beijing_now()
+            existing_record.login_count = (existing_record.login_count or 1) + 1
+            existing_record.status = 'current'
+            existing_record.user_agent = user_agent
+            current_app.logger.info(f'更新登录记录: {user.username}, 登录次数: {existing_record.login_count}')
+        else:
+            # 创建新的登录记录
+            login_record = LoginRecord(
+                id=generate_id('login'),
+                user_id=user.id,
+                ip=client_ip,
+                device=device,
+                user_agent=user_agent,
+                status='current',
+                login_time=get_beijing_now(),
+                last_login_time=get_beijing_now(),
+                login_count=1
+            )
+            db.session.add(login_record)
+            current_app.logger.info(f'创建新登录记录: {user.username}')
         
         db.session.commit()
         
@@ -100,7 +124,7 @@ def logout():
         
         if login_record:
             login_record.status = 'ended'
-            login_record.logout_time = datetime.utcnow()
+            login_record.logout_time = get_beijing_now()
             db.session.commit()
         
         current_app.logger.info(f'用户登出: {g.user_id}')
@@ -148,7 +172,7 @@ def change_password():
         
         # 更新密码
         user.password_hash = hash_password(new_password)
-        user.updated_at = datetime.utcnow()
+        user.updated_at = get_beijing_now()
         
         db.session.commit()
         

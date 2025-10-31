@@ -35,7 +35,7 @@ import { apiRequest } from '../utils/request'
  * }
  */
 export async function login(params) {
-  return await apiRequest('/auth/login', {
+  return await apiRequest('/api/auth/login', {
     method: 'POST',
     body: params
   })
@@ -57,7 +57,7 @@ export async function login(params) {
  * @returns {Promise<object>} 登出结果
  */
 export async function logout() {
-  return await apiRequest('/auth/logout', {
+  return await apiRequest('/api/auth/logout', {
     method: 'POST',
     body: {},
     needAuth: true
@@ -83,7 +83,7 @@ export async function logout() {
  * @returns {Promise<object>} 修改结果
  */
 export async function changePassword(params) {
-  return await apiRequest('/auth/change-password', {
+  return await apiRequest('/api/auth/change-password', {
     method: 'POST',
     body: params,
     needAuth: true
@@ -110,7 +110,7 @@ export async function changePassword(params) {
  * @returns {Promise<object>} 重置结果
  */
 export async function resetPassword(params) {
-  return await apiRequest('/auth/reset-password', {
+  return await apiRequest('/api/auth/reset-password', {
     method: 'POST',
     body: params
   })

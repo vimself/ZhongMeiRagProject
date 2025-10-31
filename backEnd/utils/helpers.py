@@ -3,7 +3,21 @@
 """
 import uuid
 import bcrypt
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+
+
+# 东八区时区对象
+BEIJING_TZ = timezone(timedelta(hours=8))
+
+
+def get_beijing_now():
+    """
+    获取北京时间（东八区，UTC+8）
+    
+    Returns:
+        datetime: 东八区当前时间（不带时区信息）
+    """
+    return datetime.now(BEIJING_TZ).replace(tzinfo=None)
 
 
 def generate_id(prefix=''):

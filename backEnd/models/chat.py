@@ -2,7 +2,8 @@
 对话相关模型
 """
 from datetime import datetime
-from app import db
+from extensions import db
+from utils.helpers import get_beijing_now
 
 
 class ChatSession(db.Model):
@@ -67,7 +68,7 @@ def format_chat_time(dt):
     if dt is None:
         return ''
     
-    now = datetime.utcnow()
+    now = get_beijing_now()
     diff = now - dt
     
     if diff.days == 0:
