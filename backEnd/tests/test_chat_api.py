@@ -197,3 +197,4 @@ class TestChatAPI:
         json_data = response.get_json()
         assert json_data['error'] == 0
 
+

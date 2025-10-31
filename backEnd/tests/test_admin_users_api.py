@@ -239,3 +239,4 @@ class TestAdminUsersAPI:
         json_data = response.get_json()
         assert json_data['error'] == 1006
 
+

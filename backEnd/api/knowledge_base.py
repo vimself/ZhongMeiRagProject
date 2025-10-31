@@ -297,7 +297,25 @@ def delete():
         if not kb:
             return error_response(2002, '知识库不存在')
         
-        # TODO: 删除相关的向量数据
+        # 删除相关的向量数据
+        try:
+            from utils.rag_service import rag_service
+            rag_service.delete_collection(kb_id)
+            current_app.logger.info(f'删除知识库向量集合: {kb_id}')
+        except Exception as e:
+            current_app.logger.error(f'删除向量集合失败: {str(e)}', exc_info=True)
+            # 继续删除数据库记录
+        
+        # 删除知识库的所有文档文件
+        upload_folder = current_app.config.get('UPLOAD_FOLDER')
+        documents = Document.query.filter_by(knowledge_base_id=kb_id).all()
+        for doc in documents:
+            file_path = os.path.join(upload_folder, doc.file_path)
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                except Exception as e:
+                    current_app.logger.warning(f'删除文件失败: {str(e)}')
         
         # 删除知识库（级联删除文档和权限）
         db.session.delete(kb)
@@ -367,12 +385,128 @@ def upload_document():
     POST /api/knowledge-base/upload-document
     """
     try:
-        # TODO: 实现文档上传和处理逻辑
-        return error_response(2004, '文档上传功能开发中')
+        from flask import g
+        from werkzeug.utils import secure_filename
+        from utils.document_processor import document_processor
+        from utils.rag_service import rag_service
+        
+        # 检查文件
+        if 'file' not in request.files:
+            return error_response(2001, '未上传文件')
+        
+        file = request.files['file']
+        if file.filename == '':
+            return error_response(2001, '文件名为空')
+        
+        # 获取知识库ID
+        kb_id = request.form.get('knowledgeBaseId')
+        if not kb_id:
+            return error_response(2001, '知识库ID不能为空')
+        
+        # 验证知识库存在且有权限
+        kb = KnowledgeBase.query.get(kb_id)
+        if not kb:
+            return error_response(2002, '知识库不存在')
+        
+        if not g.current_user.is_admin():
+            permission = KnowledgeBasePermission.query.filter_by(
+                knowledge_base_id=kb_id,
+                user_id=g.user_id,
+                permission='manage'
+            ).first()
+            if not permission:
+                return error_response(403, '无权限管理该知识库')
+        
+        # 验证文件类型
+        filename = secure_filename(file.filename)
+        file_ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+        
+        allowed_extensions = current_app.config.get('ALLOWED_EXTENSIONS', {'pdf', 'doc', 'docx', 'txt'})
+        if file_ext not in allowed_extensions:
+            return error_response(2005, f'不支持的文件类型: {file_ext}')
+        
+        # 保存文件
+        upload_folder = current_app.config.get('UPLOAD_FOLDER')
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        # 生成唯一文件名
+        doc_id = generate_id('doc')
+        saved_filename = f"{doc_id}_{filename}"
+        file_path = os.path.join(upload_folder, saved_filename)
+        
+        file.save(file_path)
+        file_size = os.path.getsize(file_path)
+        
+        current_app.logger.info(f'文件保存成功: {file_path}, 大小: {file_size} 字节')
+        
+        # 解析文档
+        try:
+            text = document_processor.extract_text(file_path, file_ext)
+            
+            if not text or len(text) < 10:
+                os.remove(file_path)
+                return error_response(2006, '文档内容为空或无法解析')
+            
+        except Exception as e:
+            os.remove(file_path)
+            raise Exception(f'文档解析失败: {str(e)}')
+        
+        # 分块处理
+        chunk_size = current_app.config.get('CHUNK_SIZE', 500)
+        chunk_overlap = current_app.config.get('CHUNK_OVERLAP', 50)
+        
+        chunks = document_processor.create_chunks_with_metadata(
+            text=text,
+            document_id=doc_id,
+            document_name=filename,
+            kb_id=kb_id,
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap
+        )
+        
+        current_app.logger.info(f'文档分块完成: {len(chunks)} 个块')
+        
+        # 向量化并存储到 ChromaDB
+        try:
+            rag_service.add_documents(kb_id, chunks)
+        except Exception as e:
+            os.remove(file_path)
+            raise Exception(f'向量化存储失败: {str(e)}')
+        
+        # 保存文档记录到数据库
+        document = Document(
+            id=doc_id,
+            knowledge_base_id=kb_id,
+            name=filename,
+            file_path=saved_filename,
+            file_type=file_ext,
+            file_size=file_size,
+            status='completed',
+            chunk_count=len(chunks),
+            uploaded_by=g.user_id,
+            uploaded_at=datetime.utcnow()
+        )
+        
+        db.session.add(document)
+        
+        # 更新知识库的更新时间
+        kb.updated_at = datetime.utcnow()
+        
+        db.session.commit()
+        
+        current_app.logger.info(f'文档上传成功: {filename} (ID: {doc_id}), 共 {len(chunks)} 个块')
+        
+        return success_response({
+            'documentId': doc_id,
+            'documentName': filename,
+            'chunkCount': len(chunks),
+            'fileSize': file_size
+        }, '文档上传成功')
         
     except Exception as e:
+        db.session.rollback()
         current_app.logger.error(f'上传文档异常: {str(e)}', exc_info=True)
-        return error_response(500, '上传文档失败')
+        return error_response(500, f'上传文档失败: {str(e)}')
 
 
 @knowledge_base_bp.route('/delete-document', methods=['POST'])
@@ -383,10 +517,77 @@ def delete_document():
     POST /api/knowledge-base/delete-document
     """
     try:
-        # TODO: 实现文档删除逻辑
-        return error_response(2004, '文档删除功能开发中')
+        from flask import g
+        
+        data = request.get_json()
+        doc_id = data.get('documentId')
+        
+        if not doc_id:
+            return error_response(2001, '文档ID不能为空')
+        
+        # 查询文档
+        document = Document.query.get(doc_id)
+        if not document:
+            return error_response(2002, '文档不存在')
+        
+        # 权限检查
+        kb = KnowledgeBase.query.get(document.knowledge_base_id)
+        if not kb:
+            return error_response(2002, '知识库不存在')
+        
+        if not g.current_user.is_admin():
+            permission = KnowledgeBasePermission.query.filter_by(
+                knowledge_base_id=document.knowledge_base_id,
+                user_id=g.user_id,
+                permission='manage'
+            ).first()
+            if not permission:
+                return error_response(403, '无权限管理该知识库')
+        
+        # 删除 ChromaDB 中的向量数据
+        try:
+            from utils.rag_service import rag_service
+            collection = rag_service.get_or_create_collection(document.knowledge_base_id)
+            
+            # 删除该文档的所有块
+            chunk_ids = [f"{doc_id}_chunk_{i}" for i in range(document.chunk_count or 100)]
+            
+            # ChromaDB 的 delete 会忽略不存在的 ID，所以直接删除即可
+            try:
+                collection.delete(ids=chunk_ids)
+                current_app.logger.info(f'删除文档向量: {doc_id}')
+            except Exception as e:
+                current_app.logger.warning(f'删除向量数据失败（可能已不存在）: {str(e)}')
+        
+        except Exception as e:
+            current_app.logger.error(f'删除向量数据异常: {str(e)}', exc_info=True)
+            # 继续删除数据库记录
+        
+        # 删除物理文件
+        upload_folder = current_app.config.get('UPLOAD_FOLDER')
+        file_path = os.path.join(upload_folder, document.file_path)
+        
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                current_app.logger.info(f'删除文件: {file_path}')
+            except Exception as e:
+                current_app.logger.warning(f'删除文件失败: {str(e)}')
+        
+        # 删除数据库记录
+        db.session.delete(document)
+        
+        # 更新知识库的更新时间
+        kb.updated_at = datetime.utcnow()
+        
+        db.session.commit()
+        
+        current_app.logger.info(f'删除文档成功: {document.name} (ID: {doc_id})')
+        
+        return success_response(message='文档删除成功')
         
     except Exception as e:
+        db.session.rollback()
         current_app.logger.error(f'删除文档异常: {str(e)}', exc_info=True)
         return error_response(500, '删除文档失败')
 

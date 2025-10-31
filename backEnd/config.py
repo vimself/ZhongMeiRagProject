@@ -53,17 +53,24 @@ class Config:
         'CHROMA_PERSIST_DIRECTORY', 
         os.path.join(basedir, 'chroma_db')
     )
-    EMBEDDING_MODEL_NAME = os.getenv(
-        'EMBEDDING_MODEL_NAME',
-        'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2'
-    )
     
-    # LLM配置
-    LLM_API_BASE = os.getenv('LLM_API_BASE', 'http://localhost:8001/v1')
-    LLM_API_KEY = os.getenv('LLM_API_KEY', 'sk-default')
-    LLM_MODEL_NAME = os.getenv('LLM_MODEL_NAME', 'qwen2-7b-instruct')
+    # Ollama 配置
+    OLLAMA_BASE_URL = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434')
+    OLLAMA_API_BASE = f"{OLLAMA_BASE_URL}/v1"  # OpenAI 兼容接口
+    
+    # 嵌入模型配置（用于向量化文档和查询）
+    EMBEDDING_MODEL_TYPE = os.getenv('EMBEDDING_MODEL_TYPE', 'ollama')  # ollama 或 sentence-transformers
+    EMBEDDING_MODEL_NAME = os.getenv('EMBEDDING_MODEL_NAME', 'dengcao/Qwen3-Embedding-4B:Q5_K_M')
+    EMBEDDING_DIMENSION = int(os.getenv('EMBEDDING_DIMENSION', 768))
+    
+    # LLM 配置（用于生成回答）
+    LLM_API_BASE = os.getenv('LLM_API_BASE', OLLAMA_API_BASE)
+    LLM_API_KEY = os.getenv('LLM_API_KEY', 'ollama')  # Ollama 不需要真实的 API key
+    LLM_DEFAULT_MODEL = os.getenv('LLM_DEFAULT_MODEL', 'qwen3:4b')
+    LLM_ALTERNATIVE_MODELS = os.getenv('LLM_ALTERNATIVE_MODELS', 'llama3.2:3b').split(',')
     LLM_MAX_TOKENS = int(os.getenv('LLM_MAX_TOKENS', 2048))
     LLM_TEMPERATURE = float(os.getenv('LLM_TEMPERATURE', 0.7))
+    LLM_TIMEOUT = int(os.getenv('LLM_TIMEOUT', 120))  # 请求超时时间（秒）
     
     # 日志配置
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')

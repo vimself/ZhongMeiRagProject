@@ -196,15 +196,47 @@ def send_message():
         )
         db.session.add(user_message)
         
-        # TODO: 调用RAG引擎生成答案
-        # 1. 从知识库检索相关文档
-        # 2. 组装Prompt
-        # 3. 调用LLM生成答案
-        # 4. 解析引用
-        
-        # 暂时返回模拟数据
-        answer = f'这是对问题"{question}"的回答（功能开发中）'
-        references = []
+        # 调用 RAG 引擎生成答案
+        try:
+            from utils.rag_service import rag_service
+            from models.model import Model
+            
+            # 获取模型信息
+            model = Model.query.get(session.model_id)
+            model_name = model.name if model else None
+            
+            # 获取知识库配置
+            kb_id = session.knowledge_base_id
+            similarity_threshold = current_app.config.get('SIMILARITY_THRESHOLD', 0.7)
+            top_k = current_app.config.get('TOP_K', 5)
+            
+            # 如果知识库有自定义阈值，使用知识库的配置
+            if kb_id:
+                kb = KnowledgeBase.query.get(kb_id)
+                if kb and kb.similarity_threshold:
+                    similarity_threshold = kb.similarity_threshold
+            
+            # 调用 RAG 服务
+            rag_result = rag_service.chat(
+                question=question,
+                kb_id=kb_id,
+                model_name=model_name,
+                top_k=top_k,
+                similarity_threshold=similarity_threshold
+            )
+            
+            answer = rag_result['answer']
+            references = rag_result['references']
+            
+            current_app.logger.info(
+                f'RAG 回答成功: session={session_id}, '
+                f'context_count={rag_result.get("context_count", 0)}'
+            )
+            
+        except Exception as e:
+            current_app.logger.error(f'RAG 回答失败: {str(e)}', exc_info=True)
+            answer = '抱歉，生成回答时出现了问题。请稍后重试或联系管理员。'
+            references = []
         
         # 保存助手消息
         assistant_message = ChatMessage(

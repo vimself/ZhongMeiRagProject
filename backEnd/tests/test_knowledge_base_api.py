@@ -249,3 +249,4 @@ class TestKnowledgeBaseAPI:
         assert json_data['error'] == 0
         assert isinstance(json_data['body'], list)
 
+

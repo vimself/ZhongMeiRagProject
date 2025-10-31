@@ -47,6 +47,9 @@ def create_app(config_name=None):
     # 配置日志
     setup_logging(app)
     
+    # 初始化 RAG 服务
+    initialize_rag_service(app)
+    
     # 注册蓝图
     register_blueprints(app)
     
@@ -64,6 +67,19 @@ def create_app(config_name=None):
         })
     
     return app
+
+
+def initialize_rag_service(app):
+    """初始化 RAG 服务"""
+    from utils.rag_service import rag_service
+    
+    try:
+        rag_service.initialize(app)
+        app.logger.info('RAG 服务初始化成功')
+    except Exception as e:
+        app.logger.error(f'RAG 服务初始化失败: {str(e)}', exc_info=True)
+        # 不中断应用启动，但记录错误
+        app.logger.warning('应用将在没有 RAG 服务的情况下继续运行')
 
 
 def setup_logging(app):

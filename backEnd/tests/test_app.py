@@ -34,3 +34,4 @@ class TestApp:
         assert app.config['TESTING'] is True
         assert app.config['SQLALCHEMY_DATABASE_URI'] == 'sqlite:///:memory:'
 
+
