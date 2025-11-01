@@ -3,6 +3,7 @@
 """
 from datetime import datetime
 from extensions import db
+from utils.helpers import get_beijing_now
 
 
 class Model(db.Model):
@@ -32,8 +33,8 @@ class Model(db.Model):
     response_time = db.Column(db.Integer)  # 毫秒
     health_message = db.Column(db.String(500))
     
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=get_beijing_now)
+    updated_at = db.Column(db.DateTime, default=get_beijing_now, onupdate=get_beijing_now)
     
     def __repr__(self):
         return f'<Model {self.name}>'

@@ -76,26 +76,49 @@ export async function apiRequest(url, options = {}) {
     return getMockData(url, body)
   }
 
-  // 构建请求配置
-  const config = {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers
-    }
-  }
+  // 检查是否是FormData（文件上传）
+  const isFormData = body instanceof FormData
 
+  // 构建请求头
+  const requestHeaders = {}
+  
+  // FormData 不需要手动设置Content-Type，让浏览器自动设置（包含boundary）
+  if (!isFormData) {
+    requestHeaders['Content-Type'] = 'application/json'
+  }
+  
   // 添加认证token
   if (needAuth) {
     const token = getToken()
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`
+      requestHeaders['Authorization'] = `Bearer ${token}`
     }
+  }
+  
+  // 合并自定义headers（但不覆盖已设置的关键header）
+  if (headers && Object.keys(headers).length > 0) {
+    // 过滤掉空的或undefined的header
+    Object.keys(headers).forEach(key => {
+      if (headers[key] !== undefined && headers[key] !== null && headers[key] !== '') {
+        requestHeaders[key] = headers[key]
+      }
+    })
+  }
+
+  // 构建请求配置
+  const config = {
+    method,
+    headers: requestHeaders
   }
 
   // 添加请求体
-  if (method !== 'GET' && Object.keys(body).length > 0) {
-    config.body = JSON.stringify(body)
+  if (method !== 'GET') {
+    if (isFormData) {
+      // FormData 直接赋值，不需要JSON.stringify
+      config.body = body
+    } else if (Object.keys(body).length > 0) {
+      config.body = JSON.stringify(body)
+    }
   }
 
   try {

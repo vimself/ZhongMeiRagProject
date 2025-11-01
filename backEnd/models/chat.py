@@ -15,8 +15,8 @@ class ChatSession(db.Model):
     title = db.Column(db.String(255), default='新对话')
     knowledge_base_id = db.Column(db.String(50), db.ForeignKey('knowledge_bases.id'))
     model_id = db.Column(db.String(50), db.ForeignKey('models.id'))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=get_beijing_now)
+    updated_at = db.Column(db.DateTime, default=get_beijing_now, onupdate=get_beijing_now)
     
     # 关联关系
     messages = db.relationship('ChatMessage', backref='session', lazy='dynamic', cascade='all, delete-orphan', order_by='ChatMessage.created_at')
@@ -46,7 +46,7 @@ class ChatMessage(db.Model):
     role = db.Column(db.String(20), nullable=False)  # user, assistant
     content = db.Column(db.Text, nullable=False)
     references = db.Column(db.JSON)  # 引用来源（JSON格式）
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=get_beijing_now)
     
     def __repr__(self):
         return f'<ChatMessage {self.id}>'

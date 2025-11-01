@@ -3,6 +3,7 @@
 """
 from datetime import datetime
 from extensions import db
+from utils.helpers import get_beijing_now
 
 
 class User(db.Model):
@@ -22,8 +23,8 @@ class User(db.Model):
     bio = db.Column(db.String(200))
     status = db.Column(db.String(20), default='active')  # active, disabled
     last_login_at = db.Column(db.DateTime)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=get_beijing_now)
+    updated_at = db.Column(db.DateTime, default=get_beijing_now, onupdate=get_beijing_now)
     
     # 关联关系
     chat_sessions = db.relationship('ChatSession', backref='user', lazy='dynamic')

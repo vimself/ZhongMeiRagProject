@@ -25,8 +25,8 @@ class KnowledgeBase(db.Model):
     top_k = db.Column(db.Integer, default=5)
     vector_model_id = db.Column(db.String(50))
     created_by = db.Column(db.String(50), db.ForeignKey('users.id'))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=get_beijing_now)
+    updated_at = db.Column(db.DateTime, default=get_beijing_now, onupdate=get_beijing_now)
     
     # 关联关系
     documents = db.relationship('Document', backref='knowledge_base', lazy='dynamic', cascade='all, delete-orphan')
@@ -81,7 +81,7 @@ class Document(db.Model):
     error_message = db.Column(db.Text)
     tags = db.Column(db.JSON)
     uploaded_by = db.Column(db.String(50), db.ForeignKey('users.id'))
-    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
+    uploaded_at = db.Column(db.DateTime, default=get_beijing_now)
     processed_at = db.Column(db.DateTime)
     
     def __repr__(self):
@@ -115,7 +115,7 @@ class KnowledgeBasePermission(db.Model):
     user_id = db.Column(db.String(50), db.ForeignKey('users.id'), nullable=False, index=True)
     permission = db.Column(db.String(20), nullable=False)  # view, manage
     granted_by = db.Column(db.String(50), db.ForeignKey('users.id'))
-    granted_at = db.Column(db.DateTime, default=datetime.utcnow)
+    granted_at = db.Column(db.DateTime, default=get_beijing_now)
     
     # 唯一约束
     __table_args__ = (

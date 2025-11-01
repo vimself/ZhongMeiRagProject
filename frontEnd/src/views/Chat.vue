@@ -304,9 +304,11 @@ async function loadInitialData() {
         getSessionHistory()
       ])
       
-      knowledgeBaseList.value = kbRes.data
-      modelList.value = modelRes.data
-      sessionHistory.value = historyRes.data
+      // 后端返回的数据结构：知识库和模型直接返回数组
+      // 会话历史也直接返回数组
+      knowledgeBaseList.value = Array.isArray(kbRes.data) ? kbRes.data : []
+      modelList.value = Array.isArray(modelRes.data) ? modelRes.data : []
+      sessionHistory.value = Array.isArray(historyRes.data) ? historyRes.data : []
       
       // 设置默认选中的模型（选择第一个可用模型）
       if (modelList.value && modelList.value.length > 0) {

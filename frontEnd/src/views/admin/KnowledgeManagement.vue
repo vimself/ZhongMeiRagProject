@@ -141,7 +141,8 @@ const fetchKnowledgeList = async () => {
     loading.value = true
     const res = await getKnowledgeBaseList()
     if (res.success) {
-      knowledgeList.value = res.data
+      // 后端返回的数据结构是 { list: [], total, page, pageSize }
+      knowledgeList.value = res.data.list || []
     }
   } catch (error) {
     console.error('获取知识库列表失败:', error)

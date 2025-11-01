@@ -280,9 +280,10 @@ async function loadInitialData() {
       getHotKeywords()
     ])
     
-    knowledgeBaseList.value = kbRes.data
-    docTypes.value = typesRes.data
-    hotKeywords.value = hotRes.data
+    // 后端返回的数据结构是 { list: [], total, page, pageSize }
+    knowledgeBaseList.value = kbRes.data.list || []
+    docTypes.value = typesRes.data || []
+    hotKeywords.value = hotRes.data || []
   } catch (error) {
     console.error('加载数据失败:', error)
   }
